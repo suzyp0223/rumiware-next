@@ -10,14 +10,13 @@ import TopNavBar from "../common/TopNavBar";
 const Layout = ({ children }: { children: ReactNode }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
-  const toggleSidebar = () => {
-    setIsSidebarOpen((prev) => !prev);
-  };
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
     <>
-      <TopNavBar toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} />
+      <TopNavBar isOpen={isSidebarOpen} onClose={closeSidebar} toggleSidebar={toggleSidebar} />
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
       <main className="pt-16">{children}</main>
       <Footer />
     </>
