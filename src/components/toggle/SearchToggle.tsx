@@ -1,33 +1,32 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef } from "react";
 
 import Image from "next/image";
-import close from "../../assets/icon/close.svg";
+import closeIcon from "../../assets/icon/close.svg";
 import search from "../../assets/icon/search.svg";
 
 import useClickOutside from "@/hooks/useClickOutside";
+import useToggleBtn from "@/hooks/useToggleBtn";
+import clsx from "clsx";
 
 const SearchToggle = () => {
-  const [showInput, setShowInput] = useState(false);
+  const { isOpen: showInput, toggle, close } = useToggleBtn();
 
   // 모달 외부 클릭시 모달종료
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const toggle = () => {
-    setShowInput((prev) => !prev);
-  };
-
   //외부 클릭 시 닫기
-  useClickOutside(inputRef, () => setShowInput(false), showInput);
+  useClickOutside(inputRef, close, showInput);
 
   return (
-    <div className="relative flex items-center">
+    <div className="flex items-center">
       {/* 🔍 버튼 */}
       <button
         type="button"
         onClick={toggle}
-        className="w-10 h-10 flex items-center justify-center  bg-white"
+        className="w-10 h-10 flex items-center justify-center "
+        aria-label={showInput ? "검색 닫기" : "검색 열기"}
       >
         {/* 오류수정
         상황:
@@ -46,7 +45,7 @@ const SearchToggle = () => {
         */}
         <Image
           key={showInput ? "close" : "search"} // 🔑 캐시 무효화용
-          src={showInput ? close : search}
+          src={showInput ? closeIcon : search}
           alt={showInput ? "닫기" : "검색"}
           className="w-10 h-10 bg-peach-pink"
           unoptimized
@@ -54,15 +53,19 @@ const SearchToggle = () => {
       </button>
 
       {/* 🔽 input 토글 영역 */}
-      {showInput && (
-        <input
-          ref={inputRef}
-          type="text"
-          placeholder="검색어를 입력하세요"
-          className="flex-1 h-10 border-b rounded-md border-gray-300 focus:outline-none px-4 text-base hover:border-gray-900"
-          autoFocus
-        />
-      )}
+
+      <input
+        ref={inputRef}
+        type="text"
+        placeholder="검색어를 입력하세요"
+        className={clsx(
+          "bg-peach-pink hover:bg-[#ffe3dc] outline-none",
+          "h-10 border-b rounded-md border-gray-300 px-4 text-base",
+          "transition-all duration-300 ease-in-out",
+          showInput ? "opacity-100 w-[240px]" : "opacity-0 w-0 pointer-events-none"
+        )}
+        autoFocus={showInput}
+      />
     </div>
   );
 };

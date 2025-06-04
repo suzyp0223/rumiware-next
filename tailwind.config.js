@@ -8,6 +8,7 @@ module.exports = {
     extend: {
       colors: {
         "peach-pink": "#fff5f3", // 원하는 이름으로 지정
+        "tab-gray": "#f3f4f6",
       },
       fontSize: {
         base: "1rem", // ✅ 여기서 base의 크기를 확인 가능

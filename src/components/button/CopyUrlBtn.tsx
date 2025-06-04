@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-const CopyUrlButton = () => {
+const CopyUrlBtn = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyUrl = async () => {
@@ -24,4 +24,4 @@ const CopyUrlButton = () => {
   );
 };
 
-export default CopyUrlButton;
+export default CopyUrlBtn;
