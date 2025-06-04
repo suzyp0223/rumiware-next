@@ -1,5 +1,7 @@
+// app/layout.tsx: 전체 앱 공통 레이아웃
 // 서버 컴포넌트
 import { Geist, Geist_Mono } from "next/font/google";
+import Layout from "../components/layout/Layout";
 import "./globals.css";
 
 import ClientProviders from "./ClientProviders"; // ✅ 클라이언트 전용 감싸기
@@ -19,16 +21,12 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <ClientProviders>
-          {children}
+          <Layout>{children}</Layout>
         </ClientProviders>
       </body>
     </html>
