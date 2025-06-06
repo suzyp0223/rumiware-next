@@ -13,6 +13,11 @@ module.exports = {
       fontSize: {
         base: "1rem", // ✅ 여기서 base의 크기를 확인 가능
       },
+      boxShadow: {
+        leftBottomSide: "-2px 0 6px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08)",
+        rightBottomSide: "2px 0 6px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.08)",
+        bottomSide: "0 2px 6px rgba(0,0,0,0.08)",
+      },
     },
   },
   plugins: [],

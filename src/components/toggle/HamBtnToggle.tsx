@@ -1,9 +1,8 @@
 import Image from "next/image";
 
-import Link from "next/link";
 import { useRef } from "react";
 import hamBtn from "../../assets/icon/hamBtn.svg";
-import { Category } from "../common/Category";
+import Sidebar from "../common/Sidebar";
 
 interface HamBtnToggleProps {
   toggleSidebar: () => void;
@@ -33,14 +32,8 @@ const HamBtnToggle = ({ toggleSidebar, isOpen }: HamBtnToggleProps) => {
 
       {/* 버튼 아래 드롭다운 */}
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-64 bg-white shadow-md z-50">
-          <ul className="p-4">
-            {Category.map((cat) => (
-              <li key={cat.name} className="py-1 hover:bg-gray-100 px-2 rounded">
-                <Link href={cat.pathName}>{cat.name}</Link>
-              </li>
-            ))}
-          </ul>
+        <div className="absolute top-full left-0 bg-white shadow-md z-50">
+          <Sidebar isOpen={isOpen} onClose={toggleSidebar} />
         </div>
       )}
     </div>

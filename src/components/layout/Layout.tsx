@@ -4,7 +4,6 @@
 // ClientProviders 안에서 children을 감싸기 위해 쓸 수 있음.
 import { ReactNode, useState } from "react";
 import Footer from "../common/Footer";
-import Sidebar from "../common/Sidebar";
 import TopNavBar from "../common/TopNavBar";
 
 const Layout = ({ children }: { children: ReactNode }) => {
@@ -16,7 +15,6 @@ const Layout = ({ children }: { children: ReactNode }) => {
   return (
     <>
       <TopNavBar isOpen={isSidebarOpen} onClose={closeSidebar} toggleSidebar={toggleSidebar} />
-      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
       <main className="pt-16">{children}</main>
       <Footer />
     </>

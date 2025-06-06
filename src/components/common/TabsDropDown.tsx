@@ -8,14 +8,14 @@ interface TopNavProps {
   isOpen: boolean;
 }
 
-const TabsDropDown = ({ toggleSidebar }: TopNavProps) => {
+const TabsDropDown = ({ toggleSidebar, isOpen }: TopNavProps) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
   return (
-    <ul className="md:flex justify-center items-center gap-6 text-sm font-medium py-2 bg-gray-100">
+    <ul className="md:flex justify-center items-center gap-6 text-sm font-medium bg-gray-100">
       <li className=" hover:bg-[#e5e7eb] rounded-md ">
-        <HamBtnToggle toggleSidebar={toggleSidebar} isOpen={false} />
+        <HamBtnToggle toggleSidebar={toggleSidebar} isOpen={isOpen} />
       </li>
       {Category.map((category, index) => (
         <li
