@@ -13,19 +13,20 @@ interface TopNavProps {
   toggleSidebar: () => void;
   isOpen: boolean;
   onClose: () => void;
+  closeSidebar: () => void;
 }
 
-const TopNavBar = ({ isOpen, toggleSidebar }: TopNavProps) => {
+const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
   return (
-    <nav className="w-full bg-peach-pink shadow-md">
+    <nav className="w-full bg-peach-pink shadow-md border-b border-[var(--color-red-200)]">
       <div className="mb-10">
         <div className="flex justify-between items-center px-4 py-2 text-gray-600">
           <CopyUrlBtn />
           <div className="flex gap-8 text-sm text-gray-600 mr-6">
-            <Link href="#" className="hover:underline">
+            <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)]">
               로그인
             </Link>
-            <Link href="#" className="hover:underline">
+            <Link href="/join" className="hover:underline hover:text-[var(--color-red-400)]">
               회원가입
             </Link>
           </div>
@@ -39,19 +40,23 @@ const TopNavBar = ({ isOpen, toggleSidebar }: TopNavProps) => {
           {/* <SearchBtn /> */}
           <SearchToggle />
 
-          <div className=" md:flex items-center justify-center gap-8">
+          <div className=" flex items-center justify-center gap-8">
             <Link href="#" className="flex flex-col items-center text-xs">
               <Image src={myPage} alt="마이페이지" className="w-6 h-6 mt-1" />
-              <span className="display-none mt-2">마이페이지</span>
+              <span className="display-none mt-2 hover:underline hover:text-[var(--color-red-400)]">
+                마이페이지
+              </span>
             </Link>
             <Link href="#" className="flex flex-col items-center text-xs mr-6">
               <Image src={cart} alt="장바구니" className="w-8 h-8" />
-              <span className="display-none">장바구니</span>
+              <span className="display-none hover:underline hover:text-[var(--color-red-400)]">
+                장바구니
+              </span>
             </Link>
           </div>
         </div>
       </div>
-      <TabsDropDown isOpen={isOpen} toggleSidebar={toggleSidebar} />
+      <TabsDropDown isOpen={isOpen} toggleSidebar={toggleSidebar} closeSidebar={closeSidebar} />
     </nav>
   );
 };

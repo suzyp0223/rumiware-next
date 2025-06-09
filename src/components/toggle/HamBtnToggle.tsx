@@ -1,33 +1,34 @@
-import Image from "next/image";
-
 import { useRef } from "react";
-import hamBtn from "../../assets/icon/hamBtn.svg";
+
+import useClickOutside from "@/hooks/useClickOutside";
 import Sidebar from "../common/Sidebar";
+import HamIcon from "../icons/HamIcon";
 
 interface HamBtnToggleProps {
   toggleSidebar: () => void;
   isOpen: boolean;
+  closeSidebar: () => void;
 }
 
-const HamBtnToggle = ({ toggleSidebar, isOpen }: HamBtnToggleProps) => {
+const HamBtnToggle = ({ toggleSidebar, isOpen, closeSidebar }: HamBtnToggleProps) => {
   const btnRef = useRef<HTMLDivElement | null>(null);
 
-  // //외부 클릭 시 닫기
-  // useClickOutside(btnRef, close, showMenu);
-
-  // const handleClick = () => {
-  //   toggle();
-  //   toggleSidebar();
-  // };
+  useClickOutside(btnRef, closeSidebar, isOpen);
+  // useClickOutside(btnRef, closeSidebar || (() => {}), isOpen);
 
   return (
     <div className="relative" ref={btnRef}>
       <button
-        onClick={toggleSidebar}
-        className="bg-tab-gray hover:bg-[#e5e7eb] flex items-center justify-center w-10 h-10"
+        // onClick={toggleSidebar}
+        onMouseDown={(e) => e.stopPropagation()}
+        onClick={(e) => {
+          e.stopPropagation(); // ✅ 외부 클릭 이벤트로 인식되지 않게 방지
+          toggleSidebar();
+        }}
+        className="bg-tab-gray  hover:bg-[#ffe3dc]  flex items-center justify-center w-10 h-10"
         aria-label="메뉴 열기"
       >
-        <Image src={hamBtn} alt="메뉴" className="w-6 h-6" unoptimized />
+        <HamIcon isOpen={isOpen} />
       </button>
 
       {/* 버튼 아래 드롭다운 */}

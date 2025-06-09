@@ -3,8 +3,8 @@
 import { useRef } from "react";
 
 import Image from "next/image";
-import closeIcon from "../../assets/icon/close.svg";
 import search from "../../assets/icon/search.svg";
+import CloseIcon from "../icons/CloseIcon";
 
 import useClickOutside from "@/hooks/useClickOutside";
 import useToggleBtn from "@/hooks/useToggleBtn";
@@ -25,7 +25,7 @@ const SearchToggle = () => {
       <button
         type="button"
         onClick={toggle}
-        className="w-10 h-10 flex items-center justify-center "
+        className="w-10 h-10 flex items-center justify-center"
         aria-label={showInput ? "검색 닫기" : "검색 열기"}
       >
         {/* 오류수정
@@ -43,13 +43,17 @@ const SearchToggle = () => {
           그래서 close → search 이미지 변경이 정상 반영됩니다.
 
         */}
-        <Image
-          key={showInput ? "close" : "search"} // 🔑 캐시 무효화용
-          src={showInput ? closeIcon : search}
-          alt={showInput ? "닫기" : "검색"}
-          className="w-10 h-10 bg-peach-pink"
-          unoptimized
-        />
+        {showInput ? (
+          <CloseIcon />
+        ) : (
+          <Image
+            key={showInput ? "close" : "search"} // 🔑 캐시 무효화용
+            src={search}
+            alt={showInput ? "닫기" : "검색"}
+            className="w-10 h-10 bg-peach-pink  hover:bg-[#ffe3dc]"
+            unoptimized
+          />
+        )}
       </button>
 
       {/* 🔽 input 토글 영역 */}

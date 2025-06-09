@@ -64,7 +64,7 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
               >
                 <Link
                   href={category.pathName}
-                  className="flex items-center h-12 px-4 text-[15px] text-[#111] hover:bg-gray-100 hover:text-blue-600 cursor-pointer"
+                  className="flex items-center h-12 px-4 text-[15px] text-[#111] hover:bg-gray-100 hover:underline hover:text-[var(--color-red-400)] cursor-pointer"
                 >
                   {category.name}
                 </Link>
@@ -87,7 +87,7 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
                   >
                     <Link
                       href={sub.pathName}
-                      className={`flex items-center h-12 px-4 text-[#333] hover:bg-gray-100 hover:text-blue-600 cursor-pointer ${
+                      className={`flex items-center h-12 px-4 text-[#333] hover:bg-gray-100 hover:underline hover:text-[var(--color-red-400)] cursor-pointer ${
                         hasThird ? "font-bold" : ""
                       }`}
                     >
@@ -109,7 +109,7 @@ const SideBar = ({ isOpen, onClose }: SidebarProps) => {
                     <li key={third.name}>
                       <Link
                         href={third.pathName}
-                        className="flex items-center h-12 px-4 text-[#555] hover:bg-gray-100 hover:text-blue-600 cursor-pointer"
+                        className="flex items-center h-12 px-4 text-[#555] hover:bg-gray-100 hover:underline hover:text-[var(--color-red-400)] cursor-pointer"
                       >
                         &nbsp;&nbsp;&nbsp;&nbsp;↳ {third.name}
                       </Link>

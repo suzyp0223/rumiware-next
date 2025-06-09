@@ -7,11 +7,12 @@ export default function Home() {
       <h1 className="text-3xl font-bold text-center text-blue-600 mb-10">루미웨어 메인 페이지</h1>
       {/* 예시 콘텐츠 */}
       <section className="text-center">
-        <div>{/* 무한 스크롤 콘텐츠 */}</div>
+        <div>캐러셀 자리</div>
         <p className="text-lg">쇼핑몰 홈 화면입니다.</p>
         <p className="text-gray-500 mt-2">
-          상단 바, 사이드바, 푸터는 Layout.tsx를 통해 자동 적용됩니다.
+          상단 바, 메인페이지, 푸터는 Layout.tsx를 통해 자동 적용됩니다.
         </p>
+        <div>무한 스크롤 콘텐츠</div>
       </section>
     </main>
   );

@@ -1,5 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="24" viewBox="0 0 30 24" fill="none">
-  <rect y="2" width="30" height="2" fill="black"/>
-  <rect y="11" width="30" height="2" fill="black"/>
-  <rect y="20" width="30" height="2" fill="black"/>
+  <!-- <rect y="2" width="30" height="2" fill="#EA4F59"/>
+  <rect y="11" width="30" height="2" fill="#EA4F59"/>
+  <rect y="20" width="30" height="2" fill="#EA4F59"/> -->
+  <rect y="2" width="30" height="2" fill="currentColor"/>
+  <rect y="11" width="30" height="2" fill="currentColor"/>
+  <rect y="20" width="30" height="2" fill="currentColor"/>
 </svg>

@@ -5,19 +5,21 @@ const Footer: React.FC = (): React.ReactElement => {
   return (
     <div className="flex flex-col min-h-screen m-0 p-0">
       {/* Main Content */}
-      <div className="flex-grow overflow-y-auto p-5">
+      {/* <div className="flex-grow overflow-y-auto">
         <p className="text-center py-4">무한 스크롤 콘텐츠</p>
         <div className="h-[2000px] bg-gray-50">
           <p className="text-center pt-4">스크롤 가능한 콘텐츠가 여기에 있습니다.</p>
         </div>
-      </div>
+      </div> */}
 
       {/* Footer */}
-      <footer className="text-center border-t border-[#f5a7ac] mt-auto">
+      <footer className="text-center border-t border-[var(--color-red-200)] mt-auto shadow-top">
         <div className="flex flex-row justify-center items-center gap-20 text-gray-800 text-base mt-4">
           {/* Left: Info */}
           <p className="text-xl font-bold ">
-            <Link href="/">LumiWare 루미웨어</Link>
+            <Link href="/" className="hover:text-[var(--color-red-200)]">
+              LumiWare 루미웨어
+            </Link>
           </p>
 
           <div className="flex flex-col text-sm text-gray-700">
@@ -43,7 +45,11 @@ const Footer: React.FC = (): React.ReactElement => {
           {/* Center: Resume & Blog & GitHub */}
           <div className="space-y-2 text-sm text-gray-700">
             <p>
-              <a href="/" target="_blank" className="flex items-center gap-2 hover:text-[#f5a7ac]">
+              <a
+                href="/"
+                target="_blank"
+                className="flex items-center gap-2 hover:text-[var(--color-red-200)]"
+              >
                 <img
                   src="https://www.svgrepo.com/show/137446/resume.svg"
                   alt="이력서"
@@ -56,7 +62,7 @@ const Footer: React.FC = (): React.ReactElement => {
               <a
                 href="https://ppojjakcoding.tistory.com"
                 target="_blank"
-                className="flex items-center gap-2 hover:text-[#f5a7ac]"
+                className="flex items-center gap-2 hover:text-[var(--color-red-200)]"
               >
                 <img
                   src="https://t1.daumcdn.net/tistory_admin/favicon/tistory_favicon_32x32.ico"
@@ -70,7 +76,7 @@ const Footer: React.FC = (): React.ReactElement => {
               <a
                 href="https://github.com/suzyp0223?tab=repositories"
                 target="_blank"
-                className="flex items-center gap-2 hover:text-[#f5a7ac]"
+                className="flex items-center gap-2 hover:text-[var(--color-red-200)]"
               >
                 <img
                   src="https://www.svgrepo.com/show/303615/github-icon-1-logo.svg"
@@ -83,7 +89,7 @@ const Footer: React.FC = (): React.ReactElement => {
           </div>
         </div>
 
-        <div className="bg-gray-100 flex flex-col flex-wrap justify-center items-center  h-[5rem]  mt-4">
+        <div className="bg-gray-100 flex flex-col flex-wrap justify-center items-center h-[5rem] mt-4">
           <p className="text-sm">Img Source</p>
           <div className="flex items-center flex-wrap">
             {[
@@ -96,11 +102,16 @@ const Footer: React.FC = (): React.ReactElement => {
               "https://img.icons8.com/ios-filled/50/000000/camera.png",
               "https://www.lifeofpix.com/dist/favicon-32x32.png",
             ].map((src, i) => (
-              <a href="#" key={i} target="_blank" className="m-5 h-2">
+              <a
+                href="#"
+                key={i}
+                target="_blank"
+                className="m-5 h-2 hover:bg-[var(--color-red-200)]"
+              >
                 <img
                   src={src}
                   alt="source-icon"
-                  className="w-4 h-4 hover:brightness-[2.2] hover:bg-[#f5a7ac]"
+                  className="w-4 h-4 hover:brightness-[2.2] hover:bg-[var(--color-red-200)]"
                 />
               </a>
             ))}

@@ -18,7 +18,10 @@ const CopyUrlBtn = () => {
   };
 
   return (
-    <button onClick={handleCopyUrl} className="inline text-sm px-2 py-2 rounded-2xl text-gray-600 ">
+    <button
+      onClick={handleCopyUrl}
+      className="inline text-sm px-2 py-2 rounded-2xl text-gray-600 hover:underline hover:text-[var(--color-red-400)] "
+    >
       {copied ? `✅ 복사완료! ${window.location.href}` : "🔗 페이지 URL 복사"}
     </button>
   );
