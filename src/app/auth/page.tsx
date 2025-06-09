@@ -16,7 +16,7 @@ const AuthMenu = () => {
       className="flex flex-col items-center justify-center text-lg gap-4 py-10 w-fit mx-auto
     border border-gray-200 "
     >
-      <h1 className="text-3xl">로그인</h1>
+      <h1 className="text-3xl mb-3">로그인</h1>
       {/* <AuthHeader /> */}
       <ul className="flex flex-row gap-4 text-center">
         <li className="px-4 cursor-pointer" onClick={() => setActiveTab("email")}>
@@ -61,7 +61,7 @@ const AuthMenu = () => {
             <input
               type="text"
               placeholder="비밀번호"
-              className="outline-none px-4 py-2 w-64 w-[300px]
+              className="outline-none px-4 py-2 w-[300px]
               border-b-2  border-transparent focus:border-[#0073e9] rounded-t"
             />
             <span className="absolute top-1/2 right-3 transform -translate-y-1/2">
@@ -78,7 +78,10 @@ const AuthMenu = () => {
             <input type="checkbox" className="w-5 h-5 custom-checkbox" />
             <span className="mx-2">자동 로그인</span>
           </label>
-          <a href="/login/accountInfoFind" className="text-[var(--color-blue-600)]">
+          <a
+            href="/login/accountInfoFind"
+            className="text-[var(--color-blue-600)] mr-4 right-arrow"
+          >
             아이디∙비밀번호 찾기
           </a>
         </div>

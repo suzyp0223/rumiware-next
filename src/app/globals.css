@@ -18,16 +18,21 @@
   }
 }
 @layer utilities {
-  .check-icon::before {
+  .right-arrow {
+    @apply relative;
+  }
+  .right-arrow:before {
     content: "";
     position: absolute;
-    top: 0;
-    left: 0;
-    background-position: -292px -236px;
-    background-repeat: no-repeat;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
+    left: 127px;
+    top: 6px;
+
+    width: 0.5rem;
+    height: 0.5rem;
+
+    transform: rotate(45deg);
+    border-top: 1px solid var(--color-blue-600);
+    border-right: 1px solid var(--color-blue-600);
   }
 }
 
