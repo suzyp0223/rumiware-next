@@ -24,8 +24,8 @@
   .right-arrow:before {
     content: "";
     position: absolute;
-    left: 127px;
-    top: 6px;
+    left: 110px;
+    top: 4px;
 
     width: 0.5rem;
     height: 0.5rem;

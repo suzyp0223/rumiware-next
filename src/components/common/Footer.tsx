@@ -26,20 +26,20 @@ const Footer: React.FC = (): React.ReactElement => {
             <p className="flex items-center">
               <img
                 src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
-                className="w-4 h-4"
+                className="w-4 h-4 mr-2"
                 alt="이멜"
               />
               suzyp0223@gmail.com
             </p>
-            <p className="flex items-center p-2">
+            <p className="flex items-center p-2 mr-2">
               <img
                 src="https://www.svgrepo.com/show/111201/phone-call.svg"
                 alt="Phone"
-                className="w-4 h-4"
+                className="w-4 h-4 mr-2"
               />
               010.3395.0640
             </p>
-            <p className="text-xs text-gray-500">&copy; 박수지. All Rights Reserved.</p>
+            <p className="text-xs text-gray-500">&copy; &nbsp;박수지. All Rights Reserved.</p>
           </div>
 
           {/* Center: Resume & Blog & GitHub */}
