@@ -17,7 +17,7 @@ const PasswordToggle = () => {
 
   return (
     <button onClick={() => setVisible((prev) => !prev)}>
-      {visible ? <EyeCloseIcon /> : <EyeOpenIcon />}
+      {visible ? <EyeOpenIcon /> : <EyeCloseIcon />}
     </button>
   );
 };

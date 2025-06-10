@@ -43,15 +43,13 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
           <div className=" flex items-center justify-center gap-8">
             <Link href="#" className="flex flex-col items-center text-xs">
               <Image src={myPage} alt="마이페이지" className="w-6 h-6 mt-1" />
-              <span className="display-none mt-2 hover:underline hover:text-[var(--color-red-400)]">
+              <span className="mt-2 hover:underline hover:text-[var(--color-red-400)]">
                 마이페이지
               </span>
             </Link>
             <Link href="#" className="flex flex-col items-center text-xs mr-6">
               <Image src={cart} alt="장바구니" className="w-8 h-8" />
-              <span className="display-none hover:underline hover:text-[var(--color-red-400)]">
-                장바구니
-              </span>
+              <span className="hover:underline hover:text-[var(--color-red-400)]">장바구니</span>
             </Link>
           </div>
         </div>

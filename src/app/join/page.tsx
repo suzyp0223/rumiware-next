@@ -1,13 +1,7 @@
-import Link from "next/link";
+import Join from "@/components/join/Join";
 
 const page = () => {
-  return (
-    <>
-      <Link href="/auth/email" className="hover:underline hover:text-[#0073e9]">
-        회원가입
-      </Link>
-    </>
-  );
+  return <Join />;
 };
 
 export default page;
