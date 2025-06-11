@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import KakaoMap from "../maps/KakaoMap";
 
 const MyInfo = () => {
   const [emailDomain, setEmailDomain] = useState("");
@@ -21,7 +22,7 @@ const MyInfo = () => {
   };
 
   return (
-    <div className="w-[800px] mx-auto w-full">
+    <div className="w-[800px] mx-auto">
       <div className="border-b border-black px-4 pb-2 text-xl">
         <span>회원 정보</span>
       </div>
@@ -109,7 +110,9 @@ const MyInfo = () => {
                   <span className="text-red-400">*</span>&nbsp;주소
                 </label>
               </th>
-              <td className="p-4">
+
+              <KakaoMap />
+              {/* <td className="p-4">
                 <ul>
                   <button className="mr-4 p-2 text-xs border border-gray-300 outline-none hover:border-[#0073e9] hover:text-[#0073e9]">
                     주소검색
@@ -127,7 +130,7 @@ const MyInfo = () => {
                     className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
                   />
                 </ul>
-              </td>
+              </td> */}
             </tr>
 
             <tr className="border-b border-gray-300 ">

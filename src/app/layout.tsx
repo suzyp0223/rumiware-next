@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Layout from "../components/layout/Layout";
 import "./globals.css";
 
+import Script from "next/script";
 import ClientProviders from "./ClientProviders"; // ✅ 클라이언트 전용 감싸기
 
 export const metadata = {
@@ -25,6 +26,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        {/* ✅ Kakao Maps API 스크립트 */}
+        <Script
+          src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
+          strategy="beforeInteractive"
+        />
         <ClientProviders>
           <Layout>{children}</Layout>
         </ClientProviders>
