@@ -23,8 +23,12 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
         <div className="flex justify-between items-center px-4 py-2 text-gray-600">
           <CopyUrlBtn />
           <div className="flex gap-8 text-sm text-gray-600 mr-6">
+            {/* 로그인,로그아웃 레이아웃 변경하기 */}
             <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)]">
               로그인
+            </Link>
+            <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)] hidden">
+              로그아웃
             </Link>
             <Link href="/join" className="hover:underline hover:text-[var(--color-red-400)]">
               회원가입
@@ -41,13 +45,13 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
           <SearchToggle />
 
           <div className=" flex items-center justify-center gap-8">
-            <Link href="#" className="flex flex-col items-center text-xs">
+            <Link href="/myPage" className="flex flex-col items-center text-xs">
               <Image src={myPage} alt="마이페이지" className="w-6 h-6 mt-1" />
               <span className="mt-2 hover:underline hover:text-[var(--color-red-400)]">
                 마이페이지
               </span>
             </Link>
-            <Link href="#" className="flex flex-col items-center text-xs mr-6">
+            <Link href="/cart" className="flex flex-col items-center text-xs mr-6">
               <Image src={cart} alt="장바구니" className="w-8 h-8" />
               <span className="hover:underline hover:text-[var(--color-red-400)]">장바구니</span>
             </Link>

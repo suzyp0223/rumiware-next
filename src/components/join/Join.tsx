@@ -7,7 +7,7 @@ const Join = () => {
         className="flex flex-col items-center justify-center text-lg gap-4 py-5 w-fit mx-auto
         border border-gray-200 "
       >
-        <h1 className="text-3ml mb-3">회원가입</h1>
+        <h1 className="text-3xl mb-3">회원가입</h1>
         <ul className="flex flex-row text-center px-4">
           <div className="">
             <li className="mb-4">
