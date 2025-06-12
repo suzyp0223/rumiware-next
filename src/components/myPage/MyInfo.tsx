@@ -8,6 +8,9 @@ import KakaoMap from "../maps/KakaoMap";
 const MyInfo = () => {
   const [emailDomain, setEmailDomain] = useState("");
   const [isCustom, setIsCustom] = useState(false);
+  const [smsSelected, setSmsSelected] = useState<string>("yesSms");
+  const [emailSelected, setEmailSelected] = useState<string>("yesEmail");
+  const [genderSelected, setGenderSelected] = useState<string>("non");
 
   const handleDomainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const selected = e.target.value;
@@ -112,25 +115,6 @@ const MyInfo = () => {
               </th>
 
               <KakaoMap />
-              {/* <td className="p-4">
-                <ul>
-                  <button className="mr-4 p-2 text-xs border border-gray-300 outline-none hover:border-[#0073e9] hover:text-[#0073e9]">
-                    주소검색
-                  </button>
-                  <input
-                    type="text"
-                    className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
-                  />
-                  <input
-                    type="text"
-                    className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
-                  />
-                  <input
-                    type="text"
-                    className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
-                  />
-                </ul>
-              </td> */}
             </tr>
 
             <tr className="border-b border-gray-300 ">
@@ -190,15 +174,28 @@ const MyInfo = () => {
                 <span className="text-red-400">*</span>&nbsp;성별
               </th>
               <td className="p-4">
-                <label className="inline-block  pr-6 whitespace-nowrap">
-                  <input type="radio" value="-" className="mr-1" /> 선택안함
-                </label>
-                <label className="inline-block  pr-6 whitespace-nowrap">
-                  <input type="radio" value="1" className="mr-1" /> 남
-                </label>
-                <label className="inline-block  pr-6 whitespace-nowrap">
-                  <input type="radio" value="2" className="mr-1" checked /> 여
-                </label>
+                {[
+                  { label: "선택안함", value: "non" },
+                  { label: "남", value: "male" },
+                  { label: "여", value: "female" },
+                ].map(({ label, value }) => (
+                  <label
+                    key={value}
+                    className={`inline-block  pr-6 whitespace-nowrap cursor-pointer ${
+                      genderSelected === value ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="gender"
+                      value={value}
+                      checked={genderSelected === value}
+                      onChange={(e) => setGenderSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    {label}
+                  </label>
+                ))}
               </td>
             </tr>
 
@@ -245,6 +242,40 @@ const MyInfo = () => {
                 >
                   이메일 중복확인
                 </Link>
+
+                <div className="p-2 mt-4">
+                  <span className="text-sm">이메일 수신 여부</span>
+                  <label
+                    className={`inline-block  pr-6 whitespace-nowrap pl-6 ${
+                      emailSelected === "yes" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="emailAdd"
+                      value="yes"
+                      checked={emailSelected === "yes"}
+                      onChange={(e) => setEmailSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신함</span>
+                  </label>
+                  <label
+                    className={`inline-block  pr-6 whitespace-nowrap ${
+                      emailSelected === "no" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="emailAdd"
+                      value="no"
+                      checked={emailSelected === "no"}
+                      onChange={(e) => setEmailSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신안함</span>
+                  </label>
+                </div>
               </td>
             </tr>
 
@@ -254,7 +285,7 @@ const MyInfo = () => {
                   <span className="text-red-400">*</span>&nbsp;휴대폰
                 </label>
               </th>
-              <td className="p-2">
+              <td className="p-4">
                 <select
                   className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-1 mr-4"
                   id="etcphone1"
@@ -283,10 +314,48 @@ const MyInfo = () => {
                   size={4}
                   maxLength={4}
                 />
+                <div className="p-2 mt-4">
+                  <span className="text-sm">문자 수신 여부</span>
+                  <label
+                    className={`inline-flex items-center px-6 cursor-pointer ${
+                      smsSelected === "yes" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="sms"
+                      value="yesSms"
+                      checked={smsSelected === "yesSms"}
+                      onChange={(e) => setSmsSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신함</span>
+                  </label>
+                  <label
+                    className={`inline-flex items-center cursor-pointer ${
+                      smsSelected === "no" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="sms"
+                      value="noSms"
+                      checked={smsSelected === "noSms"}
+                      onChange={(e) => setSmsSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신안함</span>
+                  </label>
+                </div>
               </td>
             </tr>
           </tbody>
         </table>
+        <div>
+          <span>
+            <Link href="">회원탈퇴</Link>
+          </span>
+        </div>
       </div>
 
       {/* 소셜 연결 */}
@@ -324,6 +393,11 @@ const MyInfo = () => {
           </dl>
         </li>
       </ul>
+
+      <div>
+        <Link href="">취소</Link>
+        <Link href="">수정</Link>
+      </div>
     </div>
   );
 };
