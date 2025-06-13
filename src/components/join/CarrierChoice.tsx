@@ -12,6 +12,7 @@
     이런 브라우저 전용 기능을 쓰려면 클라이언트 컴포넌트여야 합니다.
  */
 
+// 통신사 선택
 import { useState } from "react";
 import DownArrIcon from "../icons/DownArrIcon";
 

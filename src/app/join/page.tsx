@@ -1,7 +1,7 @@
-import Join from "@/components/join/Join";
+import JoinForm from "@/components/join/JoinForm";
 
 const page = () => {
-  return <Join />;
+  return <JoinForm />;
 };
 
 export default page;

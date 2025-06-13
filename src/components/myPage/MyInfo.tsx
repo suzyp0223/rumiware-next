@@ -39,33 +39,38 @@ const MyInfo = () => {
             <col className="w-auto" /> {/* <!-- 두 번째 열: td 열 --> */}
           </colgroup>
           <tbody className="">
-            <tr className="border-y border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
-                <label htmlFor="hname" className="head-cell">
-                  <span className="text-red-400">*</span>&nbsp;이름
-                </label>
-              </th>
-              <td className="pl-2">
-                <input
-                  type="text"
-                  className="w-[200px] border-gray-300 outline-none px-4 py-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
-                  id="hname"
-                  // value="박수지"
-                  size={15}
-                  maxLength={30}
-                />
-              </td>
-            </tr>
-
             <tr className="border-b border-gray-300 ">
               <th className="bg-gray-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="id" className="head-cell">
-                  <span className="text-red-400">*</span>&nbsp;아이디
+                  <span className="text-red-400">*</span>&nbsp;아이디(이메일)
                 </label>
               </th>
-              <td>
-                <span className="p-4">suzy2020</span>
+              <td className="p-2 m-4">
+                <span className="inline-block px-4 py-2">2021234@naver.com</span>
                 <input type="hidden" className="p-4" id="id" value="suzy2020" />
+                <Link
+                  href={""}
+                  className="m-2 p-2 text-xs border border-gray-300 hover:border-[#0073e9] hover:text-[#0073e9]"
+                >
+                  이메일 변경
+                </Link>
+                <Link
+                  href={""}
+                  className="m-2 p-2 text-xs border border-gray-300 hover:border-[#0073e9] hover:text-[#0073e9] hidden"
+                >
+                  이메일 변경 취소
+                </Link>
+                <div className="p-2 w-[600px]">
+                  <input
+                    type="text"
+                    className="w-[300px] border-gray-300 outline-none p-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  />
+
+                  {/* 인증메일 전송 버튼 클릭시 이멜중복검사 통과시 인증메일 전송 */}
+                  <button type="submit" className="ml-4 p-2 text-sm border border-gray-300">
+                    인증메일 전송
+                  </button>
+                </div>
               </td>
             </tr>
 
@@ -107,19 +112,140 @@ const MyInfo = () => {
               </td>
             </tr>
 
-            <tr className="border-b border-gray-300 ">
+            <tr className="border-y border-gray-300 ">
               <th className="bg-gray-100 px-5 py-4 align-middle text-left">
-                <label htmlFor="address" className="">
-                  <span className="text-red-400">*</span>&nbsp;주소
+                <label htmlFor="hname" className="head-cell">
+                  <span className="text-red-400 ">*</span>&nbsp;이름
                 </label>
               </th>
-
-              <KakaoMap />
+              <td className="pl-2">
+                <input
+                  type="text"
+                  className=" w-[200px] border-gray-300 outline-none px-4 py-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  id="hname"
+                  // value="박수지"
+                  size={15}
+                  maxLength={30}
+                />
+              </td>
             </tr>
 
             <tr className="border-b border-gray-300 ">
               <th className="bg-gray-100 px-5 py-4 align-middle text-left">
-                <label htmlFor="birthyear" className="">
+                <label className="head-cell">
+                  <span className="text-red-400">*</span>&nbsp;휴대폰
+                </label>
+              </th>
+              <td className="p-4">
+                <select
+                  className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-1 mr-4"
+                  id="etcphone1"
+                >
+                  <option value="">선택</option>
+                  <option value="010">010</option>
+                  <option value="011">011</option>
+                  <option value="011">016</option>
+                  <option value="011">017</option>
+                  <option value="011">018</option>
+                  <option value="011">019</option>
+                </select>
+                -
+                <input
+                  type="text"
+                  className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  id="etcphone2"
+                  size={4}
+                  maxLength={4}
+                />
+                -
+                <input
+                  type="text"
+                  className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  id="etcphone3"
+                  size={4}
+                  maxLength={4}
+                />
+              </td>
+            </tr>
+            <tr className="border-b border-gray-300 ">
+              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+                <label className="head-cell">
+                  <span className="text-red-400">*</span>&nbsp;수신설정
+                </label>
+              </th>
+              <td className="p-4">
+                <div className="p-2 mt-4">
+                  <span className="text-sm">이메일 수신 여부</span>
+                  <label
+                    className={`inline-block  pr-6 whitespace-nowrap pl-6 ${
+                      emailSelected === "yes" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="emailAdd"
+                      value="yes"
+                      checked={emailSelected === "yes"}
+                      onChange={(e) => setEmailSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신함</span>
+                  </label>
+                  <label
+                    className={`inline-block  pr-6 whitespace-nowrap ${
+                      emailSelected === "no" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="emailAdd"
+                      value="no"
+                      checked={emailSelected === "no"}
+                      onChange={(e) => setEmailSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신안함</span>
+                  </label>
+                </div>
+                <div className="p-2 mt-4">
+                  <span className="text-sm">문자 수신 여부</span>
+                  <label
+                    className={`inline-flex items-center px-6 cursor-pointer ${
+                      smsSelected === "yes" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="sms"
+                      value="yesSms"
+                      checked={smsSelected === "yesSms"}
+                      onChange={(e) => setSmsSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신함</span>
+                  </label>
+                  <label
+                    className={`inline-flex items-center cursor-pointer ${
+                      smsSelected === "no" ? "text-[#0073e9]" : "text-black"
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="sms"
+                      value="noSms"
+                      checked={smsSelected === "noSms"}
+                      onChange={(e) => setSmsSelected(e.target.value)}
+                      className="mr-1 accent-[#0073e9]"
+                    />
+                    <span className="text-sm">수신안함</span>
+                  </label>
+                </div>
+              </td>
+            </tr>
+
+            <tr className="border-b border-gray-300 ">
+              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+                <label htmlFor="birthYear" className="">
                   <span className="text-red-400">*</span>&nbsp;생년월일
                 </label>
               </th>
@@ -201,151 +327,69 @@ const MyInfo = () => {
 
             <tr className="border-b border-gray-300 ">
               <th className="bg-gray-100 px-5 py-4 align-middle text-left">
-                <label className="head-cell" htmlFor="email1">
-                  <span className="text-red-400">*</span>&nbsp;이메일
+                <label htmlFor="address" className="">
+                  <span className="text-red-400">*</span>&nbsp;주소
+                </label>
+              </th>
+
+              <KakaoMap />
+            </tr>
+
+            {/* 0개 + 버튼만 2개이상은 1개만 보여주고 더보기 구현 */}
+            <tr className="border-b border-gray-300 ">
+              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+                <label className="" htmlFor="email1">
+                  <span className="text-red-400">*</span>&nbsp;배송지
                 </label>
               </th>
               <td className="pl-4 py-4">
-                <input type="hidden" className="" id="oldemail" value="" />
-                <input type="hidden" className="" id="email" value="" />
-                <input
-                  type="text"
-                  className="outline-none border-b-2 w-[180px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
-                  id="email1"
-                  size={10}
-                  maxLength={20}
-                />
-                <span className="px-2">@</span>
-                <input
-                  type="text"
-                  id="email3"
-                  className="outline-none border-b-2 w-[150px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
-                  value={emailDomain}
-                  onChange={(e) => setEmailDomain(e.target.value)}
-                  size={15}
-                  maxLength={25}
-                />
-                <select
-                  className="px-2 outline-none text-sm"
-                  id="email2"
-                  onChange={handleDomainChange}
-                  value={isCustom ? "direct" : "emailDomain"}
-                >
-                  <option value="direct">직접입력</option>
-                  <option value="naver.com">naver.com</option>
-                  <option value="gmail.com">gmail.com</option>
-                  <option value="hotmail.com">hotmail.com</option>
-                </select>
-                <Link
-                  href={""}
-                  className="m-2 p-2 text-xs border border-gray-300 hover:border-[#0073e9] hover:text-[#0073e9]"
-                >
-                  이메일 중복확인
-                </Link>
+                <div className="relative p-2 m-2">
+                  <button
+                    type="button"
+                    className="border border-gray-300 rounded p-2 w-[600px] mb-6"
+                  >
+                    <span className="before:content-['+'] before:mr-2">배송지 추가하기</span>
+                  </button>
 
-                <div className="p-2 mt-4">
-                  <span className="text-sm">이메일 수신 여부</span>
-                  <label
-                    className={`inline-block  pr-6 whitespace-nowrap pl-6 ${
-                      emailSelected === "yes" ? "text-[#0073e9]" : "text-black"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="emailAdd"
-                      value="yes"
-                      checked={emailSelected === "yes"}
-                      onChange={(e) => setEmailSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
-                    />
-                    <span className="text-sm">수신함</span>
-                  </label>
-                  <label
-                    className={`inline-block  pr-6 whitespace-nowrap ${
-                      emailSelected === "no" ? "text-[#0073e9]" : "text-black"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="emailAdd"
-                      value="no"
-                      checked={emailSelected === "no"}
-                      onChange={(e) => setEmailSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
-                    />
-                    <span className="text-sm">수신안함</span>
-                  </label>
-                </div>
-              </td>
-            </tr>
+                  <h4 className="for-a11y hidden">배송지목록</h4>
 
-            <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
-                <label className="head-cell">
-                  <span className="text-red-400">*</span>&nbsp;휴대폰
-                </label>
-              </th>
-              <td className="p-4">
-                <select
-                  className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-1 mr-4"
-                  id="etcphone1"
-                >
-                  <option value="">선택</option>
-                  <option value="010">010</option>
-                  <option value="011">011</option>
-                  <option value="011">016</option>
-                  <option value="011">017</option>
-                  <option value="011">018</option>
-                  <option value="011">019</option>
-                </select>
-                -
-                <input
-                  type="text"
-                  className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
-                  id="etcphone2"
-                  size={4}
-                  maxLength={4}
-                />
-                -
-                <input
-                  type="text"
-                  className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
-                  id="etcphone3"
-                  size={4}
-                  maxLength={4}
-                />
-                <div className="p-2 mt-4">
-                  <span className="text-sm">문자 수신 여부</span>
-                  <label
-                    className={`inline-flex items-center px-6 cursor-pointer ${
-                      smsSelected === "yes" ? "text-[#0073e9]" : "text-black"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="sms"
-                      value="yesSms"
-                      checked={smsSelected === "yesSms"}
-                      onChange={(e) => setSmsSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
-                    />
-                    <span className="text-sm">수신함</span>
-                  </label>
-                  <label
-                    className={`inline-flex items-center cursor-pointer ${
-                      smsSelected === "no" ? "text-[#0073e9]" : "text-black"
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name="sms"
-                      value="noSms"
-                      checked={smsSelected === "noSms"}
-                      onChange={(e) => setSmsSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
-                    />
-                    <span className="text-sm">수신안함</span>
-                  </label>
+                  <ul className="w-[500px]">
+                    <button
+                      type="button"
+                      className="absolute top-17 right-2 mr-2 px-3 py-1 rounded border border-blue-600 text-sm text-blue-600 hover:underline"
+                    >
+                      수정
+                    </button>
+                    <li className="">
+                      <div className="mb-4">
+                        <span className="for-a11y hidden">배송지명</span>
+                        <span>집</span>
+                      </div>
+                      <div className="inline">
+                        <span className="hidden">수령인</span>
+                        <span className="font-bold  mr-2">박수지</span>
+                        <span>&nbsp;|&nbsp; </span>
+                      </div>
+                      <div className="inline ml-2">
+                        <span className="hidden">연락처</span>
+                        <span className="font-bold ">010-1234-5678</span>
+                      </div>
+                      <div className="mt-2">
+                        <span className="hidden">주소</span>
+                        <span>
+                          서울 중구 세종대로 110 서울특별시청 서울 중구 세종대로 110 서울특별시청{" "}
+                        </span>
+                      </div>
+                    </li>
+                  </ul>
+                  <div className="flex justify-end ">
+                    <button
+                      type="button"
+                      className="text-sm text-red-500 border border-red-500 mr-2 px-3 py-1 rounded hover:bg-red-50"
+                    >
+                      삭제
+                    </button>
+                  </div>
                 </div>
               </td>
             </tr>

@@ -30,22 +30,34 @@ const AddressForm = () => {
 
   return (
     <td className="p-4">
-      <ul className="flex flex-col gap-2">
-        <div className="flex items-center gap-4">
-          <button
-            type="button"
-            onClick={handleAddressSearch}
-            className="p-2 text-xs border border-gray-300 outline-none hover:border-[#0073e9] hover:text-[#0073e9]"
-          >
-            주소검색
-          </button>
-          <input
-            type="text"
-            value={zonecode}
-            placeholder="우편번호"
-            readOnly
-            className="outline-none border-b-2 w-[100px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
-          />
+      <ul className="flex flex-col">
+        <div className="flex justify-between items-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="mr-4">
+              <span className="for-a11y hidden">배송지명</span>
+              <span>집</span>
+            </div>
+            <div>
+              <span className="hidden">수령인</span>
+              <span className="font-bold ">박수지</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-2 mr-4">
+            <input
+              type="text"
+              value={zonecode}
+              placeholder="우편번호"
+              readOnly
+              className="mr-4 outline-none border-b-2 w-[100px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+            />
+            <button
+              type="button"
+              onClick={handleAddressSearch}
+              className="p-2 text-xs border border-gray-300 outline-none hover:border-[#0073e9] hover:text-[#0073e9]"
+            >
+              주소검색
+            </button>
+          </div>
         </div>
 
         <input

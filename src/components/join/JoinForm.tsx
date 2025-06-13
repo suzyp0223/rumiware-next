@@ -1,6 +1,6 @@
 import CarrierChoice from "./CarrierChoice";
 
-const Join = () => {
+const JoinForm = () => {
   return (
     <form className="flex flex-col  px-5">
       <div
@@ -19,7 +19,7 @@ const Join = () => {
                     border-b-2 border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
                 <button className="absolute top-1/2 right-3 transform -translate-y-1/2 text-xs hover:bg-gray-300 p-4">
-                  아이디 중복 확인
+                  아이디(이메일) 중복 확인
                 </button>
               </div>
 
@@ -149,4 +149,4 @@ const Join = () => {
   );
 };
 
-export default Join;
+export default JoinForm;

@@ -4,8 +4,6 @@
 export default function Home() {
   return (
     <main className="p-8 sm:p-20 min-h-screen">
-      <h1 className="text-3xl font-bold text-center text-blue-600 mb-10">루미웨어 메인 페이지</h1>
-      {/* 예시 콘텐츠 */}
       <section className="text-center">
         <div>캐러셀 자리</div>
         <p className="text-lg">쇼핑몰 홈 화면입니다.</p>
