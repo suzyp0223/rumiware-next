@@ -1,3 +1,10 @@
+## Next.js + firebase 빌드 + 배포 명령어
+
+npm run build # next build
+firebase deploy
+
+<!-- 성공하면 https://[프로젝트ID].web.app 주소에 배포 -->
+
 ### App Router 기반 구조
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).

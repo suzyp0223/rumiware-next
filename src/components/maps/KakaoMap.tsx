@@ -1,19 +1,13 @@
 "use client";
 
-import { useState } from "react";
-
-interface DaumPostcodeData {
-  zonecode: string; // 우편번호
-  address: string; // 도로명 or 지번 주소
-  addressType?: string;
-  bname?: string;
-  buildingName?: string;
-}
+import { useRef, useState } from "react";
+import { DaumPostcodeData } from "../types/daum";
 
 const AddressForm = () => {
   const [zonecode, setZonecode] = useState("");
   const [address, setAddress] = useState("");
   const [detailAddress, setDetailAddress] = useState("");
+  const detailAddressRef = useRef<HTMLInputElement | null>(null);
 
   const handleAddressSearch = () => {
     // 주소 검색 모달만 호출하는 방식
@@ -23,7 +17,10 @@ const AddressForm = () => {
       oncomplete: (data: DaumPostcodeData) => {
         setZonecode(data.zonecode); // 우편번호
         setAddress(data.address); // 기본주소 (도로명 or 지번)
-        document.getElementById("detailAddress").focus();
+
+        setTimeout(() => {
+          detailAddressRef.current?.focus(); // ← 안전하게 focus
+        }, 0);
       },
     }).open();
   };
@@ -71,6 +68,7 @@ const AddressForm = () => {
         <input
           type="text"
           id="detailAddress"
+          ref={detailAddressRef}
           value={detailAddress}
           onChange={(e) => setDetailAddress(e.target.value)}
           placeholder="상세주소 입력"

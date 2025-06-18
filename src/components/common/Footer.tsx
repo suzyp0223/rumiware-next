@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -24,7 +25,7 @@ const Footer: React.FC = (): React.ReactElement => {
 
           <div className="flex flex-col text-sm text-gray-700">
             <p className="flex items-center">
-              <img
+              <Image
                 src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
                 className="w-4 h-4 mr-2"
                 alt="이멜"
@@ -32,7 +33,7 @@ const Footer: React.FC = (): React.ReactElement => {
               suzyp0223@gmail.com
             </p>
             <p className="flex items-center p-2 mr-2">
-              <img
+              <Image
                 src="https://www.svgrepo.com/show/111201/phone-call.svg"
                 alt="Phone"
                 className="w-4 h-4 mr-2"
@@ -50,7 +51,7 @@ const Footer: React.FC = (): React.ReactElement => {
                 target="_blank"
                 className="flex items-center gap-2 hover:text-[var(--color-red-200)]"
               >
-                <img
+                <Image
                   src="https://www.svgrepo.com/show/137446/resume.svg"
                   alt="이력서"
                   className="w-4 h-4"
@@ -64,7 +65,7 @@ const Footer: React.FC = (): React.ReactElement => {
                 target="_blank"
                 className="flex items-center gap-2 hover:text-[var(--color-red-200)]"
               >
-                <img
+                <Image
                   src="https://t1.daumcdn.net/tistory_admin/favicon/tistory_favicon_32x32.ico"
                   alt="티스토리 아이콘"
                   className="w-4 h-4"
@@ -78,7 +79,7 @@ const Footer: React.FC = (): React.ReactElement => {
                 target="_blank"
                 className="flex items-center gap-2 hover:text-[var(--color-red-200)]"
               >
-                <img
+                <Image
                   src="https://www.svgrepo.com/show/303615/github-icon-1-logo.svg"
                   alt="GitHub"
                   className="w-4 h-4"
@@ -108,7 +109,7 @@ const Footer: React.FC = (): React.ReactElement => {
                 target="_blank"
                 className="m-5 h-2 hover:bg-[var(--color-red-200)]"
               >
-                <img
+                <Image
                   src={src}
                   alt="source-icon"
                   className="w-4 h-4 hover:brightness-[2.2] hover:bg-[var(--color-red-200)]"

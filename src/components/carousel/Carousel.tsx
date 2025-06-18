@@ -1,4 +1,6 @@
 // components/Carousel.tsx
+import Image from "next/image";
+
 import "swiper/css";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -21,23 +23,56 @@ const Carousel = () => {
       className="w-full h-64" // Tailwind로 크기 조절
     >
       <SwiperSlide>
-        <img
+        <Image
           src="/images/banner1.jpg"
           alt="배너1"
+          width={1200}
+          height={400}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
-        <img
+        <Image
           src="/images/banner2.jpg"
           alt="배너2"
+          width={1200}
+          height={400}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
-        <img
+        <Image
           src="/images/banner3.jpg"
           alt="배너3"
+          width={1200}
+          height={400}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/images/banner3.jpg"
+          alt="배너4"
+          width={1200}
+          height={400}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/images/banner3.jpg"
+          alt="배너5"
+          width={1200}
+          height={400}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/images/banner3.jpg"
+          alt="배너6"
+          width={1200}
+          height={400}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>

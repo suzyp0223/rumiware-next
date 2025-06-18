@@ -6,23 +6,25 @@ import { useState } from "react";
 import KakaoMap from "../maps/KakaoMap";
 
 const MyInfo = () => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [emailDomain, setEmailDomain] = useState("");
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [isCustom, setIsCustom] = useState(false);
   const [smsSelected, setSmsSelected] = useState<string>("yesSms");
   const [emailSelected, setEmailSelected] = useState<string>("yesEmail");
   const [genderSelected, setGenderSelected] = useState<string>("non");
 
-  const handleDomainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const selected = e.target.value;
+  // const handleDomainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const selected = e.target.value;
 
-    if (selected === "direct") {
-      setIsCustom(true);
-      setEmailDomain("");
-    } else {
-      setIsCustom(false);
-      setEmailDomain(selected);
-    }
-  };
+  //   if (selected === "direct") {
+  //     setIsCustom(true);
+  //     setEmailDomain("");
+  //   } else {
+  //     setIsCustom(false);
+  //     setEmailDomain(selected);
+  //   }
+  // };
 
   return (
     <div className="w-[800px] mx-auto">
