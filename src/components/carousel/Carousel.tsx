@@ -1,4 +1,4 @@
-// components/Carousel.tsx
+"use client";
 import Image from "next/image";
 
 import "swiper/css";

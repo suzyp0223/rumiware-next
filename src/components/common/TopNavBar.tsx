@@ -1,6 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 
+import { RootState } from "@/store/store";
+import { useSelector } from "react-redux";
+
 import cart from "../../assets/icon/cart.svg";
 import myPage from "../../assets/icon/my-page.svg";
 import rumiLogo from "../../assets/img/rumiLogo1.jpg";
@@ -17,6 +20,9 @@ interface TopNavProps {
 }
 
 const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
+  const cartItems = useSelector((state: RootState) => state.cart.items);
+  const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
   return (
     <nav className="w-full bg-peach-pink shadow-md border-b border-[var(--color-red-200)]">
       <div className="mb-10">
@@ -53,6 +59,12 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
             </Link>
             <Link href="/cart" className="flex flex-col items-center text-xs mr-6">
               <Image src={cart} alt="장바구니" className="w-8 h-8" />
+              {cartCount > 0 && (
+                <span className="absolute -top-1 right-[2.75rem] bg-red-500 text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center z-10">
+                  {cartCount}
+                </span>
+              )}
+
               <span className="hover:underline hover:text-[var(--color-red-400)]">장바구니</span>
             </Link>
           </div>
