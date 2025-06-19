@@ -5,7 +5,7 @@ import Carousel from "@/components/carousel/Carousel";
 // app/page.tsx: 메인 페이지 내용만 표시됨
 export default function Home() {
   return (
-    <main className="p-8 sm:p-20 min-h-screen">
+    <main className="p2- sm:p-2 min-h-screen">
       <section className="text-center">
         <Carousel />
         <p className="text-lg">쇼핑몰 홈 화면입니다.</p>

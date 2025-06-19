@@ -186,8 +186,8 @@ const MyInfo = () => {
                     <input
                       type="radio"
                       name="emailAdd"
-                      value="yes"
-                      checked={emailSelected === "yes"}
+                      value="yesEmail"
+                      checked={emailSelected === "yesEmail"}
                       onChange={(e) => setEmailSelected(e.target.value)}
                       className="mr-1 accent-[#0073e9]"
                     />
@@ -201,8 +201,8 @@ const MyInfo = () => {
                     <input
                       type="radio"
                       name="emailAdd"
-                      value="no"
-                      checked={emailSelected === "no"}
+                      value="noEmail"
+                      checked={emailSelected === "noEmail"}
                       onChange={(e) => setEmailSelected(e.target.value)}
                       className="mr-1 accent-[#0073e9]"
                     />

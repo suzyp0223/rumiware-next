@@ -1,6 +1,6 @@
 import Link from "next/link";
-import CloseIcon from "../icons/CloseIcon";
-import PasswordToggle from "../toggle/PasswordToggle";
+import CloseIcon from "../../icons/CloseIcon";
+import PasswordToggle from "../../toggle/PasswordToggle";
 
 const NonMemberForm = () => {
   return (

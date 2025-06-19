@@ -20,59 +20,95 @@ const Carousel = () => {
       pagination={{ clickable: true }} // 페이지 점 표시 설정
       autoplay={{ delay: 3000, disableOnInteraction: false }} // 자동 재생 설정
       loop // 슬라이드 반복 여부
-      className="w-full h-64" // Tailwind로 크기 조절
+      className="w-full h-[500px]" // Tailwind로 크기 조절
     >
       <SwiperSlide>
         <Image
-          src="/images/banner1.jpg"
+          src="/assets/carousel/carousel1.jpg"
           alt="배너1"
           width={1200}
-          height={400}
+          height={500}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
         <Image
-          src="/images/banner2.jpg"
+          src="/assets/carousel/carousel2.jpg"
           alt="배너2"
           width={1200}
-          height={400}
+          height={500}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
         <Image
-          src="/images/banner3.jpg"
+          src="/assets/carousel/carousel3.jpg"
           alt="배너3"
           width={1200}
-          height={400}
+          height={500}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
         <Image
-          src="/images/banner3.jpg"
+          src="/assets/carousel/carousel4.jpg"
           alt="배너4"
           width={1200}
-          height={400}
+          height={500}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
         <Image
-          src="/images/banner3.jpg"
+          src="/assets/carousel/carousel5.jpg"
           alt="배너5"
           width={1200}
-          height={400}
+          height={500}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>
       <SwiperSlide>
         <Image
-          src="/images/banner3.jpg"
+          src="/assets/carousel/carousel6.jpg"
           alt="배너6"
           width={1200}
-          height={400}
+          height={500}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/assets/carousel/carousel7.jpg"
+          alt="배너6"
+          width={1200}
+          height={500}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/assets/carousel/carousel8.jpg"
+          alt="배너6"
+          width={1200}
+          height={500}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/assets/carousel/carousel9.jpg"
+          alt="배너6"
+          width={1200}
+          height={500}
+          className="w-full h-full object-cover rounded-lg"
+        />
+      </SwiperSlide>
+      <SwiperSlide>
+        <Image
+          src="/assets/carousel/carousel10.jpg"
+          alt="배너6"
+          width={1200}
+          height={500}
           className="w-full h-full object-cover rounded-lg"
         />
       </SwiperSlide>

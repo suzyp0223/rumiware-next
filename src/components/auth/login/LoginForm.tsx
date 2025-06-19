@@ -1,6 +1,6 @@
 import Link from "next/link";
-import CloseIcon from "../icons/CloseIcon";
-import PasswordToggle from "../toggle/PasswordToggle";
+import CloseIcon from "../../icons/CloseIcon";
+import PasswordToggle from "../../toggle/PasswordToggle";
 import SocialLogin from "./SocialLogin";
 
 const LoginForm = () => {
@@ -48,12 +48,9 @@ const LoginForm = () => {
           <input type="checkbox" className="w-5 h-5 custom-checkbox" />
           <span className="mx-2">아이디 저장</span>
         </label>
-        <a
-          href="/login/accountInfoFind"
-          className="text-[var(--color-blue-600)] ml-16 mr-4 right-arrow"
-        >
+        <Link href="/auth/findAuth" className="text-[var(--color-blue-600)] ml-16 mr-4 right-arrow">
           아이디∙비밀번호 찾기
-        </a>
+        </Link>
       </div>
 
       <div className="flex flex-col">

@@ -29,6 +29,8 @@ const Footer: React.FC = (): React.ReactElement => {
                 src="https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico"
                 className="w-4 h-4 mr-2"
                 alt="이멜"
+                width={16}
+                height={16}
               />
               suzyp0223@gmail.com
             </p>
@@ -37,6 +39,8 @@ const Footer: React.FC = (): React.ReactElement => {
                 src="https://www.svgrepo.com/show/111201/phone-call.svg"
                 alt="Phone"
                 className="w-4 h-4 mr-2"
+                width={16}
+                height={16}
               />
               010.3395.0640
             </p>
@@ -55,7 +59,9 @@ const Footer: React.FC = (): React.ReactElement => {
                   src="https://www.svgrepo.com/show/137446/resume.svg"
                   alt="이력서"
                   className="w-4 h-4"
-                />{" "}
+                  width={16}
+                  height={16}
+                />
                 이력서
               </a>
             </p>
@@ -69,6 +75,8 @@ const Footer: React.FC = (): React.ReactElement => {
                   src="https://t1.daumcdn.net/tistory_admin/favicon/tistory_favicon_32x32.ico"
                   alt="티스토리 아이콘"
                   className="w-4 h-4"
+                  width={16}
+                  height={16}
                 />
                 뽀짝코딩
               </a>
@@ -83,6 +91,8 @@ const Footer: React.FC = (): React.ReactElement => {
                   src="https://www.svgrepo.com/show/303615/github-icon-1-logo.svg"
                   alt="GitHub"
                   className="w-4 h-4"
+                  width={16}
+                  height={16}
                 />
                 github.com/suzyp0223
               </a>
@@ -112,6 +122,8 @@ const Footer: React.FC = (): React.ReactElement => {
                 <Image
                   src={src}
                   alt="source-icon"
+                  width={16}
+                  height={16}
                   className="w-4 h-4 hover:brightness-[2.2] hover:bg-[var(--color-red-200)]"
                 />
               </a>

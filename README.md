@@ -1,7 +1,10 @@
 ## Next.js + firebase 빌드 + 배포 명령어
 
-npm run build # next build
+```bash
+npm run build
+# and
 firebase deploy
+```
 
 <!-- 성공하면 https://[프로젝트ID].web.app 주소에 배포 -->
 

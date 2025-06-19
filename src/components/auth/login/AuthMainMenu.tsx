@@ -13,12 +13,12 @@ const loginTypeList: { key: "email" | "qr" | "nonMember"; label: string }[] = [
 type LoginType = (typeof loginTypeList)[number]["key"];
 
 // 로그인 그룹
-const AuthMenu = () => {
+const AuthMainMenu = () => {
   const [activeTab, setActiveTab] = useState<LoginType>("email");
 
   return (
     <div
-      className="flex flex-col items-center justify-center text-lg gap-4 py-5 w-fit mx-auto
+      className="flex flex-col items-center justify-center text-lg gap-8 py-5 w-fit mx-auto
         border border-gray-200 "
     >
       <h1 className="text-3xl mb-3">로그인</h1>
@@ -42,4 +42,4 @@ const AuthMenu = () => {
   );
 };
 
-export default AuthMenu;
+export default AuthMainMenu;
