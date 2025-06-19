@@ -2,7 +2,7 @@ import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-import Checkbox from "../button/Checkbox";
+import CheckboxBtn from "../button/CheckboxBtn";
 import CloseIcon from "../icons/CloseIcon";
 
 const CartItemBox = () => {
@@ -11,8 +11,10 @@ const CartItemBox = () => {
       <caption className="sr-only">장바구니 담긴 상품</caption>
       <tbody>
         <tr>
-          <td className="w-[30px] p-2">
-            <Checkbox />
+          <td className="w-[30px] p-2 ">
+            <label htmlFor="check1">
+              <CheckboxBtn id="check1" />
+            </label>
           </td>
           <td className="w-[100px] p-2">
             <div className="w-[100px] h-[140px] relative bg-[#ffcfc7]">

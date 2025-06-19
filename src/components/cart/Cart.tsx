@@ -1,4 +1,4 @@
-import Checkbox from "../button/Checkbox";
+import CheckboxBtn from "../button/CheckboxBtn";
 import CartItemBox from "./CartItemBox";
 import CartPriceBox from "./CartPriceBox";
 
@@ -13,8 +13,7 @@ const Cart = () => {
         <ul className="flex flex-row gap-2 m-4 items-center text-base font-bold">
           <li className="mr-4 cursor-pointer">
             <label className="flex items-center gap-2" htmlFor="selectAll">
-              <input type="checkbox" id="selectAll" className="sr-only peer" />
-              <Checkbox />
+              <CheckboxBtn id="selectAll" />
               <span className="">전체선택</span>
             </label>
           </li>
@@ -29,7 +28,7 @@ const Cart = () => {
         </ul>
       </section>
 
-      <div className="flex flex-col items-center border border-gray-300">
+      <div className="flex flex-col items-center ">
         <CartItemBox />
         <CartPriceBox />
       </div>
