@@ -18,7 +18,7 @@ const CartItemBox = () => {
           </td>
           <td className="w-[100px] p-2">
             <div className="w-[100px] h-[140px] relative bg-[#ffcfc7]">
-              <Link href="/">
+              <Link href="/items/itemDetail">
                 <Image
                   src="/assets/carousel/carousel3.jpg"
                   alt="상품 섬네일"
@@ -31,7 +31,7 @@ const CartItemBox = () => {
 
           <td className="w-full p-2">
             <div className="flex flex-col gap-2">
-              <Link href="/" className="text-base font-semibold text-gray-800">
+              <Link href="/items/itemDetail" className="text-base font-semibold text-gray-800">
                 <strong className="sr-only">상품명</strong>
                 [EVENT] 라벤더 라운드 티
               </Link>
