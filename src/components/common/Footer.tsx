@@ -5,14 +5,6 @@ import React from "react";
 const Footer: React.FC = (): React.ReactElement => {
   return (
     <div className="flex flex-col min-h-screen m-0 p-0">
-      {/* Main Content */}
-      {/* <div className="flex-grow overflow-y-auto">
-        <p className="text-center py-4">무한 스크롤 콘텐츠</p>
-        <div className="h-[2000px] bg-gray-50">
-          <p className="text-center pt-4">스크롤 가능한 콘텐츠가 여기에 있습니다.</p>
-        </div>
-      </div> */}
-
       {/* Footer */}
       <footer className="text-center border-t border-[var(--color-red-200)] mt-auto shadow-top">
         <div className="flex flex-row justify-center items-center gap-20 text-gray-800 text-base mt-4">

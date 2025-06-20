@@ -5,7 +5,7 @@ const JoinForm = () => {
     <form className="flex flex-col  px-5">
       <div
         className="flex flex-col items-center justify-center text-lg gap-4 py-5 w-fit mx-auto
-        border border-gray-200 "
+        border border-gray-200  mt-12"
       >
         <h1 className="text-3xl mb-3">회원가입</h1>
         <ul className="flex flex-row text-center px-4">

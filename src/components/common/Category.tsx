@@ -48,7 +48,7 @@ export const Category = [
       { name: "VEST", pathName: "/outer/vest" },
       { name: "JACKET", pathName: "/outer/jacket" },
       { name: "COAT", pathName: "/outer/coat" },
-      { name: "PADDED", pathName: "/outer/padded " },
+      { name: "PADDED", pathName: "/outer/padded" },
     ],
   },
   {

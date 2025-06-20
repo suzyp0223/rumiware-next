@@ -1,11 +1,16 @@
-const DownArrIcon = () => {
+interface DownArrIconProps {
+  className?: string;
+}
+
+const DownArrIcon: React.FC<DownArrIconProps> = ({ className }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="16"
       height="16"
       fill="currentColor"
-      className="bi bi-chevron-down"
+      // className="bi bi-chevron-down"
+      className={className || "w-4 h-4"}
       viewBox="0 0 16 16"
     >
       <path

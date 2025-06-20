@@ -15,7 +15,7 @@ const FindMainMenu = () => {
   return (
     <div
       className="flex flex-col items-center justify-center text-lg gap-8 py-5 w-fit mx-auto
-        border border-gray-200 "
+        border border-gray-200  mt-12"
     >
       <h1 className="text-3xl mb-3">아이디/비밀번호 찾기</h1>
 

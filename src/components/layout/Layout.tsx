@@ -29,7 +29,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
         toggleSidebar={toggleSidebar}
         closeSidebar={closeSidebar}
       />
-      <main className="pt-16">{children}</main>
+      <main className="pt-2">{children}</main>
       <Footer />
     </>
   );

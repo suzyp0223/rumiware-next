@@ -4,7 +4,7 @@ import OrderedList from "./OrderedList";
 const MyPageMain = () => {
   return (
     // 참고 stl 마이페이지
-    <div>
+    <div className=" mt-12">
       <h1>마이페이지</h1>
 
       {/* 주문 처리 현황 */}
