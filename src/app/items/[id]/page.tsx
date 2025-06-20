@@ -11,9 +11,8 @@ export async function generateStaticParams() {
   }));
 }
 
-const Page = async ({ params }: PageProps) => {
-  const { id } = params;
-  return <ItemDetail productId={id} />;
+const Page = async ({ params }: Awaited<PageProps>) => {
+  return <ItemDetail productId={params.id} />;
 };
 
 export default Page;

@@ -21,12 +21,12 @@ const CartItemBox = () => {
               </label>
             </td>
             <td className="w-[100px] p-2">
-              <div className="w-[100px] h-[140px] relative bg-[#ffcfc7]">
-                {/* <Link href="/items/itemDetail"> */}
-                <Link href={`/items/${item.id}`}>
+              <Link href={`/items/${item.id}`}>
+                <div className="w-[100px] h-[140px] relative bg-[#ffcfc7]">
+                  {/* <Link href="/items/itemDetail"> */}
                   <Image src={item.image} alt="상품 섬네일" fill className="object-cover" />
-                </Link>
-              </div>
+                </div>
+              </Link>
             </td>
 
             <td className="w-full p-2">

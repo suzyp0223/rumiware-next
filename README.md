@@ -4,6 +4,8 @@
 npm run build
 # and
 firebase deploy
+# or  한번에
+npm run deploy
 ```
 
 <!-- 성공하면 https://[프로젝트ID].web.app 주소에 배포 -->

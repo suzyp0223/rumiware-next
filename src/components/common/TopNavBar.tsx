@@ -44,13 +44,9 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
 
         <div className="flex items-center justify-between px-4 relative">
           <Link href="/" className="absolute left-1/2 transform -translate-x-1/2">
-            <Image
-              src={rumiLogo}
-              alt="로고이미지"
-              width={130}
-              height={60}
-              className="h-auto priority"
-            />
+            <div className="relative w-[200px] h-[130px]">
+              <Image src={rumiLogo} alt="로고이미지" fill className="object-contain" />
+            </div>
           </Link>
 
           {/* <SearchBtn /> */}

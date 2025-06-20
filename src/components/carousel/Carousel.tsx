@@ -23,94 +23,105 @@ const Carousel = () => {
       className="w-full h-[500px]" // Tailwind로 크기 조절
     >
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel1.jpg"
-          alt="배너1"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel1.jpg"
+            alt="배너1"
+            fill
+            priority
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel2.jpg"
-          alt="배너2"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel2.jpg"
+            alt="배너2"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel3.jpg"
-          alt="배너3"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel3.jpg"
+            alt="배너3"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel4.jpg"
-          alt="배너4"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel4.jpg"
+            alt="배너4"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel5.jpg"
-          alt="배너5"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel5.jpg"
+            alt="배너5"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel6.jpg"
-          alt="배너6"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel6.jpg"
+            alt="배너6"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel7.jpg"
-          alt="배너6"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel7.jpg"
+            alt="배너7"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel8.jpg"
-          alt="배너6"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel8.jpg"
+            alt="배너8"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel9.jpg"
-          alt="배너6"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel9.jpg"
+            alt="배너9"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
       <SwiperSlide>
-        <Image
-          src="/assets/carousel/carousel10.jpg"
-          alt="배너6"
-          width={1200}
-          height={500}
-          className="w-full h-full object-cover rounded-lg"
-        />
+        <div className="relative w-full h-[500px]">
+          <Image
+            src="/assets/carousel/carousel10.jpg"
+            alt="배너10"
+            fill
+            className="object-cover rounded-lg"
+          />
+        </div>
       </SwiperSlide>
     </Swiper>
   );
