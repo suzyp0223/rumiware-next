@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import { cartItemList } from "../cart/data/cartItemList";
 import DownArrIcon from "../icons/DownArrIcon";

@@ -1,5 +1,3 @@
-"use client";
-
 import Carousel from "@/components/carousel/Carousel";
 
 // app/page.tsx: 메인 페이지 내용만 표시됨

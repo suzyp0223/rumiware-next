@@ -24,10 +24,10 @@ const LocationNav = ({ category }: LocationNavProps) => {
 
   return (
     <nav className="text-sm text-gray-800 mt-12 ml-4">
-      <ul className="flex gap-2">
+      <ul className="flex gap-2 mb-2">
         <li className="relative">
           <Link href="/" className="hover:underline">
-            홈
+            홈&nbsp;
           </Link>
           <span className="mx-1">/</span>
         </li>

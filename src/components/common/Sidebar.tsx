@@ -1,3 +1,5 @@
+"use client";
+
 import useClickOutside from "@/hooks/useClickOutside";
 import Link from "next/link";
 import { useRef, useState } from "react";
