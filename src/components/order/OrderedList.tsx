@@ -1,63 +1,215 @@
 import Link from "next/link";
+import MyPageSideNav from "../myPage/MyPageSideNav";
+
+const titleList = [
+  { label: "주문일자" },
+  { label: "주문일" },
+  { label: "상품명" },
+  { label: "결제금액" },
+  { label: "주문상세" },
+  { label: "배송현황" },
+] as const;
 
 const OrderedList = () => {
   return (
-    <div>
-      <div>
-        <div>
-          <h3>주문 내역</h3>
+    <div className="mt-12 w-full flex gap-6 justify-center px-[26px]">
+      {/* 사이드 바 */}
+      <aside className="w-1/5 min-w-[150px] max-w-[150px] m-4">
+        <MyPageSideNav />
+      </aside>
+
+      {/* 주문 내역 */}
+      <section className="w-full max-w-3xl m-2 mt-4 min-h-[800px]">
+        <div className="border-b border-black px-4 pb-2 text-xl">
+          <h3 className="font-medium text-lg">주문 내역</h3>
         </div>
-        <div></div>
-      </div>
 
-      <div>
-        <table summary="주문일자, 상품명, 결제금액, 주문상세">
-          <caption>주문 정보 목록</caption>
-          <thead>
-            <tr>
-              <th>
-                <div>번호</div>
-              </th>
-              <th>
-                <div>주문일</div>
-              </th>
-              <th>
-                <div>상품명</div>
-              </th>
-              <th>
-                <div>결제금액</div>
-              </th>
-              <th>
-                <div>주문상세</div>
-              </th>
-              <th>
-                <div>배송현황</div>
-              </th>
-            </tr>
-          </thead>
+        <div className="overflow-x-auto">
+          <table summary="주문일자, 상품명, 결제금액, 주문상세" className="w-full table-fixed">
+            <caption className="sr-only">주문 정보 목록</caption>
+            <colgroup>
+              <col className="w-[10%]" />
+              <col className="w-[15%]" />
+              <col className="w-[30%]" />
+              <col className="w-[15%]" />
+              <col className="w-[16%]" />
+              <col className="w-[14%]" />
+            </colgroup>
+            <thead>
+              <tr className="text-sm border-b">
+                {titleList.map((item) => (
+                  <th key={item.label} className="py-4 text-sm">
+                    <div>{item.label}</div>
+                  </th>
+                ))}
+              </tr>
+            </thead>
 
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>2023.01.02</td>
-              <td>
-                <div>
-                  <p>상품이름 외 10건</p>
-                </div>
-              </td>
-              <td>
-                <div>15,000원</div>
-              </td>
-              <td>
-                {/* 주문상세내역 아코디언으로 구현 */}
-                <div>
-                  <Link href={""}>조회</Link>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+            <tbody>
+              <tr className="text-gray-800 border-b text-sm">
+                <td className="py-4 px-2 items-center text-center">1</td>
+                <td className="py-4 px-2 items-center text-center">2023.01.02</td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>
+                    <p>상품이름 외 10건</p>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>15,000원</div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  {/* 주문상세내역 아코디언으로 구현 */}
+                  <div>
+                    <Link
+                      href="/order/orderDetail"
+                      className="border border-peach-300 px-3 py-2 rounded"
+                    >
+                      상세조회
+                    </Link>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <Link
+                    href="/order/orderDetail"
+                    className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
+                  >
+                    조회
+                  </Link>
+                </td>
+              </tr>
+              <tr className="text-gray-800 border-b text-sm">
+                <td className="py-4 px-2 items-center text-center">1</td>
+                <td className="py-4 px-2 items-center text-center">2023.01.02</td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>
+                    <p>상품이름 외 10건</p>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>15,000원</div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  {/* 주문상세내역 아코디언으로 구현 */}
+                  <div>
+                    <Link
+                      href="/order/orderDetail"
+                      className="border border-peach-300 px-3 py-2 rounded"
+                    >
+                      상세조회
+                    </Link>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <Link
+                    href="/order/orderDetail"
+                    className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
+                  >
+                    조회
+                  </Link>
+                </td>
+              </tr>
+              <tr className="text-gray-800 border-b text-sm">
+                <td className="py-4 px-2 items-center text-center">1</td>
+                <td className="py-4 px-2 items-center text-center">2023.01.02</td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>
+                    <p>상품이름 외 10건</p>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>15,000원</div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  {/* 주문상세내역 아코디언으로 구현 */}
+                  <div>
+                    <Link
+                      href="/order/orderDetail"
+                      className="border border-peach-300 px-3 py-2 rounded"
+                    >
+                      상세조회
+                    </Link>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <Link
+                    href="/order/orderDetail"
+                    className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
+                  >
+                    조회
+                  </Link>
+                </td>
+              </tr>
+              <tr className="text-gray-800 border-b text-sm">
+                <td className="py-4 px-2 items-center text-center">1</td>
+                <td className="py-4 px-2 items-center text-center">2023.01.02</td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>
+                    <p>상품이름 외 10건</p>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>15,000원</div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  {/* 주문상세내역 아코디언으로 구현 */}
+                  <div>
+                    <Link
+                      href="/order/orderDetail"
+                      className="border border-peach-300 px-3 py-2 rounded"
+                    >
+                      상세조회
+                    </Link>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <Link
+                    href="/order/orderDetail"
+                    className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
+                  >
+                    조회
+                  </Link>
+                </td>
+              </tr>
+              <tr className="text-gray-800 border-b text-sm">
+                <td className="py-4 px-2 items-center text-center">1</td>
+                <td className="py-4 px-2 items-center text-center">2023.01.02</td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>
+                    <p>상품이름 외 10건</p>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <div>15,000원</div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  {/* 주문상세내역 아코디언으로 구현 */}
+                  <div>
+                    <Link
+                      href="/order/orderDetail"
+                      className="border border-peach-300 px-3 py-2 rounded"
+                    >
+                      상세조회
+                    </Link>
+                  </div>
+                </td>
+                <td className="py-4 px-2 items-center text-center">
+                  <Link
+                    href="/order/orderDetail"
+                    className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
+                  >
+                    조회
+                  </Link>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          {/* 페이지네이션 */}
+          <div>
+            <Link href=""></Link>
+          </div>
+        </div>
+      </section>
     </div>
   );
 };

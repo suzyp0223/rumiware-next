@@ -19,12 +19,12 @@ const MyPageMain = () => {
         </div>
 
         {/* 주문 처리 현황 */}
-        <div className="p-4 mb-2 tracking-widest flex flex-row items-center justify-between">
+        <div className="p-4 tracking-widest flex flex-row items-center justify-between">
           <h3 className="font-medium text-lg">
             주문 처리 현황
             <span className="ml-4 text-sm font-light text-gray-700">( 최근 3개월 )</span>
           </h3>
-          <Link href="" className="text-sm mr-6 ">
+          <Link href="/order/orderSearch" className="text-sm mr-6 right-arrow-view">
             전체보기
           </Link>
         </div>
@@ -34,7 +34,7 @@ const MyPageMain = () => {
         {/* OrderState > 주문조회 > 주문상세 */}
         <OrderState />
 
-        {/* 주문 정보 */}
+        {/* 최근 주문 정보 */}
         <RecentOrderList />
 
         {/* 찜한상품-WishList */}

@@ -10,7 +10,8 @@ const OrderState = () => {
             className={`w-1/4 flex flex-col items-center
           ${idx !== 3 ? "right-arrow-gray" : ""}`}
           >
-            <Link href={""}>
+            {/* map에따가 페이지 상태 달리해서 보이기 -나노네추럴 참고 */}
+            <Link href="/order/orderSearch">
               <span className="font-bold text-xl">0</span>
             </Link>
             <span className="mt-4 text-sm">{label}</span>
