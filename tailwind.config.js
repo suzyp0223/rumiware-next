@@ -100,7 +100,9 @@ module.exports = {
           300: "var(--color-peach-300)",
           line: "var(--color-peach-line)",
           btn: "var(--color-peach-btn)",
+          text: "var(--color-peach-text)",
           hoverText: "var(--color-peach-hoverText)",
+          darker: "var(--color-peach-darker)",
         },
         opacity: {
           20: "var(--color-opacity-20)",

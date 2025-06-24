@@ -21,7 +21,7 @@ const Layout = ({ children }: { children: ReactNode }) => {
   const closeSidebar = () => setIsSidebarOpen(false);
 
   return (
-    <>
+    <div className="flex flex-col min-h-screen">
       {/* <ThemeProvider/> */}
       <TopNavBar
         isOpen={isSidebarOpen}
@@ -29,9 +29,9 @@ const Layout = ({ children }: { children: ReactNode }) => {
         toggleSidebar={toggleSidebar}
         closeSidebar={closeSidebar}
       />
-      <main className="pt-2">{children}</main>
+      <main className="pt-2 flex-1 flex items-center justify-center">{children}</main>
       <Footer />
-    </>
+    </div>
   );
 };
 

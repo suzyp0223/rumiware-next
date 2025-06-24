@@ -6,9 +6,9 @@ import React from "react";
 
 const Footer: React.FC = (): React.ReactElement => {
   return (
-    <div className="flex flex-col min-h-screen m-0 p-0">
+    <div className="mt-28">
       {/* Footer */}
-      <footer className="text-center border-t border-[var(--color-red-200)] mt-auto shadow-top">
+      <footer className="text-center border-t border-[var(--color-red-200)] shadow-top">
         <div className="flex flex-row justify-center items-center gap-20 text-gray-800 text-base mt-4">
           {/* Left: Info */}
           <p className="text-xl font-bold ">

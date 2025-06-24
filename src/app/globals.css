@@ -134,7 +134,9 @@
   --color-peach-300: #ffcfc7;
   --color-peach-line: #ffb5aa;
   --color-peach-btn: #ff998a;
-  --color-peach-hoverText: #d6453d;
+  --color-peach-text: #ea6f63;
+  --color-peach-hoverText: #d95a4f;
+  --color-peach-darker: #d6453d;
 }
 
 /* 사용자 정의 테마 (주의: @theme은 Tailwind 문법이 아님) */
