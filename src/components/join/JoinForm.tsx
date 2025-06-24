@@ -98,7 +98,7 @@ const JoinForm = () => {
                         htmlFor={`gender-${idx}`}
                         className={`block text-center px-4 py-2 border border-gray-300
                           hover:border-blue-600 peer-checked:border-blue-600 cursor-pointer
-                          ${idx === 0 ? "rounded-l" : ""}
+                          ${idx === 0 ? "rounded-l border-r-0" : ""}
                           ${idx === 1 ? "rounded-r" : "-ml-px"}
                           `}
                       >
@@ -123,7 +123,7 @@ const JoinForm = () => {
                         htmlFor={`nationality-${idx}`}
                         className={`block text-center px-4 py-2 border border-gray-300
                         hover:border-blue-600 peer-checked:border-blue-600 cursor-pointer
-                        ${idx === 0 ? "rounded-l" : ""}
+                        ${idx === 0 ? "rounded-l border-r-0" : ""}
                         ${idx === 1 ? "rounded-r" : "-ml-px"}
                         `}
                       >

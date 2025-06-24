@@ -1,78 +1,47 @@
 import Link from "next/link";
-import OrderedList from "./OrderedList";
+import OrderState from "../order/OrderState";
+import RecentOrderList from "../order/RecentOrderList";
+import MyPageSideNav from "./MyPageSideNav";
+import WishList from "./WishList";
 
 const MyPageMain = () => {
   return (
     // 참고 stl 마이페이지
-    <div className=" mt-12">
-      <h1>마이페이지</h1>
+    <div className="mt-12 max-w-7xl mx-auto flex gap-6">
+      {/* 사이드 바 */}
+      <aside className="w-1/5 min-w-[150px]  max-w-[150px]  m-4">
+        <MyPageSideNav />
+      </aside>
 
-      {/* 주문 처리 현황 */}
-      <div>
-        <h3>
-          주문 처리 현황
-          <span>(최근 3개월)</span>
-        </h3>
-      </div>
-      <div>
-        <div>
-          <ul>
-            주문 상태
-            <li>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-              <span>입금전 {">"} </span>
-            </li>
-            <li>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-              <span>배송준비 중 {">"}</span>
-            </li>
-            <li>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-              <span>배송 중 {">"}</span>
-            </li>
-            <li>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-              <span>배송 완료</span>
-            </li>
-          </ul>
-          <ul>
-            서비스 상태
-            <li>
-              <strong>취소 :</strong>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-            </li>
-            <li>
-              <strong>교환 :</strong>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-            </li>
-            <li>
-              <strong>반품 :</strong>
-              <Link href={""}>
-                <span>0</span>
-              </Link>
-            </li>
-          </ul>
+      <section className="w-full max-w-3xl m-2 ">
+        <div className="flex justify-center mb-6">
+          <h1 className="text-2xl font-bold tracking-wider">마이페이지</h1>
         </div>
-      </div>
 
-      {/* 주문 정보 */}
-      <OrderedList />
+        {/* 주문 처리 현황 */}
+        <div className="p-4 mb-2 tracking-widest flex flex-row items-center justify-between">
+          <h3 className="font-medium text-lg">
+            주문 처리 현황
+            <span className="ml-4 text-sm font-light text-gray-700">( 최근 3개월 )</span>
+          </h3>
+          <Link href="" className="text-sm mr-6 ">
+            전체보기
+          </Link>
+        </div>
 
-      {/* 찜한상품-WishList */}
+        {/* 주문 처리 현황 */}
+        {/* OrderState > OrderSearch (OrderedList) > OrderDetail */}
+        {/* OrderState > 주문조회 > 주문상세 */}
+        <OrderState />
 
-      {/* 최근 본 상품 */}
+        {/* 주문 정보 */}
+        <RecentOrderList />
+
+        {/* 찜한상품-WishList */}
+        <WishList />
+
+        {/* 최근 본 상품 */}
+      </section>
     </div>
   );
 };

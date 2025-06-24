@@ -12,8 +12,7 @@ interface TopNavProps {
 }
 
 const TabsDropDown = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [, setActiveIndex] = useState<number | null>(null);
 
   return (
     <ul className="flex justify-center items-center gap-6 text-sm font-medium bg-gray-100">

@@ -6,10 +6,6 @@ import { useState } from "react";
 import KakaoMap from "../maps/KakaoMap";
 
 const MyInfo = () => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [emailDomain, setEmailDomain] = useState("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [isCustom, setIsCustom] = useState(false);
   const [smsSelected, setSmsSelected] = useState<string>("yesSms");
   const [emailSelected, setEmailSelected] = useState<string>("yesEmail");
   const [genderSelected, setGenderSelected] = useState<string>("non");

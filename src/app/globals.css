@@ -28,7 +28,8 @@
   .right-arrow:before {
     content: "";
     position: absolute;
-    left: 110px;
+    left: 100%;
+    margin-left: 0.3rem;
     top: 4px;
 
     width: 0.5rem;
@@ -37,6 +38,23 @@
     transform: rotate(45deg);
     border-top: 1px solid var(--color-blue-600);
     border-right: 1px solid var(--color-blue-600);
+  }
+
+  .right-arrow-gray {
+    @apply relative;
+  }
+  .right-arrow-gray::before {
+    content: "";
+    position: absolute;
+    top: 30px;
+    left: 90%;
+
+    width: 0.5rem;
+    height: 0.5rem;
+
+    transform: rotate(45deg);
+    border-top: 2px solid var(--color-gray-600);
+    border-right: 2px solid var(--color-gray-600);
   }
 }
 
@@ -110,6 +128,13 @@
   --color-purple-700: #382373;
   --color-purple-800: #25174d;
   --color-purple-900: #130c26;
+
+  --color-peach-100: #fff5f3;
+  --color-peach-200: #ffe0db;
+  --color-peach-300: #ffcfc7;
+  --color-peach-line: #ffb5aa;
+  --color-peach-btn: #ff998a;
+  --color-peach-hoverText: #d6453d;
 }
 
 /* 사용자 정의 테마 (주의: @theme은 Tailwind 문법이 아님) */

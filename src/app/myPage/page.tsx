@@ -1,7 +1,7 @@
-import MyPage from "@/components/myPage/MyPage";
+import MyPageMain from "@/components/myPage/MyPageMain";
 
 const page = () => {
-  return <MyPage />;
+  return <MyPageMain />;
 };
 
 export default page;

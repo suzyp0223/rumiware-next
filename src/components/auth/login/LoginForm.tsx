@@ -39,7 +39,7 @@ const LoginForm = () => {
         </div>
       </div>
 
-      <div className="text-xs flex flex-row items-center space-evenly  w-96">
+      <div className="text-xs flex flex-row items-center space-evenly">
         <label htmlFor="" className="flex items-center" arial-checked="false">
           <input type="checkbox" className="w-5 h-5 custom-checkbox" />
           <span className="mx-2">자동 로그인</span>
@@ -48,7 +48,7 @@ const LoginForm = () => {
           <input type="checkbox" className="w-5 h-5 custom-checkbox" />
           <span className="mx-2">아이디 저장</span>
         </label>
-        <Link href="/auth/findAuth" className="text-[var(--color-blue-600)] ml-16 mr-4 right-arrow">
+        <Link href="/auth/findAuth" className="text-[var(--color-blue-600)] ml-16 mr-6 right-arrow">
           아이디∙비밀번호 찾기
         </Link>
       </div>

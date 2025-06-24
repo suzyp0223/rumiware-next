@@ -19,8 +19,7 @@ export interface ItemDetailProps {
 const ItemDetail = ({ productId }: ItemDetailProps) => {
   const item = cartItemList.find((item) => item.id === productId);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [selectedColor, setSelectedColor] = useState(item?.color[0] || "");
+  const [selectedColor] = useState(item?.color[0] || "");
 
   // ✅ item이 있으면 color[0], 없으면 빈 문자열
 

@@ -50,7 +50,7 @@ const SearchToggle = () => {
             key={showInput ? "close" : "search"} // 🔑 캐시 무효화용
             src={search}
             alt={showInput ? "닫기" : "검색"}
-            className="w-10 h-10 bg-peach-pink  hover:bg-[#ffe3dc]"
+            className="w-8 h-8 bg-peach-pink  hover:bg-[#ffe3dc]"
             unoptimized
           />
         )}

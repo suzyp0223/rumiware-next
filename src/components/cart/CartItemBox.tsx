@@ -22,7 +22,7 @@ const CartItemBox = () => {
             </td>
             <td className="w-[100px] p-2">
               <Link href={`/items/${item.id}`}>
-                <div className="w-[100px] h-[140px] relative bg-[#ffcfc7]">
+                <div className="w-[100px] h-[140px] relative bg-peach-300">
                   {/* <Link href="/items/itemDetail"> */}
                   <Image src={item.image} alt="상품 섬네일" fill className="object-cover" />
                 </div>
@@ -41,7 +41,7 @@ const CartItemBox = () => {
                 </div>
                 <Link
                   href="/"
-                  className="w-fit border bg-[#ffcfc7] text-gray-700 text-sm rounded py-1 px-3"
+                  className="w-fit border bg-peach-300 text-gray-700 text-sm rounded py-1 px-3"
                 >
                   주문 수정
                 </Link>

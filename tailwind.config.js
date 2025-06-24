@@ -94,6 +94,14 @@ module.exports = {
           800: "var(--color-purple-800)",
           900: "var(--color-purple-900)",
         },
+        peach: {
+          100: "var(--color-peach-100)",
+          200: "var(--color-peach-200)",
+          300: "var(--color-peach-300)",
+          line: "var(--color-peach-line)",
+          btn: "var(--color-peach-btn)",
+          hoverText: "var(--color-peach-hoverText)",
+        },
         opacity: {
           20: "var(--color-opacity-20)",
         },
