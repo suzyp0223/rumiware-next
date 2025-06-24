@@ -38,7 +38,6 @@ const Footer: React.FC = (): React.ReactElement => {
               />
               010.3395.0640
             </p>
-            <p className="text-xs text-gray-500">&copy; &nbsp;박수지. All Rights Reserved.</p>
           </div>
 
           {/* Center: Resume & Blog & GitHub */}
@@ -92,6 +91,9 @@ const Footer: React.FC = (): React.ReactElement => {
               </a>
             </p>
           </div>
+        </div>
+        <div>
+          <p className="text-xs text-gray-500 mt-8">&copy; &nbsp;박수지. All Rights Reserved.</p>
         </div>
 
         <div className="bg-gray-100 flex flex-col flex-wrap justify-center items-center h-[5rem] mt-4">
