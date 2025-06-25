@@ -4,7 +4,7 @@ import Link from "next/link";
 const WishList = () => {
   return (
     <div className="mt-16">
-      <div className="tracking-widest flex flex-row items-center justify-between pb-4 border-b-2 border-black">
+      <div className="tracking-widest flex flex-row items-center justify-between pb-4 border-b border-black">
         <h1 className="font-medium text-lg">관심상품</h1>
         <Link href="/myPage/wishListBox" className="text-sm mr-6 right-arrow-view">
           전체보기

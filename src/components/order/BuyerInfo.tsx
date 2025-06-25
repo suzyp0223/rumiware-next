@@ -3,7 +3,7 @@ const BuyerInfo = () => {
     <div>
       {/* 주문자정보*/}
       <section className="w-full max-w-3xl m-2 mt-4 mb-6">
-        <div className="tracking-widest flex flex-row items-center justify-between px-4 pb-2 border-b-2 border-black">
+        <div className="tracking-widest flex flex-row items-center justify-between px-4 pb-2 border-b border-black">
           <h1 className="font-medium text-lg">주문자 정보</h1>
         </div>
 

@@ -12,7 +12,7 @@ const LoginForm = () => {
             type="text"
             placeholder="아이디(이메일)"
             className="outline-none  px-4 py-2 w-96
-                border-b-2 border-transparent focus:border-[#0073e9] rounded-t"
+                border-b border-transparent focus:border-[#0073e9] rounded-t"
           />
           <span className="absolute top-1/2 right-3 transform -translate-y-1/2">
             <CloseIcon />
@@ -28,7 +28,7 @@ const LoginForm = () => {
             type="text"
             placeholder="비밀번호"
             className="outline-none px-4 py-2 w-96
-                border-b-2  border-transparent focus:border-[#0073e9] rounded-t"
+                border-b  border-transparent focus:border-[#0073e9] rounded-t"
           />
           <span className="absolute top-1/2 right-3 transform -translate-y-1/2 mr-2">
             <PasswordToggle />

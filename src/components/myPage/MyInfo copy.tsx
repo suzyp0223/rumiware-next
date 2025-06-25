@@ -57,7 +57,7 @@
 //                 <div className="p-2 w-[600px]">
 //                   <input
 //                     type="text"
-//                     className="w-[300px] border-gray-300 outline-none p-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+//                     className="w-[300px] border-gray-300 outline-none p-2 border-b hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
 //                   />
 
 //                   {/* 인증메일 전송 버튼 클릭시 이멜중복검사 통과시 인증메일 전송 */}
@@ -77,7 +77,7 @@
 //               <td className="p-4 pb-0">
 //                 <input
 //                   type="password"
-//                   className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+//                   className="outline-none border-b w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
 //                   id="password1"
 //                   size={15}
 //                   maxLength={20}
@@ -97,7 +97,7 @@
 //               <td className="p-4 pb-0">
 //                 <input
 //                   type="password"
-//                   className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+//                   className="outline-none border-b w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
 //                   id="password2"
 //                 />
 //                 <span className="block text-sm text-red-500 pb-2 pl-2">
@@ -115,7 +115,7 @@
 //               <td className="pl-2">
 //                 <input
 //                   type="text"
-//                   className="w-[200px] border-gray-300 outline-none px-4 py-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+//                   className="w-[200px] border-gray-300 outline-none px-4 py-2 border-b hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
 //                   id="hname"
 //                   // value="박수지"
 //                   size={15}
@@ -132,7 +132,7 @@
 //               </th>
 //               <td className="p-4">
 //                 <select
-//                   className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-1 mr-4"
+//                   className="outline-none border-b border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-1 mr-4"
 //                   id="etcphone1"
 //                 >
 //                   <option value="">선택</option>
@@ -146,7 +146,7 @@
 //                 -
 //                 <input
 //                   type="text"
-//                   className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+//                   className="outline-none w-[80px] mx-2 px-2 border-b border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
 //                   id="etcphone2"
 //                   size={4}
 //                   maxLength={4}
@@ -154,7 +154,7 @@
 //                 -
 //                 <input
 //                   type="text"
-//                   className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+//                   className="outline-none w-[80px] mx-2 px-2 border-b border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
 //                   id="etcphone3"
 //                   size={4}
 //                   maxLength={4}
@@ -246,7 +246,7 @@
 //               <td className="p-4">
 //                 <select
 //                   id="birthYear"
-//                   className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 mr-2"
+//                   className="outline-none border-b border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 mr-2"
 //                 >
 //                   <option value="">년</option>
 //                   {Array.from({ length: 100 }, (_, i) => {
@@ -261,7 +261,7 @@
 
 //                 <select
 //                   id="birthMonth"
-//                   className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 mr-2"
+//                   className="outline-none border-b border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 mr-2"
 //                 >
 //                   <option value="">월</option>
 //                   {Array.from({ length: 12 }, (_, i) => {
@@ -275,7 +275,7 @@
 
 //                 <select
 //                   id="birthDay"
-//                   className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2"
+//                   className="outline-none border-b border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2"
 //                 >
 //                   <option value="">일</option>
 //                   {Array.from({ length: 31 }, (_, i) => {
@@ -339,7 +339,7 @@
 //                 <input type="hidden" className="" id="email" value="" />
 //                 <input
 //                   type="text"
-//                   className="outline-none border-b-2 w-[180px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+//                   className="outline-none border-b w-[180px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
 //                   id="email1"
 //                   size={10}
 //                   maxLength={20}
@@ -348,7 +348,7 @@
 //                 <input
 //                   type="text"
 //                   id="email3"
-//                   className="outline-none border-b-2 w-[150px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+//                   className="outline-none border-b w-[150px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
 //                   value={emailDomain}
 //                   onChange={(e) => setEmailDomain(e.target.value)}
 //                   size={15}

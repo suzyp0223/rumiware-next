@@ -16,7 +16,7 @@ const JoinForm = () => {
                   type="text"
                   placeholder="아이디(이메일)"
                   className="outline-none  px-4 py-2 w-96
-                    border-b-2 border-transparent focus:border-[#0073e9] rounded-t mr-2"
+                    border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
                 <button className="absolute top-1/2 right-3 transform -translate-y-1/2 text-xs hover:bg-gray-300 p-4">
                   아이디(이메일) 중복 확인
@@ -39,7 +39,7 @@ const JoinForm = () => {
                   type="text"
                   placeholder="비밀번호"
                   className="outline-none  px-4 py-2 w-96
-                  border-b-2 border-transparent focus:border-[#0073e9] rounded-t mr-2"
+                  border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
               </div>
               <div className="flex flex-col text-xs mb-4">
@@ -52,7 +52,7 @@ const JoinForm = () => {
                   type="text"
                   placeholder="비밀번호 확인"
                   className="outline-none  px-4 py-2 w-96
-                border-b-2 border-transparent focus:border-[#0073e9] rounded-t mr-2"
+                border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
               </div>
               <div className="flex flex-col text-xs">
@@ -68,7 +68,7 @@ const JoinForm = () => {
                   type="text"
                   placeholder="이름"
                   className="outline-none  px-4 py-2 w-96
-                border-b-2 border-transparent focus:border-[#0073e9] rounded-t mr-2"
+                border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
               </div>
             </li>
@@ -79,7 +79,7 @@ const JoinForm = () => {
                   type="text"
                   placeholder="생년월일 8자리"
                   className="outline-none  px-4 py-2 w-96
-                border-b-2 border-transparent focus:border-[#0073e9]  mr-2"
+                border-b border-transparent focus:border-[#0073e9]  mr-2"
                 />
               </div>
               <div className="flex border border-gray-300 rounded-b w-full p-2 text-sm">

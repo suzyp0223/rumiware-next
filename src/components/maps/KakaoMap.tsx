@@ -45,12 +45,12 @@ const AddressForm = () => {
               value={zonecode}
               placeholder="우편번호"
               readOnly
-              className="mr-4 outline-none border-b-2 w-[100px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+              className="mr-4 outline-none border-b w-[100px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
             />
             <button
               type="button"
               onClick={handleAddressSearch}
-              className="p-2 text-xs border border-gray-300 outline-none hover:border-[#0073e9] hover:text-[#0073e9]"
+              className="p-2 text-xs border border-gray-300 outline-none hover:border-peach-300 hover:text-gray-800 rounded"
             >
               주소검색
             </button>
@@ -62,7 +62,7 @@ const AddressForm = () => {
           value={address}
           placeholder="기본주소"
           readOnly
-          className="outline-none border-b-2 w-[600px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+          className="outline-none border-b w-[600px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
         />
 
         <input
@@ -72,7 +72,7 @@ const AddressForm = () => {
           value={detailAddress}
           onChange={(e) => setDetailAddress(e.target.value)}
           placeholder="상세주소 입력"
-          className="outline-none border-b-2 w-[600px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+          className="outline-none border-b w-[600px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
         />
         <label className="text-xs">
           <span className="text-red-400">*</span>&nbsp;상세주소를 입력해주세요

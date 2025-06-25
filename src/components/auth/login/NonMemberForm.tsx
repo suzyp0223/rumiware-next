@@ -12,7 +12,7 @@ const NonMemberForm = () => {
             <input
               type="text"
               placeholder="구매자 이름"
-              className="outline-none w-full px-4 py-2 border-b-2 border-transparent focus:border-[#0073e9] rounded-t"
+              className="outline-none w-full px-4 py-2 border-b border-transparent focus:border-[#0073e9] rounded-t"
             />
             <span className="absolute top-1/2 right-3 transform -translate-y-1/2">
               <CloseIcon />
@@ -29,7 +29,7 @@ const NonMemberForm = () => {
             <input
               type="text"
               placeholder="구매번호"
-              className="outline-none w-full px-4 py-2 border-b-2 border-transparent focus:border-[#0073e9] rounded-t"
+              className="outline-none w-full px-4 py-2 border-b border-transparent focus:border-[#0073e9] rounded-t"
             />
             <span className="absolute top-1/2 right-3 transform -translate-y-1/2">
               <CloseIcon />
@@ -46,7 +46,7 @@ const NonMemberForm = () => {
             <input
               type="text"
               placeholder="비회원 구매 비밀번호"
-              className="outline-none w-full px-4 py-2 border-b-2 border-transparent focus:border-[#0073e9] rounded-t"
+              className="outline-none w-full px-4 py-2 border-b border-transparent focus:border-[#0073e9] rounded-t"
             />
             <span className="absolute top-1/2 right-3 transform -translate-y-1/2 mr-2">
               <PasswordToggle />

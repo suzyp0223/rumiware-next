@@ -6,7 +6,7 @@ const OrderDetail = () => {
     <>
       {/* 주문상세내역 */}
       <section className="w-full max-w-3xl m-2 mt-4 mb-6">
-        <div className="tracking-widest items-center justify-between px-4 pb-2 border-b-2 border-black">
+        <div className="tracking-widest items-center justify-between px-4 pb-2 border-b border-black">
           <h1 className="font-medium text-lg">주문 상세내역</h1>
         </div>
 
@@ -81,10 +81,10 @@ const OrderDetail = () => {
                         <span>적립금</span>
                         <span>3,000원</span>
                       </li>
-                      <li className="mb-2 flex justify-between">
+                      {/* <li className="mb-2 flex justify-between">
                         <span>포인트</span>
                         <span>0원</span>
-                      </li>
+                      </li> */}
                     </ul>
                   </div>
                 </td>

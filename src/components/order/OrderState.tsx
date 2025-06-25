@@ -3,7 +3,7 @@ import Link from "next/link";
 const OrderState = () => {
   return (
     <>
-      <div className="p-4 tracking-widest flex flex-row items-center justify-between">
+      <div className="p-4 tracking-widest flex flex-row items-center justify-between border-b border-black">
         <h3 className="font-medium text-lg">
           주문 처리 현황
           <span className="ml-4 text-sm font-light text-gray-700">( 최근 3개월 )</span>

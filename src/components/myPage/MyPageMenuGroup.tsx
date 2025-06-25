@@ -12,9 +12,9 @@ const MyPageMenuGroup: NavGroup[] = [
   {
     title: "쇼핑정보",
     items: [
-      { label: "주문내역", href: "myPage/orderList" },
-      { label: "최근본상품", href: "" },
-      { label: "관심상품", href: "" },
+      { label: "주문내역", href: "/order/orderSearchMain" },
+      { label: "오늘본상품", href: "/items/todayViewItems" },
+      { label: "관심상품", href: "/myPage/wishListBox" },
     ],
   },
   {

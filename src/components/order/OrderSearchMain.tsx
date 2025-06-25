@@ -37,7 +37,7 @@ const OrderSearchMain = () => {
 
       {/* 주문 내역 */}
       <section className="w-full max-w-3xl m-2 mt-4 min-h-[800px]">
-        <div className="tracking-widest border-b-2 border-black px-4 pb-2 text-xl">
+        <div className="tracking-widest border-b border-black px-4 pb-2 text-xl">
           <h3 className="font-medium text-lg">주문조회</h3>
         </div>
 

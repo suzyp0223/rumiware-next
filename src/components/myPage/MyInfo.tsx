@@ -38,7 +38,7 @@ const MyInfo = () => {
           </colgroup>
           <tbody className="">
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="id" className="head-cell">
                   <span className="text-red-400">*</span>&nbsp;아이디(이메일)
                 </label>
@@ -48,24 +48,27 @@ const MyInfo = () => {
                 <input type="hidden" className="p-4" id="id" value="suzy2020" />
                 <Link
                   href={""}
-                  className="m-2 p-2 text-xs border border-gray-300 hover:border-[#0073e9] hover:text-[#0073e9]"
+                  className="m-2 p-2 text-xs border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
                 >
                   이메일 변경
                 </Link>
                 <Link
                   href={""}
-                  className="m-2 p-2 text-xs border border-gray-300 hover:border-[#0073e9] hover:text-[#0073e9] hidden"
+                  className="m-2 p-2 text-xs border border-gray-300 hover:border-peach-600 hover:text-gray-800 rounded hidden"
                 >
                   이메일 변경 취소
                 </Link>
                 <div className="p-2 w-[600px]">
                   <input
                     type="text"
-                    className="w-[300px] border-gray-300 outline-none p-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                    className="w-[300px] border-gray-300 outline-none p-2 border-b hover:border-b-peach-600 focus:border-b-peach-600"
                   />
 
                   {/* 인증메일 전송 버튼 클릭시 이멜중복검사 통과시 인증메일 전송 */}
-                  <button type="submit" className="ml-4 p-2 text-sm border border-gray-300">
+                  <button
+                    type="submit"
+                    className="ml-4 p-2 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
+                  >
                     인증메일 전송
                   </button>
                 </div>
@@ -73,7 +76,7 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="password1" className="head-cell">
                   <span className="text-red-400">*</span>&nbsp;비밀번호
                 </label>
@@ -81,7 +84,7 @@ const MyInfo = () => {
               <td className="p-4 pb-0">
                 <input
                   type="password"
-                  className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+                  className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
                   id="password1"
                   size={15}
                   maxLength={20}
@@ -93,7 +96,7 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="password2" className="">
                   <span className="text-red-400">*</span>&nbsp;비밀번호 확인
                 </label>
@@ -101,7 +104,7 @@ const MyInfo = () => {
               <td className="p-4 pb-0">
                 <input
                   type="password"
-                  className="outline-none border-b-2 w-[200px] border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 text-base"
+                  className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
                   id="password2"
                 />
                 <span className="block text-sm text-red-500 pb-2 pl-2">
@@ -111,7 +114,7 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-y border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="hname" className="head-cell">
                   <span className="text-red-400 ">*</span>&nbsp;이름
                 </label>
@@ -119,7 +122,7 @@ const MyInfo = () => {
               <td className="pl-2">
                 <input
                   type="text"
-                  className=" w-[200px] border-gray-300 outline-none px-4 py-2 border-b-2 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  className=" w-[200px] border-gray-300 outline-none px-4 py-2 border-b hover:border-b-peach-600 focus:border-b-peach-600"
                   id="hname"
                   // value="박수지"
                   size={15}
@@ -129,14 +132,14 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label className="head-cell">
                   <span className="text-red-400">*</span>&nbsp;휴대폰
                 </label>
               </th>
               <td className="p-4">
                 <select
-                  className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-1 mr-4"
+                  className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-1 mr-4"
                   id="etcphone1"
                 >
                   <option value="">선택</option>
@@ -150,7 +153,7 @@ const MyInfo = () => {
                 -
                 <input
                   type="text"
-                  className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  className="outline-none w-[80px] mx-2 px-2 border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
                   id="etcphone2"
                   size={4}
                   maxLength={4}
@@ -158,7 +161,7 @@ const MyInfo = () => {
                 -
                 <input
                   type="text"
-                  className="outline-none w-[80px] mx-2 px-2 border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9]"
+                  className="outline-none w-[80px] mx-2 px-2 border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
                   id="etcphone3"
                   size={4}
                   maxLength={4}
@@ -166,7 +169,7 @@ const MyInfo = () => {
               </td>
             </tr>
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label className="head-cell">
                   <span className="text-red-400">*</span>&nbsp;수신설정
                 </label>
@@ -176,7 +179,7 @@ const MyInfo = () => {
                   <span className="text-sm">이메일 수신 여부</span>
                   <label
                     className={`inline-block  pr-6 whitespace-nowrap pl-6 ${
-                      emailSelected === "yes" ? "text-[#0073e9]" : "text-black"
+                      emailSelected === "yes" ? "text-peach-600" : "text-black"
                     }`}
                   >
                     <input
@@ -185,13 +188,13 @@ const MyInfo = () => {
                       value="yesEmail"
                       checked={emailSelected === "yesEmail"}
                       onChange={(e) => setEmailSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
+                      className="mr-1 accent-peach-600"
                     />
                     <span className="text-sm">수신함</span>
                   </label>
                   <label
                     className={`inline-block  pr-6 whitespace-nowrap ${
-                      emailSelected === "no" ? "text-[#0073e9]" : "text-black"
+                      emailSelected === "no" ? "text-peach-600" : "text-black"
                     }`}
                   >
                     <input
@@ -200,7 +203,7 @@ const MyInfo = () => {
                       value="noEmail"
                       checked={emailSelected === "noEmail"}
                       onChange={(e) => setEmailSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
+                      className="mr-1 accent-peach-600"
                     />
                     <span className="text-sm">수신안함</span>
                   </label>
@@ -209,7 +212,7 @@ const MyInfo = () => {
                   <span className="text-sm">문자 수신 여부</span>
                   <label
                     className={`inline-flex items-center px-6 cursor-pointer ${
-                      smsSelected === "yes" ? "text-[#0073e9]" : "text-black"
+                      smsSelected === "yes" ? "text-peach-600" : "text-black"
                     }`}
                   >
                     <input
@@ -218,13 +221,13 @@ const MyInfo = () => {
                       value="yesSms"
                       checked={smsSelected === "yesSms"}
                       onChange={(e) => setSmsSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
+                      className="mr-1 accent-peach-600"
                     />
                     <span className="text-sm">수신함</span>
                   </label>
                   <label
                     className={`inline-flex items-center cursor-pointer ${
-                      smsSelected === "no" ? "text-[#0073e9]" : "text-black"
+                      smsSelected === "no" ? "text-peach-600" : "text-black"
                     }`}
                   >
                     <input
@@ -233,7 +236,7 @@ const MyInfo = () => {
                       value="noSms"
                       checked={smsSelected === "noSms"}
                       onChange={(e) => setSmsSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
+                      className="mr-1 accent-peach-600"
                     />
                     <span className="text-sm">수신안함</span>
                   </label>
@@ -242,7 +245,7 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="birthYear" className="">
                   <span className="text-red-400">*</span>&nbsp;생년월일
                 </label>
@@ -250,7 +253,7 @@ const MyInfo = () => {
               <td className="p-4">
                 <select
                   id="birthYear"
-                  className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 mr-2"
+                  className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2"
                 >
                   <option value="">년</option>
                   {Array.from({ length: 100 }, (_, i) => {
@@ -265,7 +268,7 @@ const MyInfo = () => {
 
                 <select
                   id="birthMonth"
-                  className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2 mr-2"
+                  className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2"
                 >
                   <option value="">월</option>
                   {Array.from({ length: 12 }, (_, i) => {
@@ -279,7 +282,7 @@ const MyInfo = () => {
 
                 <select
                   id="birthDay"
-                  className="outline-none border-b-2 border-gray-300 hover:border-b-[#0073e9] focus:border-b-[#0073e9] p-2"
+                  className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2"
                 >
                   <option value="">일</option>
                   {Array.from({ length: 31 }, (_, i) => {
@@ -294,7 +297,7 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <span className="text-red-400">*</span>&nbsp;성별
               </th>
               <td className="p-4">
@@ -306,7 +309,7 @@ const MyInfo = () => {
                   <label
                     key={value}
                     className={`inline-block  pr-6 whitespace-nowrap cursor-pointer ${
-                      genderSelected === value ? "text-[#0073e9]" : "text-black"
+                      genderSelected === value ? "text-peach-600" : "text-black"
                     }`}
                   >
                     <input
@@ -315,7 +318,7 @@ const MyInfo = () => {
                       value={value}
                       checked={genderSelected === value}
                       onChange={(e) => setGenderSelected(e.target.value)}
-                      className="mr-1 accent-[#0073e9]"
+                      className="mr-1 accent-peach-600"
                     />
                     {label}
                   </label>
@@ -324,7 +327,7 @@ const MyInfo = () => {
             </tr>
 
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label htmlFor="address" className="">
                   <span className="text-red-400">*</span>&nbsp;주소
                 </label>
@@ -335,7 +338,7 @@ const MyInfo = () => {
 
             {/* 0개 + 버튼만 2개이상은 1개만 보여주고 더보기 구현 */}
             <tr className="border-b border-gray-300 ">
-              <th className="bg-gray-100 px-5 py-4 align-middle text-left">
+              <th className="bg-peach-100 px-5 py-4 align-middle text-left">
                 <label className="" htmlFor="email1">
                   <span className="text-red-400">*</span>&nbsp;배송지
                 </label>
@@ -383,7 +386,7 @@ const MyInfo = () => {
                   <div className="flex justify-end ">
                     <button
                       type="button"
-                      className="text-sm text-red-500 border border-red-500 mr-2 px-3 py-1 rounded hover:bg-red-50"
+                      className="text-sm text-red-500 border border-red-500 mr-2 px-3 py-1 rounded hover:underline"
                     >
                       삭제
                     </button>

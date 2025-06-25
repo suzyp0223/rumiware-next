@@ -83,7 +83,7 @@ const CarrierChoice = () => {
             maxLength={17}
             placeholder="휴대전화번호"
             onChange={handleChange}
-            className="outline-none  w-full max-w-md pl-3  border-b-2 border-transparent focus:border-[#0073e9] "
+            className="outline-none  w-full max-w-md pl-3  border-b border-transparent focus:border-[#0073e9] "
           />
         </div>
       </div>
