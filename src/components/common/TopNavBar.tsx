@@ -24,7 +24,7 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <nav className="w-full bg-peach-pink shadow-md border-b border-[var(--color-red-200)]">
+    <nav className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
       <div className="mb-10">
         <div className="flex justify-between items-center px-4 py-2 text-gray-600">
           <CopyUrlBtn />

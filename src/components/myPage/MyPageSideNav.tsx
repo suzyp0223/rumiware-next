@@ -9,7 +9,7 @@ const MyPageSideNav = () => {
         <div key={group.title} className="mb-10">
           <h1 className="font-bold text-lg mb-2 ml-1">{group.title}</h1>
           <div>
-            <ul className="p-6 bg-peach-100 text-gray-700">
+            <ul className="p-6 bg-peach-100 text-gray-700 rounded">
               {group.items.map((item) => (
                 <li key={item.label} className="mb-2 hover:underline">
                   <Link href={item.href}>{item.label}</Link>

@@ -1,5 +1,4 @@
 import Link from "next/link";
-import MyPageSideNav from "../myPage/MyPageSideNav";
 
 const titleList = [
   { label: "주문일자" },
@@ -12,15 +11,10 @@ const titleList = [
 
 const OrderedList = () => {
   return (
-    <div className="mt-12 w-full flex gap-6 justify-center px-[26px]">
-      {/* 사이드 바 */}
-      <aside className="w-1/5 min-w-[150px] max-w-[150px] m-4">
-        <MyPageSideNav />
-      </aside>
-
+    <>
       {/* 주문 내역 */}
       <section className="w-full max-w-3xl m-2 mt-4 min-h-[800px]">
-        <div className="border-b border-black px-4 pb-2 text-xl">
+        <div className="tracking-widest border-b-2 border-black px-4 pb-2 text-xl">
           <h3 className="font-medium text-lg">주문 내역</h3>
         </div>
 
@@ -61,7 +55,7 @@ const OrderedList = () => {
                   {/* 주문상세내역 아코디언으로 구현 */}
                   <div>
                     <Link
-                      href="/order/orderDetail"
+                      href="/order/orderDetailMain"
                       className="border border-peach-300 px-3 py-2 rounded"
                     >
                       상세조회
@@ -70,7 +64,7 @@ const OrderedList = () => {
                 </td>
                 <td className="py-4 px-2 items-center text-center">
                   <Link
-                    href="/order/orderDetail"
+                    href="/order/OrderDetailMain"
                     className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
                   >
                     조회
@@ -92,7 +86,7 @@ const OrderedList = () => {
                   {/* 주문상세내역 아코디언으로 구현 */}
                   <div>
                     <Link
-                      href="/order/orderDetail"
+                      href="/order/OrderDetailMain"
                       className="border border-peach-300 px-3 py-2 rounded"
                     >
                       상세조회
@@ -101,7 +95,7 @@ const OrderedList = () => {
                 </td>
                 <td className="py-4 px-2 items-center text-center">
                   <Link
-                    href="/order/orderDetail"
+                    href="/order/OrderDetailMain"
                     className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
                   >
                     조회
@@ -123,7 +117,7 @@ const OrderedList = () => {
                   {/* 주문상세내역 아코디언으로 구현 */}
                   <div>
                     <Link
-                      href="/order/orderDetail"
+                      href="/order/OrderDetailMain"
                       className="border border-peach-300 px-3 py-2 rounded"
                     >
                       상세조회
@@ -132,7 +126,7 @@ const OrderedList = () => {
                 </td>
                 <td className="py-4 px-2 items-center text-center">
                   <Link
-                    href="/order/orderDetail"
+                    href="/order/OrderDetailMain"
                     className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
                   >
                     조회
@@ -154,7 +148,7 @@ const OrderedList = () => {
                   {/* 주문상세내역 아코디언으로 구현 */}
                   <div>
                     <Link
-                      href="/order/orderDetail"
+                      href="/order/OrderDetailMain"
                       className="border border-peach-300 px-3 py-2 rounded"
                     >
                       상세조회
@@ -163,38 +157,7 @@ const OrderedList = () => {
                 </td>
                 <td className="py-4 px-2 items-center text-center">
                   <Link
-                    href="/order/orderDetail"
-                    className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
-                  >
-                    조회
-                  </Link>
-                </td>
-              </tr>
-              <tr className="text-gray-800 border-b text-sm">
-                <td className="py-4 px-2 items-center text-center">1</td>
-                <td className="py-4 px-2 items-center text-center">2023.01.02</td>
-                <td className="py-4 px-2 items-center text-center">
-                  <div>
-                    <p>상품이름 외 10건</p>
-                  </div>
-                </td>
-                <td className="py-4 px-2 items-center text-center">
-                  <div>15,000원</div>
-                </td>
-                <td className="py-4 px-2 items-center text-center">
-                  {/* 주문상세내역 아코디언으로 구현 */}
-                  <div>
-                    <Link
-                      href="/order/orderDetail"
-                      className="border border-peach-300 px-3 py-2 rounded"
-                    >
-                      상세조회
-                    </Link>
-                  </div>
-                </td>
-                <td className="py-4 px-2 items-center text-center">
-                  <Link
-                    href="/order/orderDetail"
+                    href="/order/OrderDetailMain"
                     className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
                   >
                     조회
@@ -210,7 +173,7 @@ const OrderedList = () => {
           </div>
         </div>
       </section>
-    </div>
+    </>
   );
 };
 

@@ -6,7 +6,7 @@ const RecentOrderList = () => {
     <div className="mt-16">
       <div className="tracking-widest flex flex-row items-center justify-between pb-4 border-b-2 border-black">
         <h1 className="font-medium text-lg">최근 주문 정보</h1>
-        <Link href="/order/orderedList" className="text-sm mr-6 right-arrow-view">
+        <Link href="/order/orderedListMain" className="text-sm mr-6 right-arrow-view">
           전체보기
         </Link>
       </div>
@@ -40,7 +40,7 @@ const RecentOrderList = () => {
                     </div>
                   </Link>
                 </div>
-                <div className="ml-4">
+                <div className="ml-4 my-2">
                   <p>
                     <Link href="">핑크자수 H라인 치마 외 14건</Link>
                   </p>
@@ -51,10 +51,10 @@ const RecentOrderList = () => {
               </td>
               <td className="py-4 px-2 text-center">
                 <Link
-                  href="/order/orderDetail"
-                  className="bg-peach-300 text-sm px-3 py-2 tracking-widest rounded"
+                  href="/order/orderDetailMain"
+                  className="border border-peach-300 text-sm px-3 py-2 tracking-widest rounded"
                 >
-                  조회
+                  상세조회
                 </Link>
               </td>
             </tr>

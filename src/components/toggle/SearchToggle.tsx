@@ -50,7 +50,7 @@ const SearchToggle = () => {
             key={showInput ? "close" : "search"} // 🔑 캐시 무효화용
             src={search}
             alt={showInput ? "닫기" : "검색"}
-            className="w-8 h-8 bg-peach-pink  hover:bg-[#ffe3dc]"
+            className="w-8 h-8 bg-peach-100  hover:bg-[#ffe3dc]"
             unoptimized
           />
         )}
@@ -63,7 +63,7 @@ const SearchToggle = () => {
         type="text"
         placeholder="검색어를 입력하세요"
         className={clsx(
-          "bg-peach-pink hover:bg-[#ffe3dc] outline-none",
+          "bg-peach-100 hover:bg-peach-100 outline-none",
           "h-10 border-b rounded-md border-gray-300 px-4 text-base",
           "transition-all duration-300 ease-in-out",
           showInput ? "opacity-100 w-[240px]" : "opacity-0 w-0 pointer-events-none"

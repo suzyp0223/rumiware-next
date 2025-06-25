@@ -28,7 +28,7 @@ const WishList = () => {
               </li>
               <li className="mb-2">
                 <div className="text-base">
-                  <span className="text-peach-hoverText font-semibold mr-3">60%</span>
+                  <span className="text-peach-700 font-semibold mr-3">60%</span>
                   {/* originalPrice */}
                   <span className="font-semibold mr-2">120,000</span>
                   {/* salePrice */}
@@ -55,7 +55,7 @@ const WishList = () => {
               </li>
               <li className="mb-2">
                 <div className="text-base">
-                  <span className="text-peach-hoverText font-semibold mr-3">60%</span>
+                  <span className="text-peach-700 font-semibold mr-3">60%</span>
                   {/* originalPrice */}
                   <span className="font-semibold mr-2">120,000</span>
                   {/* salePrice */}
@@ -82,7 +82,7 @@ const WishList = () => {
               </li>
               <li className="mb-2">
                 <div className="text-base">
-                  <span className="text-peach-hoverText font-semibold mr-3">60%</span>
+                  <span className="text-peach-700 font-semibold mr-3">60%</span>
                   {/* originalPrice */}
                   <span className="font-semibold mr-2">120,000</span>
                   {/* salePrice */}
@@ -109,7 +109,7 @@ const WishList = () => {
               </li>
               <li className="mb-2">
                 <div className="text-base">
-                  <span className="text-peach-hoverText font-semibold mr-3">60%</span>
+                  <span className="text-peach-700 font-semibold mr-3">60%</span>
                   {/* originalPrice */}
                   <span className="font-semibold mr-2">120,000</span>
                   {/* salePrice */}

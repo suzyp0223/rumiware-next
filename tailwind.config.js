@@ -11,7 +11,6 @@ module.exports = {
         "top-md": "0 -6px 10px -2px rgba(0, 0, 0, 0.15)", // 좀 더 진하고 크게
       },
       colors: {
-        "peach-pink": "#fff5f3", // 원하는 이름으로 지정
         "tab-gray": "#f3f4f6",
 
         back: "var(--color-back)",
@@ -98,10 +97,10 @@ module.exports = {
           100: "var(--color-peach-100)",
           200: "var(--color-peach-200)",
           300: "var(--color-peach-300)",
-          line: "var(--color-peach-line)",
-          btn: "var(--color-peach-btn)",
-          text: "var(--color-peach-text)",
-          hoverText: "var(--color-peach-hoverText)",
+          400: "var(--color-peach-400)",
+          500: "var(--color-peach-500)",
+          600: "var(--color-peach-600)",
+          700: "var(--color-peach-700)",
           darker: "var(--color-peach-darker)",
         },
         opacity: {
