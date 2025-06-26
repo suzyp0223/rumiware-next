@@ -21,7 +21,7 @@ const TodayViewItems = () => {
         {/* 전체선택 / 선택삭제 / 선택 상품 주문 버튼 */}
         <SelectBtn />
 
-        <div className="overflow-x-auto border-t">
+        <div className="overflow-x-auto">
           <table summary="주문일자, 상품명, 결제금액, 주문상세" className="w-full table-fixed">
             <caption className="sr-only">주문 정보 목록</caption>
             <colgroup>
@@ -34,7 +34,7 @@ const TodayViewItems = () => {
               <col className="w-[12%]" />
             </colgroup>
             <thead>
-              <tr className="text-sm border-b">
+              <tr className="text-sm border-b bg-peach-100">
                 <th className="py-4 text-sm my-4">
                   <div>
                     <input type="checkbox" className="hidden" />

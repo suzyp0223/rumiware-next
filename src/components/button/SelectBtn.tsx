@@ -18,7 +18,9 @@ const SelectBtn = () => {
           </li>
           <li className="h-6 border-l border-gray-400"></li>
           <li className="">
-            <button className="px-3 py-1 ">선택 상품 주문</button>
+            <button className="px-3 py-1 border border-peach-200 bg-peach-200 rounded">
+              선택 상품 주문
+            </button>
           </li>
         </ul>
       </section>
