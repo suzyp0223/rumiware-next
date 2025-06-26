@@ -23,7 +23,7 @@ const Carousel = () => {
       className="w-full h-[500px]" // Tailwind로 크기 조절
     >
       <SwiperSlide>
-        <div className="relative w-full h-[500px]">
+        <div className="relative w-full h-[500px] min-h-[500px] bg-peach-300">
           <Image
             src="/assets/carousel/carousel1.jpg"
             alt="배너1"
@@ -34,7 +34,7 @@ const Carousel = () => {
         </div>
       </SwiperSlide>
       <SwiperSlide>
-        <div className="relative w-full h-[500px]">
+        <div className="relative w-full h-[500px] min-h-[500px] bg-peach-300">
           <Image
             src="/assets/carousel/carousel2.jpg"
             alt="배너2"
@@ -44,7 +44,7 @@ const Carousel = () => {
         </div>
       </SwiperSlide>
       <SwiperSlide>
-        <div className="relative w-full h-[500px]">
+        <div className="relative w-full h-[500px] min-h-[500px] bg-peach-300">
           <Image
             src="/assets/carousel/carousel3.jpg"
             alt="배너3"

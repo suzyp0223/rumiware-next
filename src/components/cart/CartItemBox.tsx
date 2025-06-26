@@ -21,9 +21,9 @@ const CartItemBox = () => {
               </label>
             </td>
             <td className="w-[100px] p-2">
+              {/* <Link href="/items/itemDetail"> */}
               <Link href={`/items/${item.id}`}>
                 <div className="w-[100px] h-[140px] relative bg-peach-300">
-                  {/* <Link href="/items/itemDetail"> */}
                   <Image src={item.image} alt="상품 섬네일" fill className="object-cover" />
                 </div>
               </Link>
@@ -36,14 +36,24 @@ const CartItemBox = () => {
                   {item.name}
                 </Link>
                 <div className="mt-6 text-sm text-gray-600">
-                  {item.name}
-                  <span className="ml-1 font-medium">{item.count}개</span>
+                  {/* 내가 선택한 색상/사이즈로 변경, 현재 수량 - + 사이에 표시 및 변경가능하게 구현하기*/}
+                  <p className="text-gray-600 text-sm my-4 ml-1 font-medium">
+                    <span>
+                      색상:&nbsp;
+                      <span>{item.color}</span>
+                    </span>
+                    <span className="px-2">|</span>
+                    <span>
+                      사이즈:&nbsp;
+                      <span>{item.options}</span>
+                    </span>
+                  </p>
                 </div>
                 <Link
                   href="/"
                   className="w-fit border bg-peach-300 text-gray-700 text-sm rounded py-1 px-3"
                 >
-                  주문 수정
+                  선택 수정
                 </Link>
               </div>
             </td>
