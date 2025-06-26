@@ -22,9 +22,9 @@ const MyPageMenuGroup: NavGroup[] = [
     title: "나의정보",
     items: [
       { label: "회원정보", href: "/myPage/myInfo" },
-      { label: "내 게시글", href: "/myPage" },
-      { label: "적립금내역", href: "/myPage" },
-      { label: "쿠폰내역", href: "/myPage" },
+      { label: "내 게시글", href: "/myPage/myArticle" },
+      { label: "적립금내역", href: "/benefit/pointHistoryMain" },
+      { label: "쿠폰내역", href: "/benefit/couponHistoryMain" },
     ],
   },
 ];
