@@ -1,5 +1,6 @@
 import MyPageSideNav from "../myPage/MyPageSideNav";
 import CurrentPoint from "./CurrentPoint";
+import PointHistory from "./PointHistory";
 
 const PointHistoryMain = () => {
   return (
@@ -14,9 +15,7 @@ const PointHistoryMain = () => {
         <CurrentPoint />
 
         {/* 적립금내역 */}
-        <div className="tracking-widest border-b border-black px-4 pb-2 text-xl mt-16">
-          <h3 className="font-medium text-lg">적립금내역</h3>
-        </div>
+        <PointHistory />
       </section>
     </div>
   );

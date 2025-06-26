@@ -35,7 +35,7 @@ const TodayViewItems = () => {
             </colgroup>
             <thead>
               <tr className="text-sm border-b bg-peach-100">
-                <th className="py-4 text-sm my-4">
+                <th className="py-4 text-sm">
                   <div>
                     <input type="checkbox" className="hidden" />
                   </div>
