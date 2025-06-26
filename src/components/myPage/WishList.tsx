@@ -22,7 +22,7 @@ const WishList = () => {
         </div>
 
         {/* 전체선택 / 선택삭제 / 선택 상품 주문 버튼 */}
-        <SelectBtn />
+        <SelectBtn showOrderBtn={false} />
 
         <div className="overflow-x-auto">
           <table summary="주문일자, 상품명, 결제금액, 주문상세" className="w-full table-fixed">

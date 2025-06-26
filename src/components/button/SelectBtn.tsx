@@ -1,6 +1,9 @@
 import CheckboxBtn from "./CheckboxBtn";
 
-const SelectBtn = () => {
+interface SelectBtnProps {
+  showOrderBtn?: boolean;
+}
+const SelectBtn = ({ showOrderBtn = true }: SelectBtnProps) => {
   return (
     <>
       {/* 전체선택 / 선택삭제 / 선택 상품 주문 버튼 */}
@@ -16,12 +19,17 @@ const SelectBtn = () => {
           <li className="">
             <button className="px-3 py-1">선택삭제</button>
           </li>
-          <li className="h-6 border-l border-gray-400"></li>
-          <li className="">
-            <button className="px-3 py-1 border border-peach-200 bg-peach-200 rounded">
-              선택 상품 주문
-            </button>
-          </li>
+
+          {showOrderBtn && (
+            <>
+              <li className="h-6 border-l border-gray-400"></li>
+              <li className="">
+                <button className="px-3 py-1 border border-peach-200 bg-peach-200 rounded">
+                  선택 상품 주문
+                </button>
+              </li>
+            </>
+          )}
         </ul>
       </section>
     </>
