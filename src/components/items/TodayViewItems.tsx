@@ -6,7 +6,7 @@ import MyPageSideNav from "../myPage/MyPageSideNav";
 
 const TodayViewItems = () => {
   return (
-    <div className="mt-12 max-w-7xl mx-auto flex gap-6">
+    <div className="mt-12 max-w-7xl mx-auto flex gap-6 caret-transparent">
       {/* 사이드 바 */}
       <aside className="w-1/5 min-w-[150px] max-w-[150px] m-4">
         <MyPageSideNav />

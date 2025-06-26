@@ -18,7 +18,7 @@ const PointHistory = () => {
           </colgroup>
           <thead>
             <tr className="text-sm border-b bg-peach-100">
-              <th className="py-4">날짜</th>
+              <th className="py-2">날짜</th>
               <th>내역</th>
               <th>적립금</th>
             </tr>

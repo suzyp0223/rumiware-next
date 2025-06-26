@@ -19,6 +19,7 @@
     "daisyui": "^5.0.43",
     "date-fns": "^4.1.0",
     "firebase": "^11.9.1",
+    "framer-motion": "^12.19.1",
     "lucide-react": "^0.518.0",
     "next": "15.3.2",
     "react": "^19.0.0",
