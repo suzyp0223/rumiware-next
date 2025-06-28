@@ -42,7 +42,7 @@ const ReviewWriteForm = () => {
 
         <div className="">
           <ul className="flex flex-col w-full gap-2 py-4 mb-10 border-b">
-            <li className="pb-4">
+            <li className="pb-4 border-b">
               <div className="flex flex-col mx-4">
                 <p className="mb-2">
                   <span className="mr-10 text-sm">2025.06.26</span>
