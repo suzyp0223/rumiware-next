@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import CloseIcon from "../icons/CloseIcon";
 
-const MyReviewWritten = () => {
+const ReviewWritten = () => {
   return (
     <ul className="">
       <li className="min-h-[50px] flex justify-between bg-peach-100 p-4 rounded">
@@ -29,7 +29,7 @@ const MyReviewWritten = () => {
       <li className="border-b">
         <div className="px-2 py-4 flex items-start">
           {/* 유저가 올린 이미지 */}
-          <div className="w-[50px] h-[70px] relative bg-peach-300 shrink-0">
+          <div className="w-[70px] h-[90px] relative bg-peach-300 shrink-0">
             <Image src="/assets/items/item1.jpg" alt="" fill />
           </div>
           <div className="px-4 text-left">
@@ -50,4 +50,4 @@ const MyReviewWritten = () => {
   );
 };
 
-export default MyReviewWritten;
+export default ReviewWritten;

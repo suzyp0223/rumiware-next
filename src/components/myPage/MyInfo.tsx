@@ -145,10 +145,7 @@ const MyInfo = () => {
                   </label>
                 </th>
                 <td className="p-4">
-                  <select
-                    className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-1 mr-4"
-                    id="etcphone1"
-                  >
+                  <select className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-1 mr-4">
                     <option value="">선택</option>
                     <option value="010">010</option>
                     <option value="011">011</option>

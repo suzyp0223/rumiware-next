@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import CloseIcon from "../icons/CloseIcon";
 
-const MyReviewWrite = () => {
+const ReviewWrite = () => {
   return (
     <table summary="주문일자, 상품명, 결제금액, 주문상세" className="w-full table-fixed">
       <caption className="sr-only">주문 정보 목록</caption>
@@ -56,7 +56,7 @@ const MyReviewWrite = () => {
             {/* 주문상세내역 아코디언으로 구현 */}
             <div className="flex flex-col items-center gap-6">
               <Link
-                href="/order/OrderDetailMain"
+                href="/review/reviewWriteForm"
                 className="border border-peach-300 bg-peach-300 text-gray-800 px-3 py-2 rounded"
               >
                 리뷰 작성하기
@@ -70,4 +70,4 @@ const MyReviewWrite = () => {
   );
 };
 
-export default MyReviewWrite;
+export default ReviewWrite;

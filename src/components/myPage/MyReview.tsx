@@ -5,8 +5,8 @@ import { useState } from "react";
 import Link from "next/link";
 
 import MyPageSideNav from "./MyPageSideNav";
-import MyReviewWrite from "./MyReviewWrite";
-import MyReviewWritten from "./MyReviewWritten";
+import ReviewWrite from "./ReviewWrite";
+import ReviewWritten from "./ReviewWritten";
 
 // as const 덕분에 이 배열은 읽기 전용(Readonly) 튜플로 간주되어 각 요소의 key, label이 리터럴 타입으로 고정.
 const reviewTabTypeList = [
@@ -58,8 +58,8 @@ const MyReview = () => {
         </div>
 
         <div className="overflow-x-auto">
-          {selectedTab === "writeReview" && <MyReviewWrite />}
-          {selectedTab === "writtenReview" && <MyReviewWritten />}
+          {selectedTab === "writeReview" && <ReviewWrite />}
+          {selectedTab === "writtenReview" && <ReviewWritten />}
 
           {/* 페이지네이션 */}
           <div>
