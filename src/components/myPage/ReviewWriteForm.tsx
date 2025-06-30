@@ -7,11 +7,12 @@ import MyPageSideNav from "./MyPageSideNav";
 import { ChangeEvent, useState } from "react";
 import CloseIcon from "./../icons/CloseIcon";
 import { useRouter } from "next/navigation";
+import ConfirmModal from "../ui/modals/ConfirmModal";
 
 const ReviewWriteForm = () => {
   const [textCnt, setTextCnt] = useState(0);
-  const [fileTextCntArr, setFileTextCntArr] = useState<string[]>([]);
   const [, setFileCnt] = useState(0);
+  const [fileTextCntArr, setFileTextCntArr] = useState<string[]>([]);
   const [previewImgs, setPreviewImgs] = useState<string[]>([]);
 
   const [isCancelModal, setIsCancelModal] = useState(false);
@@ -60,6 +61,10 @@ const ReviewWriteForm = () => {
     setFileTextCntArr(fileTextCntArr);
   };
 
+  const handleCancelClick = () => {
+    setIsCancelModal(true);
+  };
+
   const confirmCancel = () => {
     setPreviewImgs([]); // 첨부한 미리보기 이미지 초기화
     setFileTextCntArr([]); // 각 이미지에 적은 설명 텍스트 초기화
@@ -71,9 +76,6 @@ const ReviewWriteForm = () => {
     } else {
       router.push("/myPage/myReview");
     }
-  };
-  const handleCancelClick = () => {
-    setIsCancelModal(true);
   };
 
   return (
@@ -305,28 +307,12 @@ const ReviewWriteForm = () => {
         </div>
       </section>
 
-      {/* 모달   */}
-      {isCancelModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
-          <div className="bg-white p-6 rounded-lg shadow-md w-[320px] text-center">
-            <p className="mb-4 text-lg font-medium">리뷰 작성을 취소하시겠습니까?</p>
-            <div className="flex justify-center gap-4">
-              <button
-                onClick={confirmCancel}
-                className="w-[80px] px-4 py-2 rounded bg-peach-300 hover:bg-peach-400 text-white"
-              >
-                예
-              </button>
-              <button
-                onClick={() => setIsCancelModal(false)}
-                className="w-[80px] px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
-              >
-                아니요
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* 모달 */}
+      <ConfirmModal
+        isOpen={isCancelModal}
+        onConfirm={confirmCancel}
+        onCancel={() => setIsCancelModal(false)}
+      />
     </div>
   );
 };
