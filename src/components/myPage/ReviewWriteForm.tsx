@@ -6,12 +6,16 @@ import Link from "next/link";
 import MyPageSideNav from "./MyPageSideNav";
 import { ChangeEvent, useState } from "react";
 import CloseIcon from "./../icons/CloseIcon";
+import { useRouter } from "next/navigation";
 
 const ReviewWriteForm = () => {
   const [textCnt, setTextCnt] = useState(0);
   const [fileTextCntArr, setFileTextCntArr] = useState<string[]>([]);
-  const [fileCnt, setFileCnt] = useState(0);
+  const [, setFileCnt] = useState(0);
   const [previewImgs, setPreviewImgs] = useState<string[]>([]);
+
+  const [isCancelModal, setIsCancelModal] = useState(false);
+  const router = useRouter();
 
   // const validateReview = (text: string) => {
   //   if (20 > text.length || text.length > 300) {
@@ -51,9 +55,25 @@ const ReviewWriteForm = () => {
     setPreviewImgs(newImgs);
 
     // 설명 배열에서 삭제
-    const newDescriptions = [...descriptions];
-    newDescriptions.splice(idx, 1);
-    setDescriptions;
+    const newDescriptions = [...fileTextCntArr];
+    newDescriptions.splice(idx, 1); //ids 위치의 항목 하나만 제거
+    setFileTextCntArr(fileTextCntArr);
+  };
+
+  const confirmCancel = () => {
+    setPreviewImgs([]); // 첨부한 미리보기 이미지 초기화
+    setFileTextCntArr([]); // 각 이미지에 적은 설명 텍스트 초기화
+    setIsCancelModal(false); // 모달 닫기
+
+    // 페이지 이동
+    if (window.history.length > 1) {
+      router.back(); // 이전 페이지로 이동
+    } else {
+      router.push("/myPage/myReview");
+    }
+  };
+  const handleCancelClick = () => {
+    setIsCancelModal(true);
   };
 
   return (
@@ -261,7 +281,9 @@ const ReviewWriteForm = () => {
                           <strong>{fileTextCntArr[idx]?.length}</strong>&nbsp;/&nbsp;
                           <span>150</span>
                         </span>
-                        <CloseIcon className="w-8 ml-2" />
+                        <button onClick={() => handleDelete(idx)}>
+                          <CloseIcon className="w-8 ml-2" />
+                        </button>
                       </div>
                     </li>
                   ))}
@@ -275,12 +297,36 @@ const ReviewWriteForm = () => {
             <button className="w-[120px] h-[40px] border border-peach-300 bg-peach-300 hover:text-gray-800 rounded mr-4">
               등록하기
             </button>
-            <div className="">
+
+            <button onClick={handleCancelClick}>
               <CloseIcon className="w-[120px] h-[40px] border border-peach-300 rounded" />
-            </div>
+            </button>
           </div>
         </div>
       </section>
+
+      {/* 모달   */}
+      {isCancelModal && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-40 flex items-center justify-center">
+          <div className="bg-white p-6 rounded-lg shadow-md w-[320px] text-center">
+            <p className="mb-4 text-lg font-medium">리뷰 작성을 취소하시겠습니까?</p>
+            <div className="flex justify-center gap-4">
+              <button
+                onClick={confirmCancel}
+                className="w-[80px] px-4 py-2 rounded bg-peach-300 hover:bg-peach-400 text-white"
+              >
+                예
+              </button>
+              <button
+                onClick={() => setIsCancelModal(false)}
+                className="w-[80px] px-4 py-2 rounded border border-gray-300 hover:bg-gray-100"
+              >
+                아니요
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
