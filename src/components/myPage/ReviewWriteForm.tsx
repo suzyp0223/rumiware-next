@@ -4,12 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 
 import MyPageSideNav from "./MyPageSideNav";
-import CloseIcon from "../icons/CloseIcon";
 import { ChangeEvent, useState } from "react";
+import CloseIcon from "./../icons/CloseIcon";
 
 const ReviewWriteForm = () => {
   const [textCnt, setTextCnt] = useState(0);
+  const [fileTextCntArr, setFileTextCntArr] = useState<string[]>([]);
   const [fileCnt, setFileCnt] = useState(0);
+  const [previewImgs, setPreviewImgs] = useState<string[]>([]);
 
   // const validateReview = (text: string) => {
   //   if (20 > text.length || text.length > 300) {
@@ -18,13 +20,40 @@ const ReviewWriteForm = () => {
   //   return null;
   // };
 
+  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
+    setTextCnt(e.target.value.length);
+  };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     setFileCnt(files ? files.length : 0);
+    if (!files) return;
+
+    const fileArray = Array.from(files).slice(0, 10);
+    const previews = fileArray.map((file) => URL.createObjectURL(file));
+    setPreviewImgs(previews);
+    setFileTextCntArr(Array(fileArray.length).fill(""));
   };
 
-  const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setTextCnt(e.target.value.length);
+  const fileTextHandleChange = (idx: number, value: string) => {
+    // React에서는 상태를 직접 수정하면 안 되므로 복사해서 써야 함.
+    const newDescriptions = [...fileTextCntArr];
+    // 해당 위치의 값만 업뎃
+    newDescriptions[idx] = value;
+    // React 상태 업데이트
+    setFileTextCntArr(newDescriptions);
+  };
+
+  const handleDelete = (idx: number) => {
+    // 이미지 미리보기 배열에서 삭제
+    const newImgs = [...previewImgs];
+    newImgs.splice(idx, 1);
+    setPreviewImgs(newImgs);
+
+    // 설명 배열에서 삭제
+    const newDescriptions = [...descriptions];
+    newDescriptions.splice(idx, 1);
+    setDescriptions;
   };
 
   return (
@@ -177,9 +206,9 @@ const ReviewWriteForm = () => {
                 </div>
               </div>
             </li>
-            <li className="my-4">
-              <div className="flex px-4">
-                <div className="w-[100px] shrink-0 py-4">사진첨부</div>
+            <li className="flex my-4">
+              <div className="w-[100px] shrink-0 py-4">사진첨부</div>
+              <div className="flex flex-col items-center px-4">
                 <div className="flex-1 text-left text-sm">
                   <input
                     type="file"
@@ -187,20 +216,56 @@ const ReviewWriteForm = () => {
                     multiple
                     onChange={handleFileChange}
                     className="hidden peer"
+                    accept="img/*"
                   />
                   <label
                     htmlFor="reviewFileBtn"
-                    className="inline-block cursor-pointer px-4 py-2 rounded border border-peach-300 bg-white hover:bg-peach-300 hover:text-gray-800"
+                    className="inline-block cursor-pointer px-4 py-2 rounded border
+                    border-peach-300 bg-white
+                    hover:bg-peach-300 hover:text-gray-800"
                   >
                     파일 선택
                   </label>
                   <span className="ml-4">
-                    <strong>2</strong>&nbsp;/&nbsp;<span>10</span>
+                    <strong>{previewImgs.length}</strong>&nbsp;/&nbsp;<span>10</span>
                   </span>
                   <span className="text-xs text -gray-700 ml-8">
                     사진은 최대 20MB 이하의 JPG, PNG, GIF 파일 10장까지 첨부 가능합니다.
                   </span>
                 </div>
+                <ul className="flex flex-wrap gap-4 self-start mt-4">
+                  {previewImgs.map((src, idx) => (
+                    <li key={idx} className="flex flex-row ">
+                      <div className="h-[70px] w-[460px] border rounded flex flex-row ">
+                        <div className="w-[70px] h-[68px] relative">
+                          <Image
+                            src={src}
+                            alt={`preview-${idx}`}
+                            fill
+                            className="object-cover rounded"
+                          ></Image>
+                        </div>
+                        <div className="w-[380px]">
+                          <textarea
+                            rows={3}
+                            placeholder="이 사진을 설명해주세요."
+                            maxLength={150}
+                            value={fileTextCntArr[idx] || ""}
+                            onChange={(e) => fileTextHandleChange(idx, e.target.value)}
+                            className="w-full text-xs outline-none resize-none my-2 mx-2"
+                          ></textarea>
+                        </div>
+                      </div>
+                      <div className="flex items-center ml-4 text-sm my-2">
+                        <span>
+                          <strong>{fileTextCntArr[idx]?.length}</strong>&nbsp;/&nbsp;
+                          <span>150</span>
+                        </span>
+                        <CloseIcon className="w-8 ml-2" />
+                      </div>
+                    </li>
+                  ))}
+                </ul>
               </div>
             </li>
           </ul>
