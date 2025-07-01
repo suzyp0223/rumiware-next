@@ -1,3 +1,6 @@
+"use client";
+
+import { useState } from "react";
 import { Minus, Plus } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -9,11 +12,18 @@ import type { CartItemProps } from "./data/cartItemList";
 import { cartItemList } from "./data/cartItemList";
 
 const CartItemBox = () => {
+  const [items, setItems] = useState<CartItemProps[]>(cartItemList);
+
+  const handleDelete = (index: number) => {
+    const newItems = items.filter((_, i) => i !== index);
+    setItems(newItems);
+  };
+
   return (
     <table className="table-auto w-full border-b border-gray-300">
       <caption className="sr-only">장바구니 담긴 상품</caption>
       <tbody>
-        {cartItemList.map((item: CartItemProps, index: number) => (
+        {items.map((item, index) => (
           <tr key={index} className="border-b border-gray-300">
             <td className="w-[30px] p-2 ">
               <label htmlFor={item.id}>
@@ -79,9 +89,9 @@ const CartItemBox = () => {
 
             <td className="w-[50px] p-2">
               <div className="">
-                <Link href="#" className="">
+                <button onClick={() => handleDelete(index)}>
                   <CloseIcon />
-                </Link>
+                </button>
               </div>
             </td>
           </tr>

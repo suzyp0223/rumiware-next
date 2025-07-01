@@ -3,11 +3,11 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import MyPageSideNav from "./MyPageSideNav";
+import MyPageSideNav from "../MyPageSideNav";
 import { ChangeEvent, useState } from "react";
-import CloseIcon from "./../icons/CloseIcon";
+import CloseIcon from "../../icons/CloseIcon";
 import { useRouter } from "next/navigation";
-import ConfirmModal from "../ui/modals/ConfirmModal";
+import ConfirmModal from "../../ui/modals/ConfirmModal";
 
 const ReviewWriteForm = () => {
   const [textCnt, setTextCnt] = useState(0);
@@ -62,6 +62,7 @@ const ReviewWriteForm = () => {
   };
 
   const handleCancelClick = () => {
+    // 모달 보여주기
     setIsCancelModal(true);
   };
 

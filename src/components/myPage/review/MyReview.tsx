@@ -4,7 +4,7 @@ import { useState } from "react";
 
 import Link from "next/link";
 
-import MyPageSideNav from "./MyPageSideNav";
+import MyPageSideNav from "../MyPageSideNav";
 import ReviewWrite from "./ReviewWrite";
 import ReviewWritten from "./ReviewWritten";
 

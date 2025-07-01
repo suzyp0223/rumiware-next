@@ -108,7 +108,10 @@ const WishList = () => {
                   >
                     담기
                   </Link>
-                  <CloseIcon className="ml-5 mt-6" />
+
+                  <button>
+                    <CloseIcon className="ml-5 mt-6" />
+                  </button>
                 </td>
               </tr>
             </tbody>

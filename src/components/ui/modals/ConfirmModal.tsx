@@ -9,7 +9,7 @@ const ConfirmModal: React.FC<ConfirmModalProps> = ({
   isOpen,
   onConfirm,
   onCancel,
-  message = "리뷰 작성을 취소하시겠습니까?",
+  message = "정말 취소하시겠습니까?",
 }) => {
   if (!isOpen) return null;
 

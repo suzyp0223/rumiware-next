@@ -1,8 +1,17 @@
+// "use client";
+
+// import { usePathname } from "next/navigation";
+
 import Image from "next/image";
 import Link from "next/link";
-import CloseIcon from "../icons/CloseIcon";
+import CloseIcon from "../../icons/CloseIcon";
 
 const ReviewWritten = () => {
+  // const pathname = usePathname();
+  // const message = pathname === "/myPage/myReview"
+  // ? "리뷰를 삭제하시겠습니까?"
+  // : "리뷰 작성을 취소하시겠습니까?"
+
   return (
     <ul className="">
       <li className="min-h-[50px] flex justify-between bg-peach-100 p-4 rounded">

@@ -14,7 +14,7 @@ const MyPageMenuGroup: NavGroup[] = [
     items: [
       { label: "주문내역", href: "/order/orderSearchMain" },
       { label: "장바구니", href: "/cart" },
-      { label: "찜한 상품", href: "/myPage/wishList" },
+      { label: "찜한 상품", href: "/myPage/wishListMain" },
       { label: "오늘본상품", href: "/items/todayViewItems" },
     ],
   },
