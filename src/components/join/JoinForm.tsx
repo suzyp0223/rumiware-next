@@ -1,6 +1,46 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { auth } from "@/lib/firebase";
+import { db } from "@/lib/firebase";
+
 import CarrierChoice from "./CarrierChoice";
 
 const JoinForm = () => {
+  const [email, setEmail] = useState("");
+  const [pwd, setPwd] = useState("");
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    console.log("db,", db);
+  }, []);
+
+  const handleSignUp = async () => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pwd);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        uid: user.uid,
+        email: user.email,
+        name: name,
+        createAt: serverTimestamp(),
+        isAdmin: false,
+      });
+
+      alert("회원가입 및 정보 저장 성공!");
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.log("회원가입 오류:", error);
+      } else {
+        alert("알 수 없는 오류가 발생했습니다");
+      }
+    }
+  };
+
   return (
     <form className="flex flex-col  px-5">
       <div
@@ -15,6 +55,8 @@ const JoinForm = () => {
                 <input
                   type="text"
                   placeholder="아이디(이메일)"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
                   className="outline-none  px-4 py-2 w-96
                     border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
@@ -38,6 +80,8 @@ const JoinForm = () => {
                 <input
                   type="text"
                   placeholder="비밀번호"
+                  value={pwd}
+                  onChange={(e) => setPwd(e.target.value)}
                   className="outline-none  px-4 py-2 w-96
                   border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
@@ -67,6 +111,8 @@ const JoinForm = () => {
                 <input
                   type="text"
                   placeholder="이름"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
                   className="outline-none  px-4 py-2 w-96
                 border-b border-transparent focus:border-[#0073e9] rounded-t mr-2"
                 />
@@ -142,6 +188,13 @@ const JoinForm = () => {
                 </ul>
               </div>
             </li>
+
+            <button
+              onClick={handleSignUp}
+              className="w-full border border-blue-600 text-blue-600 hover:text-blue-800 hover:border-blue-800 p-2 mt-4 rounded"
+            >
+              가입하기
+            </button>
           </div>
         </ul>
       </div>

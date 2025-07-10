@@ -20,25 +20,29 @@ const CarrierChoice = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedCarrier, setSelectedCarrier] = useState("통신사 선택");
   const [phone, setPhone] = useState("");
+  const [error, setError] = useState(false);
 
   const formatPhoneNum = (value: string) => {
-    // 숫자가 아닌 모든 문자(공백 포함)를 제거
-    const onlyNumbers = value.replace(/\D/g, "");
-
-    if (onlyNumbers.length <= 3) return onlyNumbers;
-    if (onlyNumbers.length <= 7) {
-      return `${onlyNumbers.slice(0, 3)} - ${onlyNumbers.slice(3)}`;
+    if (value.length <= 3) return value;
+    if (value.length <= 7) {
+      return `${value.slice(0, 3)} - ${value.slice(3)}`;
     } else {
-      return `${onlyNumbers.slice(0, 3)} - ${onlyNumbers.slice(3, 7)} - ${onlyNumbers.slice(
-        7,
-        11
-      )}`;
+      return `${value.slice(0, 3)} - ${value.slice(3, 7)} - ${value.slice(7, 11)}`;
     }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const input = e.target.value;
-    setPhone(formatPhoneNum(input));
+
+    // 하이픈 제외한 숫자만 추출
+    const onlyNumbers = input.replace(/\D/g, "");
+
+    // 🔹 숫자만 입력했는지 검사 (길이 상관없이)
+    const isInvalid = /[^0-9]/.test(onlyNumbers); // 문자/특수기호가 있으면 true
+    setError(isInvalid);
+
+    // 포맷 적용 후 상태 업데이트
+    setPhone(formatPhoneNum(onlyNumbers));
   };
 
   const carrierList = ["KT", "KT 알뜰폰", "LG U+", "LG U+ 알뜰폰", "SKT", "SKT 알뜰폰"];
@@ -83,12 +87,25 @@ const CarrierChoice = () => {
             maxLength={17}
             placeholder="휴대전화번호"
             onChange={handleChange}
-            className="outline-none  w-full max-w-md pl-3  border-b border-transparent focus:border-[#0073e9] "
+            className={`outline-none  w-full max-w-md pl-3  border-b border-transparent focus:border-[#0073e9]
+              ${
+                error ? "border-red-500" : "border-transparent"
+              } focus:border-blue-600 outline-none pl-3 `}
           />
+          {error && <p className="text-sm text-left text-red-500 mt-1 ml-4">숫자만 입력해주세요</p>}
         </div>
       </div>
       <div className="bg-[#0073e9] text-white mt-4 rounded  border hover:border-[#0073e9] hover:bg-white hover:text-[#0073e9]">
-        <button type="button" className="outline-none w-full p-2">
+        <button
+          type="button"
+          disabled={selectedCarrier === "통신사 선택" || phone === "" || error}
+          className={`outline-none w-full p-2
+          ${
+            selectedCarrier === "통신사 선택"
+              ? "bg-gray-300 text-white cursor-not-allowed"
+              : "bg-blue-600 text-white hover:bg-white hover:text-blue-600 hover:border"
+          }`}
+        >
           인증요청
         </button>
       </div>
