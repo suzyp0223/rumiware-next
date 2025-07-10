@@ -16,10 +16,20 @@
 import { useState } from "react";
 import DownArrIcon from "../icons/DownArrIcon";
 
-const CarrierChoice = () => {
+interface CarrierChoiceProps {
+  phoneNumber: string;
+  setPhoneNumber: (val: string) => void;
+  carrier: string;
+  setCarrier: (val: string) => void;
+}
+
+const CarrierChoice = ({
+  phoneNumber,
+  setPhoneNumber,
+  carrier,
+  setCarrier,
+}: CarrierChoiceProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedCarrier, setSelectedCarrier] = useState("통신사 선택");
-  const [phone, setPhone] = useState("");
   const [error, setError] = useState(false);
 
   const formatPhoneNum = (value: string) => {
@@ -42,7 +52,7 @@ const CarrierChoice = () => {
     setError(isInvalid);
 
     // 포맷 적용 후 상태 업데이트
-    setPhone(formatPhoneNum(onlyNumbers));
+    setPhoneNumber(formatPhoneNum(onlyNumbers));
   };
 
   const carrierList = ["KT", "KT 알뜰폰", "LG U+", "LG U+ 알뜰폰", "SKT", "SKT 알뜰폰"];
@@ -56,7 +66,8 @@ const CarrierChoice = () => {
           onClick={() => setIsOpen((prev) => !prev)}
           className="flex flex-row space-around items-center gap-2 m-2 hover:text-[#0073e9]"
         >
-          <span className="">{selectedCarrier}</span>
+          {/* <span className="">{selectedCarrier}</span> */}
+          <span className="">{carrier || "통신사 선택"}</span>
           <DownArrIcon />
         </button>
 
@@ -69,7 +80,7 @@ const CarrierChoice = () => {
                   type="button"
                   className="block w-full text-left p-2  hover:bg-gray-100  hover:text-[#0073e9]"
                   onClick={() => {
-                    setSelectedCarrier(carrier);
+                    setCarrier(carrier);
                     setIsOpen(false);
                   }}
                 >
@@ -82,7 +93,7 @@ const CarrierChoice = () => {
 
         <div className="px-2 py-2">
           <input
-            value={phone}
+            value={phoneNumber}
             type="tel"
             maxLength={17}
             placeholder="휴대전화번호"
@@ -95,13 +106,13 @@ const CarrierChoice = () => {
           {error && <p className="text-sm text-left text-red-500 mt-1 ml-4">숫자만 입력해주세요</p>}
         </div>
       </div>
-      <div className="bg-[#0073e9] text-white mt-4 rounded  border hover:border-[#0073e9] hover:bg-white hover:text-[#0073e9]">
+      <div className="text-white mt-4 ">
         <button
           type="button"
-          disabled={selectedCarrier === "통신사 선택" || phone === "" || error}
-          className={`outline-none w-full p-2
+          disabled={!carrier || !phoneNumber || error}
+          className={`outline-none w-full p-2 rounded border hover:border-[#0073e9] hover:bg-white hover:text-[#0073e9]
           ${
-            selectedCarrier === "통신사 선택"
+            !carrier
               ? "bg-gray-300 text-white cursor-not-allowed"
               : "bg-blue-600 text-white hover:bg-white hover:text-blue-600 hover:border"
           }`}
