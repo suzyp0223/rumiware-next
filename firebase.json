@@ -13,13 +13,6 @@
         "source": "**",
         "destination": "/index.html"
       }
-    ],
-    "redirects": [
-      {
-        "source": "/",
-        "destination": "https://www.rumiware.shop",
-        "type": 301
-      }
     ]
   },
   "storage": {
