@@ -23,7 +23,7 @@ const periodList = [
   { label: "3개월", days: "90", key: "threeMonth" },
   { label: "6개월", days: "180", key: "sixMonth" },
 ] as const;
-type PeriodList = (typeof periodList)[number]["label"];
+// type PeriodList = (typeof periodList)[number]["label"];
 
 const OrderSearchMain = () => {
   const [selectedTab, setSelectedTab] = useState<OrderTabTypeLabel>("주문내역 조회");

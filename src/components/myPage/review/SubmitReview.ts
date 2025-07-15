@@ -1,5 +1,9 @@
-const SubmitReview = async (data: {}) => {
-  return <></>;
-};
+// const SubmitReview = (data: {}) => {
+//   return (
+//     <div>
+//       <p>제출UI</p>
+//     </div>
+//   );
+// };
 
-export default SubmitReview;
+// export default SubmitReview;

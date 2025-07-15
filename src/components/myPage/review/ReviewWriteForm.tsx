@@ -72,7 +72,7 @@ const ReviewWriteForm = () => {
     setIsCancelModal(false); // 모달 닫기
 
     // 페이지 이동
-    if (window.history.length > 1) {
+    if (typeof window !== "undefined" && window.history.length > 1) {
       router.back(); // 이전 페이지로 이동
     } else {
       router.push("/myPage/myReview");

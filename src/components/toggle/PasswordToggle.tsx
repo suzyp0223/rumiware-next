@@ -8,15 +8,23 @@
   브라우저 API (localStorage, window 등) 사용 가능
  */
 
-import { useState } from "react";
 import EyeCloseIcon from "../icons/EyeCloseIcon";
 import EyeOpenIcon from "../icons/EyeOpenIcon";
 
-const PasswordToggle = () => {
-  const [visible, setVisible] = useState(false);
+interface PasswordToggleProps {
+  visible: boolean;
+  onToggle: () => void;
+}
 
+const PasswordToggle = ({ visible, onToggle }: PasswordToggleProps) => {
   return (
-    <button onClick={() => setVisible((prev) => !prev)}>
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-label={visible ? "비밀번호 숨기기" : "비밀번호 보기"}
+      title={visible ? "비밀번호 숨기기" : "비밀번호 보기"}
+      className="flex items-center justify-center w-6 h-6 focus:outline-none"
+    >
       {visible ? <EyeOpenIcon /> : <EyeCloseIcon />}
     </button>
   );

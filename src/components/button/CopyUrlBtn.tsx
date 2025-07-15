@@ -6,14 +6,16 @@ const CopyUrlBtn = () => {
   const [copied, setCopied] = useState(false);
 
   const handleCopyUrl = async () => {
-    try {
-      await navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
+    if (typeof window !== "undefined" && navigator?.clipboard) {
+      try {
+        await navigator.clipboard.writeText(window.location.href);
+        setCopied(true);
 
-      setTimeout(() => setCopied(false), 2000);
-    } catch (err) {
-      alert("❌ URL 복사에 실패했습니다.");
-      console.error(err);
+        setTimeout(() => setCopied(false), 2000);
+      } catch (err) {
+        alert("❌ URL 복사에 실패했습니다.");
+        console.error(err);
+      }
     }
   };
 

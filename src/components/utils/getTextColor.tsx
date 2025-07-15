@@ -11,6 +11,8 @@ const namedColors: Record<string, [number, number, number]> = {
   // 필요시 더 추가 가능
 };
 
+const isBrowser = () => typeof window !== "undefined";
+
 // HEX or named color를 받아 밝기를 계산하고 텍스트 색상을 결정
 const getTextColor = (color: string): "white" | "black" => {
   let r = 0,
@@ -51,7 +53,7 @@ const getTextColor = (color: string): "white" | "black" => {
   }
 
   // 4️⃣ canvas fallback (브라우저 전용)
-  else if (typeof window !== "undefined") {
+  else if (isBrowser()) {
     const ctx = document.createElement("canvas").getContext("2d");
     if (ctx) {
       ctx.fillStyle = color; // 색상 이름 또는 기타 문자열

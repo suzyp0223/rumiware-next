@@ -1,5 +1,4 @@
-// Import the functions you need from the SDKs you need
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, isSupported } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth"; // 로그인
 import { getFirestore } from "firebase/firestore"; // 업로드
@@ -22,8 +21,20 @@ const firebaseConfig = {
 // Firebase 앱 초기화 (중복 방지)
 const app = initializeApp(firebaseConfig);
 
+// SSR-safe하게 Analytics 초기화
+let analytics: ReturnType<typeof getAnalytics> | null = null;
+
+if (typeof window !== "undefined") {
+  isSupported().then((supported) => {
+    if (supported) {
+      analytics = getAnalytics(app);
+    }
+  });
+}
+
+export { app, analytics };
+
 // 필요한 서비스만 가져오기
-export const analytics = getAnalytics(app);
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);

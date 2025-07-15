@@ -4,8 +4,8 @@ import { useEffect, useState } from "react";
 
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
-import { auth } from "@/lib/firebase";
-import { db } from "@/lib/firebase";
+import { auth } from "@/firebase/firebase";
+import { db } from "@/firebase/firebase";
 
 import CarrierChoice from "./CarrierChoice";
 
@@ -13,6 +13,11 @@ const JoinForm = () => {
   const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [name, setName] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState("");
+  const [nationality, setNationality] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [carrier, setCarrier] = useState("");
 
   useEffect(() => {
     console.log("db,", db);
@@ -27,6 +32,11 @@ const JoinForm = () => {
         uid: user.uid,
         email: user.email,
         name: name,
+        birthDate: birthDate,
+        gender: gender,
+        nationality: nationality,
+        phone: phoneNumber,
+        carrier: carrier,
         createAt: serverTimestamp(),
         isAdmin: false,
       });
@@ -124,6 +134,7 @@ const JoinForm = () => {
                 <input
                   type="text"
                   placeholder="생년월일 8자리"
+                  onChange={(e) => setBirthDate(e.target.value)}
                   className="outline-none  px-4 py-2 w-96
                 border-b border-transparent focus:border-[#0073e9]  mr-2"
                 />
@@ -136,6 +147,7 @@ const JoinForm = () => {
                       <input
                         type="radio"
                         name="gender"
+                        onChange={(e) => setGender(e.target.value)}
                         value={label}
                         id={`gender-${idx}`}
                         className="hidden peer"
@@ -161,6 +173,7 @@ const JoinForm = () => {
                       <input
                         type="radio"
                         name="nationality"
+                        onChange={(e) => setNationality(e.target.value)}
                         value={label}
                         id={`nationality-${idx}`}
                         className="hidden peer"
@@ -184,7 +197,12 @@ const JoinForm = () => {
             <li className="py-2">
               <div className="">
                 <ul className="text-s">
-                  <CarrierChoice />
+                  <CarrierChoice
+                    phoneNumber={phoneNumber}
+                    setPhoneNumber={setPhoneNumber}
+                    carrier={carrier}
+                    setCarrier={setCarrier}
+                  />
                 </ul>
               </div>
             </li>
