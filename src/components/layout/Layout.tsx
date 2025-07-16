@@ -1,34 +1,37 @@
-"use client";
-
-// TopNavBar, Sidebar, Footer를 공통으로 묶는 UI 전용 레이아웃 컴포넌트
-// ClientProviders 안에서 children을 감싸기 위해 쓸 수 있음.
 /*
-사이드바 열기/닫기
-모달 열기/닫기
-테마 다크모드 상태
-탭 선택 상태
-등은 Layout이 관리하는 게 자연스러움.
+// 서버에서 Header, Sidebar, Footer를 포함한 전체 레이아웃을 구성하는 컴포넌트.
+// UI 상태(예: 모달, 사이드바, 다크모드 등)는 클라이언트 컴포넌트에서 개별적으로 관리.
 */
 
-import { ReactNode, useState } from "react";
+"use client";
+
+import { ReactNode, useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setUser } from "@/store/authSlice";
+
+import type { SessionUser } from "../types/auth";
+
 import Footer from "../common/Footer";
-import TopNavBar from "../common/TopNavBar";
+import Header from "../common/Header";
 
-const Layout = ({ children }: { children: ReactNode }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+interface LayoutProps {
+  user: SessionUser | null;
+  children: ReactNode;
+}
 
-  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
-  const closeSidebar = () => setIsSidebarOpen(false);
+const Layout = ({ user, children }: LayoutProps) => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user) {
+      dispatch(setUser(user));
+    }
+  }, [user, dispatch]);
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* <ThemeProvider/> */}
-      <TopNavBar
-        isOpen={isSidebarOpen}
-        onClose={closeSidebar}
-        toggleSidebar={toggleSidebar}
-        closeSidebar={closeSidebar}
-      />
+      <Header user={user} />
       <main className="pt-2 flex-1 flex items-center justify-center">{children}</main>
       <Footer />
     </div>

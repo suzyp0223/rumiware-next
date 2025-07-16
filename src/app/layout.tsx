@@ -1,11 +1,18 @@
 // app/layout.tsx: 전체 앱 공통 레이아웃
 // 서버 컴포넌트
-import { Geist, Geist_Mono } from "next/font/google";
-import Layout from "../components/layout/Layout";
-import "./globals.css";
 
 import Script from "next/script";
+import { cookies } from "next/headers";
+import { Geist, Geist_Mono } from "next/font/google";
+
+import "./globals.css";
+
+import Layout from "../components/layout/Layout";
 import ClientProviders from "./ClientProviders"; // ✅ 클라이언트 전용 감싸기
+import { verifySession } from "../components/utils/verifySession";
+
+// // ✅ 동적 렌더링을 강제로 활성화 (쿠키 사용 때문)
+// export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Rumiware",
@@ -22,7 +29,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // ✅ 세션 쿠키 확인 및 사용자 정보 불러오기
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+
+  const user = session ? await verifySession(session) : null;
+
   return (
     <html lang="ko">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
@@ -31,8 +44,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           src="https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"
           strategy="beforeInteractive"
         />
+
+        {/* ✅ 클라이언트 전용 상태관리 Provider 감싸기 */}
         <ClientProviders>
-          <Layout>{children}</Layout>
+          {/* user를 Layout에 props로 전달 */}
+          <Layout user={user}>{children}</Layout>
         </ClientProviders>
       </body>
     </html>

@@ -1,8 +1,14 @@
+"use client";
+
+import { useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
 
 import { RootState } from "@/store/store";
 import { useSelector } from "react-redux";
+// import type { User as FirebaseUser } from "firebase/auth";
+import type { SessionUser } from "../types/auth";
 
 import cart from "../../assets/icon/cart.svg";
 import myPage from "../../assets/icon/my-page.svg";
@@ -12,33 +18,56 @@ import CopyUrlBtn from "../button/CopyUrlBtn";
 import SearchToggle from "../toggle/SearchToggle";
 import TabsDropDown from "./TabsDropDown";
 
-interface TopNavProps {
-  toggleSidebar: () => void;
-  isOpen: boolean;
-  onClose: () => void;
-  closeSidebar: () => void;
+// interface HeaderProps {
+//   toggleSidebar: () => void;
+//   isOpen: boolean;
+//   onClose: () => void;
+//   closeSidebar: () => void;
+// }
+
+// const Header = ({ toggleSidebar, isOpen, closeSidebar }: HeaderProps) => {
+
+interface HeaderProps {
+  user: SessionUser | null;
 }
 
-const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
+const Header = ({ user }: HeaderProps) => {
+  // const [isLogin, setIsLogin] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
+  const closeSidebar = () => setIsSidebarOpen(false);
+
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   return (
-    <nav className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
+    <header className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
       <div className="mb-10">
         <div className="flex justify-between items-center px-4 py-2 text-gray-600">
           <CopyUrlBtn />
           <div className="flex gap-8 text-sm text-gray-600 mr-6">
             {/* 로그인,로그아웃 레이아웃 변경하기 */}
-            <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)]">
-              로그인
-            </Link>
-            <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)] hidden">
-              로그아웃
-            </Link>
-            <Link href="/join" className="hover:underline hover:text-[var(--color-red-400)]">
-              회원가입
-            </Link>
+            {user ? (
+              <div>
+                <span>{user.email}</span>
+                <Link
+                  href="/auth"
+                  className="hover:underline hover:text-[var(--color-red-400)] hidden"
+                >
+                  로그아웃
+                </Link>
+              </div>
+            ) : (
+              <>
+                <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)]">
+                  로그인
+                </Link>
+                <Link href="/join" className="hover:underline hover:text-[var(--color-red-400)]">
+                  회원가입
+                </Link>
+              </>
+            )}
           </div>
         </div>
 
@@ -72,9 +101,13 @@ const TopNavBar = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
           </div>
         </div>
       </div>
-      <TabsDropDown isOpen={isOpen} toggleSidebar={toggleSidebar} closeSidebar={closeSidebar} />
-    </nav>
+      <TabsDropDown
+        isOpen={isSidebarOpen}
+        toggleSidebar={toggleSidebar}
+        closeSidebar={closeSidebar}
+      />
+    </header>
   );
 };
 
-export default TopNavBar;
+export default Header;

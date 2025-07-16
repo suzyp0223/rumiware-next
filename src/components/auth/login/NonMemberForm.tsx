@@ -1,8 +1,13 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import CloseIcon from "../../icons/CloseIcon";
 import PasswordToggle from "../../toggle/PasswordToggle";
 
 const NonMemberForm = () => {
+  const [showPwd, setShowPwd] = useState(false);
+
   return (
     <form className="flex flex-col gap-2 px-5">
       <div className="flex flex-col gap-2 w-full items-center">
@@ -49,7 +54,7 @@ const NonMemberForm = () => {
               className="outline-none w-full px-4 py-2 border-b border-transparent focus:border-[#0073e9] rounded-t"
             />
             <span className="absolute top-1/2 right-3 transform -translate-y-1/2 mr-2">
-              <PasswordToggle />
+              <PasswordToggle visible={showPwd} onToggle={() => setShowPwd((prev) => !prev)} />
             </span>
           </div>
           <div className="text-xs text-[var(--color-red-500)] mx-2 mt-2">
