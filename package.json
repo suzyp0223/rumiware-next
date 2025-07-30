@@ -18,7 +18,7 @@
     "clsx": "^2.1.1",
     "daisyui": "^5.0.43",
     "date-fns": "^4.1.0",
-    "firebase": "^11.9.1",
+    "firebase": "^11.10.0",
     "firebase-admin": "^13.4.0",
     "framer-motion": "^12.19.1",
     "js-cookie": "^3.0.5",
@@ -27,6 +27,7 @@
     "react": "^19.0.0",
     "react-datepicker": "^8.4.0",
     "react-dom": "^19.0.0",
+    "react-firebase-hooks": "^5.1.1",
     "react-redux": "^9.2.0",
     "sharp": "^0.34.2",
     "swiper": "^11.2.8"

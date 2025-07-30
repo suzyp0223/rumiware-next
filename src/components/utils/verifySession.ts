@@ -1,4 +1,4 @@
-import { adminAuth } from "@/firebase/admin";
+import { adminAuth } from "@/firebases/admin";
 import { SessionUser } from "../types/auth";
 
 export async function verifySession(token: string): Promise<SessionUser | null> {

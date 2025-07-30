@@ -1,3 +1,4 @@
+// 로그인 상태 및 로그인 유저 관리
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 interface User {
@@ -27,8 +28,12 @@ const authSlice = createSlice({
       state.isLoggedIn = false;
       state.user = null;
     },
+    setUser(state, action: PayloadAction<User>) {
+      state.isLoggedIn = true;
+      state.user = action.payload;
+    },
   },
 });
 
-export const { setLogin, logout } = authSlice.actions;
+export const { setUser, setLogin, logout } = authSlice.actions;
 export default authSlice.reducer;

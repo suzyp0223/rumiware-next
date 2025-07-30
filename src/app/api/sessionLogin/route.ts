@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/firebase/admin";
+import { adminAuth } from "@/firebases/admin";
 
 export async function POST(req: NextRequest) {
   // 💬 클라이언트에서 받은 idToken을 추출

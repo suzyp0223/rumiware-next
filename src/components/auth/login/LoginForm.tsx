@@ -111,7 +111,6 @@ const LoginForm = () => {
               className="absolute top-1/2 right-3 transform -translate-y-1/2"
               onClick={() => {
                 setEmail("");
-                setEmailError("아이디(이메일)를 입력해주세요.");
               }}
             >
               <CloseIcon />

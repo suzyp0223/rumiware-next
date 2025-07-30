@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { adminAuth } from "@/firebase/admin";
+import { adminAuth } from "@/firebases/admin";
 
 // 🔐 모든 요청에 대해 실행되는 미들웨어
 export async function middleware(req: NextRequest) {

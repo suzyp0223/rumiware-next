@@ -9,6 +9,7 @@ import { getStorage } from "firebase/storage"; //
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
+  // apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY!,
   apiKey: "AIzaSyAKQ82Ui0KNTRCAqyaiu6tMocfq_5cN12s",
   authDomain: "rumiware-a8503.firebaseapp.com",
   projectId: "rumiware-a8503",

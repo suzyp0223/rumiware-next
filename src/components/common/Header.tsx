@@ -1,12 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import { signOut } from "firebase/auth";
+import { auth } from "../../firebases/firebase";
 
 import Image from "next/image";
 import Link from "next/link";
 
 import { RootState } from "@/store/store";
-import { useSelector } from "react-redux";
 // import type { User as FirebaseUser } from "firebase/auth";
 import type { SessionUser } from "../types/auth";
 
@@ -18,21 +20,11 @@ import CopyUrlBtn from "../button/CopyUrlBtn";
 import SearchToggle from "../toggle/SearchToggle";
 import TabsDropDown from "./TabsDropDown";
 
-// interface HeaderProps {
-//   toggleSidebar: () => void;
-//   isOpen: boolean;
-//   onClose: () => void;
-//   closeSidebar: () => void;
-// }
-
-// const Header = ({ toggleSidebar, isOpen, closeSidebar }: HeaderProps) => {
-
 interface HeaderProps {
   user: SessionUser | null;
 }
 
 const Header = ({ user }: HeaderProps) => {
-  // const [isLogin, setIsLogin] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
@@ -40,6 +32,15 @@ const Header = ({ user }: HeaderProps) => {
 
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  const logoutHandler = async () => {
+    try {
+      await signOut(auth);
+      alert("로그아웃 되었습니다.");
+    } catch (error) {
+      console.error("로그아웃 오류:", error);
+    }
+  };
 
   return (
     <header className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
@@ -51,12 +52,12 @@ const Header = ({ user }: HeaderProps) => {
             {user ? (
               <div>
                 <span>{user.email}</span>
-                <Link
-                  href="/auth"
-                  className="hover:underline hover:text-[var(--color-red-400)] hidden"
+                <button
+                  onClick={logoutHandler}
+                  className="hover:underline hover:text-[var(--color-red-400)]"
                 >
                   로그아웃
-                </Link>
+                </button>
               </div>
             ) : (
               <>
@@ -95,12 +96,12 @@ const Header = ({ user }: HeaderProps) => {
                   {cartCount}
                 </span>
               )}
-
               <span className="hover:underline hover:text-[var(--color-red-400)]">장바구니</span>
             </Link>
           </div>
         </div>
       </div>
+
       <TabsDropDown
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}

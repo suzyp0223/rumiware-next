@@ -7,7 +7,7 @@
 
 import { ReactNode, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { setUser } from "@/store/authSlice";
+import { setUser } from "@/store/slices/authSlice";
 
 import type { SessionUser } from "../types/auth";
 
@@ -24,7 +24,12 @@ const Layout = ({ user, children }: LayoutProps) => {
 
   useEffect(() => {
     if (user) {
-      dispatch(setUser(user));
+      dispatch(
+        setUser({
+          email: user.email ?? "", // undefined 방지 처리
+          displayName: user.displayName ?? "",
+        })
+      );
     }
   }, [user, dispatch]);
 

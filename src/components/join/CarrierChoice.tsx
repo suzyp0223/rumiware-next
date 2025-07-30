@@ -1,126 +1,132 @@
-"use client"; //클라이언트 컴포넌트임을 명시하는 지시문
-/** 'use client'를 작성하는 이유
- * 기본은 서버 컴포넌트이기 때문.
- *
- * Next.js(App Router 기준)에서는 .tsx 파일은 기본적으로 서버 컴포넌트입니다.
-    → 서버에서 실행되고, HTML을 생성해서 클라이언트에 전달해요.
-    하지만:
-    상태(useState)
-    이펙트(useEffect)
-    이벤트 핸들러 (onClick, onChange)
-    브라우저 API (localStorage, window 등)
-    이런 브라우저 전용 기능을 쓰려면 클라이언트 컴포넌트여야 합니다.
- */
+"use client";
 
-// 통신사 선택
-import { useState } from "react";
-import DownArrIcon from "../icons/DownArrIcon";
+import React, { ChangeEvent, useEffect, useState } from "react";
+import usePhoneAuth from "@/hooks/usePhoneAuth";
 
 interface CarrierChoiceProps {
   phoneNumber: string;
   setPhoneNumber: (val: string) => void;
-  carrier: string;
-  setCarrier: (val: string) => void;
+  setVerified: (val: boolean) => void;
+  phoneError: string;
+  // setPhoneError: (msg: string) => void;
+  submitButtonRef: React.RefObject<HTMLButtonElement | null>;
 }
 
 const CarrierChoice = ({
   phoneNumber,
   setPhoneNumber,
-  carrier,
-  setCarrier,
+  setVerified,
+  phoneError,
+  // setPhoneError,
+  submitButtonRef,
 }: CarrierChoiceProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [error, setError] = useState(false);
+  const [sendError, setSendError] = useState(""); // 인증요청 오류 메시지
+  const [codeError, setCodeError] = useState(""); // 인증확인 오류 메시지
 
-  const formatPhoneNum = (value: string) => {
-    if (value.length <= 3) return value;
-    if (value.length <= 7) {
-      return `${value.slice(0, 3)} - ${value.slice(3)}`;
-    } else {
-      return `${value.slice(0, 3)} - ${value.slice(3, 7)} - ${value.slice(7, 11)}`;
+  const { code, setCode, verified, sendCode, verifyCode, confirmationSent } =
+    usePhoneAuth(phoneNumber);
+
+  const handlePhoneChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const onlyNumbers = e.target.value.replace(/\D/g, "");
+    const formatted =
+      onlyNumbers.length <= 3
+        ? onlyNumbers
+        : onlyNumbers.length <= 7
+        ? `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3)}`
+        : `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7, 11)}`;
+
+    setPhoneNumber(formatted);
+    setSendError(""); // 입력 중이면 인증요청 에러 초기화
+    // setPhoneError(""); // 입력 중이면 상위 에러 초기화
+  };
+
+  // 인증요청 유효성 검사
+  const handleSendCode = () => {
+    if (!phoneNumber || phoneNumber.replace(/\D/g, "").length < 10) {
+      setSendError("유효한 전화번호를 입력해주세요.");
+      return;
     }
+
+    setSendError("");
+    sendCode();
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const input = e.target.value;
+  // 인증확인 유효성 검사
+  const handleVerifyCode = () => {
+    if (!code || code.length !== 6) {
+      setCodeError("6자리 인증번호를 입력해주세요.");
+      return;
+    }
 
-    // 하이픈 제외한 숫자만 추출
-    const onlyNumbers = input.replace(/\D/g, "");
-
-    // 🔹 숫자만 입력했는지 검사 (길이 상관없이)
-    const isInvalid = /[^0-9]/.test(onlyNumbers); // 문자/특수기호가 있으면 true
-    setError(isInvalid);
-
-    // 포맷 적용 후 상태 업데이트
-    setPhoneNumber(formatPhoneNum(onlyNumbers));
+    setCodeError("");
+    verifyCode();
   };
 
-  const carrierList = ["KT", "KT 알뜰폰", "LG U+", "LG U+ 알뜰폰", "SKT", "SKT 알뜰폰"];
+  useEffect(() => {
+    setVerified(verified);
+
+    if (verified) {
+      submitButtonRef.current?.focus(); // ✅ 가입 버튼 포커스
+    }
+  }, [verified]);
 
   return (
-    <li className="">
-      <div className="border border-gray-300 rounded">
-        <button
-          type="button"
-          aria-expanded={isOpen}
-          onClick={() => setIsOpen((prev) => !prev)}
-          className="flex flex-row space-around items-center gap-2 m-2 hover:text-[#0073e9]"
-        >
-          {/* <span className="">{selectedCarrier}</span> */}
-          <span className="">{carrier || "통신사 선택"}</span>
-          <DownArrIcon />
-        </button>
+    <>
+      {/* reCAPTCHA 위치 */}
+      <div id="recaptcha-container" className="hidden"></div>
 
-        {/* 논리 AND 연산자 - isOpen이 true면 괄호 안 JSX를 실행(렌더링)해라! */}
-        {isOpen && (
-          <ul className="absolute bg-white w-26 z-10 shadow-md text-xs">
-            {carrierList.map((carrier) => (
-              <li className="" key={carrier}>
-                <button
-                  type="button"
-                  className="block w-full text-left p-2  hover:bg-gray-100  hover:text-[#0073e9]"
-                  onClick={() => {
-                    setCarrier(carrier);
-                    setIsOpen(false);
-                  }}
-                >
-                  {carrier}
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
+      <li>
+        <div className="border border-gray-300 rounded">
+          {/* 전화번호 입력 */}
+          <div className="relative px-2 py-2 border-b">
+            <input
+              id="phone-input"
+              value={phoneNumber}
+              onChange={handlePhoneChange}
+              type="tel"
+              placeholder="휴대전화번호"
+              className="outline-none w-full max-w-md pl-3 border-b border-transparent focus:border-blue-600"
+            />
+            <button
+              type="button"
+              onClick={handleSendCode}
+              disabled={!phoneNumber || verified}
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 text-xs hover:bg-gray-300 p-2"
+            >
+              인증요청
+            </button>
+          </div>
 
-        <div className="px-2 py-2">
-          <input
-            value={phoneNumber}
-            type="tel"
-            maxLength={17}
-            placeholder="휴대전화번호"
-            onChange={handleChange}
-            className={`outline-none  w-full max-w-md pl-3  border-b border-transparent focus:border-[#0073e9]
-              ${
-                error ? "border-red-500" : "border-transparent"
-              } focus:border-blue-600 outline-none pl-3 `}
-          />
-          {error && <p className="text-sm text-left text-red-500 mt-1 ml-4">숫자만 입력해주세요</p>}
+          {/* 전화번호 오류 메시지 */}
+          {(sendError || phoneError) && (
+            <p className="text-sm text-red-500 mt-1 ml-2">{sendError || phoneError}</p>
+          )}
+
+          {/* 인증번호 입력 */}
+          <div className="relative py-2 px-2">
+            <input
+              type="text"
+              placeholder="인증번호 6자리"
+              value={code}
+              onChange={(e) => setCode(e.target.value)}
+              disabled={verified}
+              className="outline-none w-full max-w-md pl-3 border-b border-transparent focus:border-blue-600"
+            />
+            <button
+              type="button"
+              onClick={handleVerifyCode}
+              disabled={!confirmationSent || verified}
+              className="absolute top-1/2 right-2 transform -translate-y-1/2 text-xs hover:bg-gray-300 p-2"
+            >
+              인증확인
+            </button>
+          </div>
+
+          {/* 인증번호 오류 메시지 */}
+          {codeError && <p className="text-sm text-red-500 mt-1 ml-2">{codeError}</p>}
         </div>
-      </div>
-      <div className="text-white mt-4 ">
-        <button
-          type="button"
-          disabled={!carrier || !phoneNumber || error}
-          className={`outline-none w-full p-2 rounded border hover:border-[#0073e9] hover:bg-white hover:text-[#0073e9]
-          ${
-            !carrier
-              ? "bg-gray-300 text-white cursor-not-allowed"
-              : "bg-blue-600 text-white hover:bg-white hover:text-blue-600 hover:border"
-          }`}
-        >
-          인증요청
-        </button>
-      </div>
-    </li>
+      </li>
+    </>
   );
 };
 

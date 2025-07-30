@@ -5,9 +5,9 @@ const EyeCloseIcon = () => (
     viewBox="0 0 24 24"
     fill="none"
     stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
   >
     <path
       d="M17.94 17.94A10.07 10.07 0 0 1 12 20
