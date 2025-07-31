@@ -1,6 +1,7 @@
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "@/firebases/firebase";
 
+// 클라이언트 → 서버로 ID 토큰 전송 → 서버에서 세션 쿠키 생성 방식
 export const useLogin = () => {
   const login = async (
     email: string,
@@ -14,7 +15,7 @@ export const useLogin = () => {
       // 🔑 Firebase 사용자로부터 ID 토큰을 받아옴
       const idToken = await userCredential.user.getIdToken();
 
-      // 🛰️ 서버 API (/api/sessionLogin)에 토큰을 보내 세션 쿠키 생성 요청
+      // 🛰️ 서버 API (/api/sessionLogin)에 토큰을 전달 → 세션 쿠키 생성 요청
       await fetch("/api/sessionLogin", {
         method: "POST",
         body: JSON.stringify({ idToken, autoLogin }),

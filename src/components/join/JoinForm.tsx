@@ -41,6 +41,7 @@ const JoinForm = () => {
   const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
   const [isPwdMatch, setIsPwdMatch] = useState<boolean | null>(null); // 비밀번호 일치 여부
   const [isPhoneVerified, setIsPhoneVerified] = useState(false);
+  const [isVerifiedCode, setIsVerifiedCode] = useState(false);
 
   const [nameError, setNameError] = useState("");
   const [confirmPwdError, setConfirmPwdError] = useState("");
@@ -53,8 +54,9 @@ const JoinForm = () => {
   const [passwordError, setPasswordError] = useState<string>("");
 
   // 필드별 ref 선언
-  const nameRef = useRef<HTMLInputElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
   const pwdRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
   const confirmPwdRef = useRef<HTMLInputElement>(null);
   const birthDateRef = useRef<HTMLInputElement>(null);
   const genderRef = useRef<HTMLDivElement>(null);
@@ -75,6 +77,20 @@ const JoinForm = () => {
 
   const handleSignUp = async () => {
     let isValid = true;
+
+    if (!isEmailChecked || !isEmailAvailable) {
+      setEmailError("이메일 중복 확인을 완료해주세요.");
+      emailRef.current?.focus();
+      isValid = false;
+      return;
+    } else setEmailError("");
+
+    if (!pwd) {
+      setPasswordError("비밀번호를 입력해주세요.");
+      pwdRef.current?.focus();
+      isValid = false;
+      return;
+    } else setPasswordError("");
 
     if (!name) {
       setNameError("이름을 입력해주세요.");
@@ -98,7 +114,7 @@ const JoinForm = () => {
     } else setGenderError("");
 
     if (!nationality) {
-      setNationalityError("국적을 선택해주세요.");
+      setNationalityError("내/외국적을 선택해주세요.");
       nationalityRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
       isValid = false;
       return;
@@ -106,14 +122,15 @@ const JoinForm = () => {
 
     if (!isValid) return;
 
-    if (!isEmailChecked || !isEmailAvailable) {
-      alert("이메일 중복 확인을 완료해주세요.");
-      return;
-    }
-
     if (!isPhoneVerified) {
       setPhoneError("휴대폰 인증을 완료해주세요.");
       document.getElementById("phone-input")?.focus(); // ✅ 인증 인풋으로 포커스
+      return;
+    }
+
+    if (!isVerifiedCode) {
+      setPhoneError("인증번호 6자리를 입력해주세요.");
+      document.getElementById("phone-code")?.focus();
       return;
     }
 
@@ -262,6 +279,7 @@ const JoinForm = () => {
               </div>
             </li>
 
+            {/* 비밀번호 */}
             <li className="mb-4">
               <div className="relative py-2 px-2 border border-gray-300 ">
                 <input
@@ -436,15 +454,16 @@ const JoinForm = () => {
                     phoneNumber={phoneNumber}
                     setPhoneNumber={setPhoneNumber}
                     setVerified={setIsPhoneVerified}
+                    setVerifiedCode={setIsVerifiedCode}
                     phoneError={phoneError}
-                    // setPhoneError={setPhoneError}
+                    setPhoneError={setPhoneError}
                     submitButtonRef={submitButtonRef}
                   />
-                  {phoneError && (
+                  {/* {phoneError && (
                     <p className="text-[var(--color-red-500)] text-xs text-left ml-2 mt-1">
                       {phoneError}
                     </p>
-                  )}
+                  )} */}
                 </ul>
               </div>
             </li>

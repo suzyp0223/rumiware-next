@@ -6,7 +6,7 @@ import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
-
+import { User } from "../components/context/UserContext";
 import Layout from "../components/layout/Layout";
 import ClientProviders from "./ClientProviders"; // ✅ 클라이언트 전용 감싸기
 import { verifySession } from "../components/utils/verifySession";
@@ -46,7 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
 
         {/* ✅ 클라이언트 전용 상태관리 Provider 감싸기 */}
-        <ClientProviders>
+        <ClientProviders initialUser={user as User}>
           {/* user를 Layout에 props로 전달 */}
           <Layout user={user}>{children}</Layout>
         </ClientProviders>

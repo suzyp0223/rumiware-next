@@ -3,9 +3,9 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "@/firebases/firebase";
 
-type User = {
+export type User = {
   uid: string;
-  email: string;
+  email: string | undefined;
   name?: string;
   picture?: string;
 } | null;
@@ -16,12 +16,12 @@ export const useUser = () => useContext(UserContext);
 
 export const UserProvider = ({
   children,
-  initialUser,
+  initialUser, // 👈 Layout에서 전달받을 사용자 정보
 }: {
   children: React.ReactNode;
-  initialUser: User;
+  initialUser: User | undefined;
 }) => {
-  const [user] = useState(initialUser); // 상태는 유지만 하고 변경하지 않음
+  const [user] = useState(initialUser ?? null); // 상태는 유지만 하고 변경하지 않음
 
   // ✅ 자동 로그인 연장 로직
   useEffect(() => {

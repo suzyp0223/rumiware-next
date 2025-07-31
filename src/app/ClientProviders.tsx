@@ -6,11 +6,20 @@ import { ReactNode } from "react";
 import { Provider } from "react-redux";
 import { queryClient } from "../lib/queryClient";
 import { store } from "../store/store";
+import { UserProvider, User } from "../components/context/UserContext"; // ✅
 
-export default function ClientProviders({ children }: { children: ReactNode }) {
+type Props = {
+  children: ReactNode;
+  initialUser: User;
+};
+
+export default function ClientProviders({ children, initialUser }: Props) {
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+      <QueryClientProvider client={queryClient}>
+        {/* ✅ 로그인 상태 자동 연장 감시 */}
+        <UserProvider initialUser={initialUser}>{children}</UserProvider>
+      </QueryClientProvider>
     </Provider>
   );
 }
