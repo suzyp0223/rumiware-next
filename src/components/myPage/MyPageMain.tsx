@@ -3,7 +3,15 @@ import RecentOrderList from "../order/RecentOrderList";
 import MyPageSideNav from "./MyPageSideNav";
 import WishList from "./WishList";
 
-const MyPageMain = () => {
+type Props = {
+  user: {
+    uid: string;
+    email?: string;
+    name?: string;
+  };
+};
+
+const MyPageMain = ({ user }: Props) => {
   return (
     // 참고 stl 마이페이지
     <div className="mt-12 max-w-7xl mx-auto flex gap-6">
@@ -13,8 +21,9 @@ const MyPageMain = () => {
       </aside>
 
       <section className="w-full max-w-3xl m-2 mt-4 min-h-[800px]">
-        <div className="flex justify-center mb-6">
+        <div className="flex flex-col items-center mb-6">
           <h1 className="text-2xl font-bold tracking-wider">마이페이지</h1>
+          <p className="mt-4 text-gray-600">{user.email} 님, 환영합니다!</p>
         </div>
 
         {/* 주문 처리 현황 */}

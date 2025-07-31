@@ -2,8 +2,7 @@
 
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebases/firebase";
+import { useLogout } from "@/hooks/useLogout";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -33,14 +32,7 @@ const Header = ({ user }: HeaderProps) => {
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const logoutHandler = async () => {
-    try {
-      await signOut(auth);
-      alert("로그아웃 되었습니다.");
-    } catch (error) {
-      console.error("로그아웃 오류:", error);
-    }
-  };
+  const { logout } = useLogout();
 
   return (
     <header className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
@@ -48,12 +40,12 @@ const Header = ({ user }: HeaderProps) => {
         <div className="flex justify-between items-center px-4 py-2 text-gray-600">
           <CopyUrlBtn />
           <div className="flex gap-8 text-sm text-gray-600 mr-6">
-            {/* 로그인,로그아웃 레이아웃 변경하기 */}
+            {/* 로그인, 로그아웃  */}
             {user ? (
               <div>
-                <span>{user.email}</span>
+                <span className="mr-8">{user.email} 님</span>
                 <button
-                  onClick={logoutHandler}
+                  onClick={logout}
                   className="hover:underline hover:text-[var(--color-red-400)]"
                 >
                   로그아웃
@@ -82,13 +74,16 @@ const Header = ({ user }: HeaderProps) => {
           {/* <SearchBtn /> */}
           <SearchToggle />
 
+          {/* 마이페이지, 장바구니 영역 */}
           <div className=" flex items-center justify-center gap-8">
-            <Link href="/myPage" className="flex flex-col items-center text-xs">
-              <Image src={myPage} alt="마이페이지" className="w-6 h-6 mt-1" />
-              <span className="mt-2 hover:underline hover:text-[var(--color-red-400)]">
-                마이페이지
-              </span>
-            </Link>
+            {user && (
+              <Link href="/myPage" className="flex flex-col items-center text-xs">
+                <Image src={myPage} alt="마이페이지" className="w-6 h-6 mt-1" />
+                <span className="mt-2 hover:underline hover:text-[var(--color-red-400)]">
+                  마이페이지
+                </span>
+              </Link>
+            )}
             <Link href="/cart" className="flex flex-col items-center text-xs mr-6">
               <Image src={cart} alt="장바구니" className="w-8 h-8" />
               {cartCount > 0 && (
@@ -102,6 +97,7 @@ const Header = ({ user }: HeaderProps) => {
         </div>
       </div>
 
+      {/* 햄버거 버튼 */}
       <TabsDropDown
         isOpen={isSidebarOpen}
         toggleSidebar={toggleSidebar}

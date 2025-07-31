@@ -12,7 +12,7 @@ import ClientProviders from "./ClientProviders"; // ✅ 클라이언트 전용 �
 import { verifySession } from "../components/utils/verifySession";
 
 // // ✅ 동적 렌더링을 강제로 활성화 (쿠키 사용 때문)
-// export const dynamic = "force-dynamic";
+export const dynamic = "force-dynamic";
 
 export const metadata = {
   title: "Rumiware",
