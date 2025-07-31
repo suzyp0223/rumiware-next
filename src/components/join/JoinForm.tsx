@@ -153,7 +153,7 @@ const JoinForm = () => {
       if (error instanceof Error) {
         console.log("회원가입 오류:", error);
       } else {
-        console.log("알 수 없는 오류가 발생했습니다");
+        console.log("회원가입시 알 수 없는 오류가 발생했습니다");
       }
     }
   };
