@@ -76,8 +76,9 @@ export const isValidKoreanName = (name: string): boolean => {
 };
 
 export const getNameError = (name: string): string => {
-  if (name.trim() === "") return "이름을 입력해주세요.";
-  if (!isValidKoreanName(name)) return "이름은 한글만 입력해주세요.";
+  const trimmed = name.trim();
+  if (trimmed === "") return "이름을 입력해주세요.";
+  if (!isValidKoreanName(trimmed)) return "이름은 두 글자 이상 한글만 입력해주세요.";
   return "";
 };
 

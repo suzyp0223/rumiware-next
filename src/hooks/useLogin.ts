@@ -34,7 +34,7 @@ export const useLogin = () => {
       let message = "로그인 중 알 수 없는 오류가 발생했습니다.";
       if (error.code === "auth/user-not-found") message = "존재하지 않는 사용자입니다.";
       if (["auth/wrong-password", "auth/invalid-credential"].includes(error.code)) {
-        message = "비밀번호가 올바르지 않습니다.";
+        message = "비밀번호가 틀렸습니다.";
       }
       if (error.code === "auth/invalid-email") message = "올바른 이메일 형식이 아닙니다.";
       if (error.code === "auth/network-request-failed") message = "네트워크 오류입니다.";

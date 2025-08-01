@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import FindAuth from "./FindAuth";
-import IssueTempPwd from "./IssueTempPwd";
+import FindAuthForm from "./FindAuthForm";
+import ResetPwdForm from "./ResetPwdForm";
 
 const findAuthTypeList = [
   { key: "email", label: "아이디 찾기" },
@@ -32,8 +32,8 @@ const FindMainMenu = () => {
         ))}
       </ul>
 
-      {activeTab === "email" && <FindAuth />}
-      {activeTab === "tempPwd" && <IssueTempPwd />}
+      {activeTab === "email" && <FindAuthForm />}
+      {activeTab === "tempPwd" && <ResetPwdForm />}
     </div>
   );
 };

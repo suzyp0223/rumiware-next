@@ -1,7 +1,7 @@
-import FindAuth from "@/components/auth/findAuth/FindMainMenu";
+import FindMainMenu from "@/components/auth/findAuth/FindMainMenu";
 
 const page = () => {
-  return <FindAuth />;
+  return <FindMainMenu />;
 };
 
 export default page;

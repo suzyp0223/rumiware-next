@@ -67,12 +67,12 @@ export const signUpUser = createAsyncThunk(
 
       const userData: UserState = {
         uid: user.uid,
-        email: user.email ?? "",
-        name,
+        email: email.replace(/\s/g, "").toLowerCase() ?? "",
+        name: name.replace(/\s/g, ""),
         birthDate,
         gender,
         nationality,
-        phoneNumber,
+        phoneNumber: phoneNumber.replace(/\s/g, "").replace(/-/g, ""),
         isAdmin: false,
         createdAt: serverTimestamp(),
       };

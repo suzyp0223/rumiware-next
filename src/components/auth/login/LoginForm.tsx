@@ -88,7 +88,13 @@ const LoginForm = () => {
 
     const result = await login(email, pwd, autoLogin);
     if (!result.success) {
-      setErrorMsg(result.error || "로그인에 실패했습니다.");
+      if (result.error?.includes("비밀번호")) {
+        setPasswordError(result.error);
+      } else if (result.error?.includes("사용자")) {
+        setEmailError(result.error);
+      } else {
+        setErrorMsg(result.error || "로그인에 실패했습니다.");
+      }
     }
   };
 
@@ -103,8 +109,9 @@ const LoginForm = () => {
             value={email}
             onChange={handleEmailChange}
             onBlur={handleEmailBlur}
-            className="outline-none  px-4 py-2 w-96
-                border-b border-transparent focus:border-[#0073e9] rounded-t"
+            className={`outline-none px-4 py-2 w-full
+                border-b border-transparent focus:border-[#0073e9] rounded-t
+              ${emailError ? "border border-red-500" : "border border-gray-300"}`}
           />
           {email && (
             <span
@@ -118,9 +125,7 @@ const LoginForm = () => {
           )}
         </div>
 
-        {emailError && (
-          <div className="text-xs text-[var(--color-red-500)] mx-2 mt-2">{emailError}</div>
-        )}
+        {emailError && <div className="text-xs text-red-500 mx-2 mt-2">{emailError}</div>}
       </div>
 
       {/* 비밀번호 입력 */}
@@ -132,8 +137,9 @@ const LoginForm = () => {
             value={pwd}
             onChange={handlePwdChange}
             onBlur={handlePasswordBlur}
-            className="outline-none px-4 py-2 w-96
-                border-b  border-transparent focus:border-[#0073e9] rounded-t"
+            className={`outline-none px-4 py-2 w-full
+                border-b border-transparent focus:border-[#0073e9] rounded-t
+                ${passwordError ? "border border-red-500" : "border border-gray-300"}`}
           />
           <span className="absolute top-1/2 right-3 transform -translate-y-1/2 mr-2">
             <PasswordToggle visible={showPwd} onToggle={() => setShowPwd((prev) => !prev)} />

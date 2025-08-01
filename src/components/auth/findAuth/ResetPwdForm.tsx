@@ -2,15 +2,17 @@
 
 import { useState } from "react";
 
-const FindAuth = () => {
+const ResetPwdForm = () => {
   const [checkRadio, setCheckRadio] = useState<"email" | "tempPwd">("email");
 
   return (
     <form className="flex flex-col gap-2 px-5">
       <div className="flex flex-col items-center justify-center text-lg gap-4 py-5 w-fit mx-auto">
         <div className="w-[400px]">
-          <p className="text-xs text-gray-600">
-            회원가입 시, 입력하신 이름 + 이메일 또는 휴대폰 번호로 아이디를 확인하실 수 있습니다.
+          <p className="text-xs text-gray-600 leading-normal">
+            가입하신 아이디+이메일 또는 휴대폰번호를 입력, 본인인증을 통해 이메일 또는 휴대폰번호로
+            임시 비밀번호를 보내드립니다. 확인 후 로그인하셔서 반드시 비밀번호를 변경하시기
+            바랍니다.
           </p>
         </div>
         <div className="mt-4 mb-2 ml-2 text-xs self-start">
@@ -37,13 +39,13 @@ const FindAuth = () => {
         <div className="w-96 flex flex-col">
           <ul className="">
             <li className="border border-gray-300 mb-2 p-2 ">
-              <label className={`hidden`}>NAME</label>
+              <label className={`hidden`}>ID</label>
               <input
                 type="text"
                 className="outline-none block w-full"
-                placeholder="NAME"
+                placeholder="ID"
                 maxLength={30}
-                title="이름"
+                title="아이디"
               />
             </li>
             {checkRadio === "email" ? (
@@ -72,7 +74,7 @@ const FindAuth = () => {
           </ul>
           <div className="mt-4">
             <button className="block  border border-blue-600 text-blue-600 hover:text-white hover:bg-blue-600 hover:border-blue-600 py-2 rounded w-96 my-2 text-center transition-all duration-30 ease-in">
-              아이디 찾기
+              임시 비밀번호 발급
             </button>
             <button className="block bg-blue-600 text-white border hover:text-blue-600 hover:bg-white hover:border-blue-600 py-2 rounded w-96 my-2 text-center transition-all duration-30 ease-in">
               로그인
@@ -84,4 +86,4 @@ const FindAuth = () => {
   );
 };
 
-export default FindAuth;
+export default ResetPwdForm;
