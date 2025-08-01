@@ -1,106 +1,119 @@
 "use client";
 
-import { useState } from "react";
-import useFindId from "./../../../hooks/useFindId";
-import { getNameError } from "@/hooks/useAuthValidation";
+import { useState, useEffect } from "react";
+
+import useFindUser from "../../../hooks/useFindUser";
 import CloseIcon from "@/components/icons/CloseIcon";
+import { getNameError } from "@/hooks/useAuthValidation";
 
 const FindAuthForm = () => {
+  const { findUser } = useFindUser();
+
+  // 🔁 폼 상태
+  const [searchType, setSearchType] = useState<"byPhone" | "byEmail">("byPhone");
   const [name, setName] = useState("");
-  const [emailOrPhone, setEmailOrPhone] = useState("");
-  const [method, setMethod] = useState<"email" | "phone">("email");
-  const [result, setResult] = useState<string | null>(null);
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [email, setEmail] = useState("");
 
-  const [nameError, setNameError] = useState<string>("");
-  const [emailOrPhoneError, setEmailOrPhoneError] = useState<string>("");
+  const [error, setError] = useState<string | null>(null);
+  const [nameError, setNameError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
 
-  const { findUserByEmail, findUserByPhone } = useFindId();
+  const [emailResult, setEmailResult] = useState<string | null>(null);
+  const [phoneResult, setPhoneResult] = useState<string | null>(null);
 
-  const handleFind = async (e: React.FormEvent) => {
+  useEffect(() => {
+    setPhoneResult(null);
+    setEmailResult(null);
+  }, [searchType]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // 🔐 1. 에러 초기화
-    setNameError("");
-    setEmailOrPhoneError("");
-    setResult("");
+    // 초기화
+    setNameError(null);
+    setPhoneError(null);
+    setEmailError(null);
+    setError(null);
 
-    // 🔍 2. 유효성 검사
-    let isValid = true;
-
-    const nameValidationMessage = getNameError(name);
-    if (nameValidationMessage) {
-      setNameError(nameValidationMessage);
-      isValid = false;
+    if (!name.trim()) {
+      setNameError("이름을 입력해주세요.");
+      return;
     }
 
-    if (!emailOrPhone.trim()) {
-      if (method === "email") {
-        setEmailOrPhoneError(
-          method === "email" ? "이메일을 입력해주세요." : "휴대폰 번호를 입력해주세요."
-        );
+    setError(null); // 초기화
+
+    try {
+      let data;
+      if (searchType === "byPhone") {
+        if (!phoneNumber.trim()) {
+          setPhoneError("휴대폰 번호를 입력해주세요.");
+          return;
+        }
+        data = await findUser("byPhone", { name, phoneNumber });
+        setPhoneResult(data?.email ?? "일치하는 정보가 없습니다.");
+        setEmailResult(null);
+      } else {
+        if (!email.trim()) {
+          setEmailError("이메일을 입력해주세요.");
+          return;
+        }
+        data = await findUser("byEmail", { name, email });
+        setEmailResult(data?.phoneNumber ?? "일치하는 정보가 없습니다.");
+        setPhoneResult(null);
       }
-      isValid = false;
-    }
-
-    if (!isValid) return;
-
-    // 🔄 3. Firebase에서 찾기
-    let user;
-
-    if (method === "email") {
-      user = await findUserByEmail(emailOrPhone, name);
-    } else {
-      user = await findUserByPhone(emailOrPhone, name);
-    }
-
-    if (user) {
-      setResult(`회원님의 아이디는: ${user.email}`);
-    } else {
-      setResult("일치하는 정보가 없습니다.");
+    } catch {
+      setError("검색 중 오류가 발생했습니다.");
     }
   };
 
-  return (
-    <form onSubmit={handleFind} className="flex flex-col gap-2 px-5">
-      <div className="flex flex-col items-center justify-center text-lg gap-4 py-5 w-fit mx-auto">
-        <div className="w-[400px]">
-          <p className="text-xs text-gray-600">
-            회원가입 시, 입력하신 이름 + 이메일 또는 휴대폰 번호로 아이디를 확인하실 수 있습니다.
-          </p>
-        </div>
-        <div className="mt-4 mb-2 ml-2 text-xs self-start">
-          <label className={`mr-10 ${method === "email" ? "text-[#0073e9]" : "text-black"}`}>
-            <input
-              type="radio"
-              checked={method === "email"}
-              onChange={() => setMethod("email")}
-              className="align-middle accent-[#0073e9]"
-            />
-            &nbsp;이메일로 휴대폰 번호 찾기
-          </label>
-          <label className={` ${method === "phone" ? "text-[#0073e9]" : "text-black"}`}>
-            <input
-              type="radio"
-              checked={method === "phone"}
-              onChange={() => setMethod("phone")}
-              className="align-middle"
-            />
-            &nbsp;휴대폰 번호로 찾기
-          </label>
-        </div>
+  const handleNameValid = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setName(value);
+    setNameError(getNameError(value));
+  };
 
-        <div className="w-96 flex flex-col">
-          <ul className="">
-            <li className="relative border border-gray-300 p-2 ">
-              <label className={`hidden`}>NAME</label>
+  return (
+    <div className="w-fit px-4">
+      <p className="w-[410px] text-xs text-gray-600 leading-normal py-5 px-2 min-h-[70px] mx-auto">
+        회원가입 시, 입력하신 이름 + 휴대폰 번호로 아이디(이메일)를 확인하실 수 있습니다.
+      </p>
+      {/* 🔘 검색 방식 선택 */}
+      <div className="flex gap-4 mt-4 mb-4 ml-3 text-xs">
+        <label className={`mr-10 ${searchType === "byPhone" ? "text-[#0073e9]" : "text-black"}`}>
+          <input
+            type="radio"
+            name="searchType"
+            value="byPhone"
+            checked={searchType === "byPhone"}
+            onChange={() => setSearchType("byPhone")}
+          />
+          <span className="ml-1">휴대폰으로 아이디(이메일) 찾기</span>
+        </label>
+        <label className={` ${searchType === "byEmail" ? "text-[#0073e9]" : "text-black"}`}>
+          <input
+            type="radio"
+            name="searchType"
+            value="byEmail"
+            checked={searchType === "byEmail"}
+            onChange={() => setSearchType("byEmail")}
+          />
+          <span className="ml-1">이메일로 휴대폰 찾기</span>
+        </label>
+      </div>
+
+      {/* 📋 입력 폼 */}
+      <form onSubmit={handleSubmit} className="space-y-3 px-3 w-full mb-6 ">
+        <ul>
+          <li>
+            <div className="relative">
               <input
                 type="text"
                 placeholder="이름"
-                title="이름"
-                maxLength={30}
                 value={name}
-                onChange={(e) => setName(e.target.value.trim())}
-                className="outline-none block w-full"
+                onChange={handleNameValid}
+                className="outline-none w-full border border-gray-300 p-2 rounded"
               />
               <span
                 className="absolute top-1/2 right-3 transform -translate-y-1/2"
@@ -110,52 +123,92 @@ const FindAuthForm = () => {
               >
                 <CloseIcon />
               </span>
-            </li>
-            {nameError && <div className="text-xs text-red-500 mx-2 mt-1">{nameError}</div>}
+            </div>
 
-            <li className="relative border border-gray-300 p-2 mt-4">
-              <label className="hidden">E-MAIL Or PHONE</label>
-              <input
-                type="text"
-                placeholder={method === "email" ? "이메일 주소" : "휴대폰 번호  - 없이 번호만"}
-                maxLength={80}
-                value={emailOrPhone}
-                onChange={(e) => setEmailOrPhone(e.target.value.trim())}
-                className="outline-none block w-full"
-              />
-              <span
-                className="absolute top-1/2 right-3 transform -translate-y-1/2"
-                onClick={() => {
-                  setEmailOrPhone("");
-                }}
-              >
-                <CloseIcon />
-              </span>
-            </li>
-            {emailOrPhoneError && (
-              <div className="text-xs text-red-500 mx-2 mt-1">{emailOrPhoneError}</div>
-            )}
-          </ul>
-          <div className="mt-4">
-            {result && <p className="text-ml mt-4 ">{result}</p>}
+            {nameError && <p className="text-red-500 text-xs mt-1">{nameError}</p>}
+          </li>
 
-            <button
-              type="submit"
-              className="block mt-8 border border-blue-600 text-blue-600 hover:text-white hover:bg-blue-600 hover:border-blue-600 py-2 rounded w-96 my-2 text-center transition-all duration-30 ease-in"
-            >
-              아이디 찾기
-            </button>
-            <button
-              type="button"
-              className="block bg-blue-600 text-white border hover:text-blue-600 hover:bg-white hover:border-blue-600 py-2 rounded w-96 my-2 text-center transition-all duration-30 ease-in"
-              onClick={() => (window.location.href = "/auth")}
-            >
-              로그인
-            </button>
-          </div>
+          {searchType === "byPhone" && (
+            <li className="mt-3">
+              <div className="relative">
+                <input
+                  type="text"
+                  placeholder="휴대폰 번호 -없이 (예: 01012345678)"
+                  value={phoneNumber}
+                  onChange={(e) => setPhoneNumber(e.target.value)}
+                  className="outline-none w-full border border-gray-300 p-2 rounded"
+                />
+                <span
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                  onClick={() => {
+                    setPhoneNumber("");
+                  }}
+                >
+                  <CloseIcon />
+                </span>
+              </div>
+              {phoneError && <p className="text-red-500 text-xs mt-1">{phoneError}</p>}
+            </li>
+          )}
+
+          {searchType === "byEmail" && (
+            <li className="mt-3">
+              <div className="relative">
+                <input
+                  type="email"
+                  placeholder="이메일 (예: abc@example.com)"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="outline-none w-full border border-gray-300 p-2 rounded"
+                />
+                <span
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                  onClick={() => {
+                    setEmail("");
+                  }}
+                >
+                  <CloseIcon />
+                </span>
+              </div>
+              {emailError && <p className="text-red-500 text-xs mt-1">{emailError}</p>}
+            </li>
+          )}
+        </ul>
+        {error && <p className="text-red-500 text-sm">{error}</p>}
+
+        <div className="pt-6 pb-4">
+          <button
+            type="submit"
+            className="block border border-blue-600 text-blue-600 hover:text-white hover:bg-blue-600 hover:border-blue-600 py-2 rounded w-full my-2 text-center transition-all duration-30 ease-in"
+          >
+            {searchType === "byPhone" ? "아이디(이메일) 찾기" : "휴대폰 번호 찾기"}
+          </button>
+          <button
+            type="button"
+            className="block bg-blue-600 text-white border hover:text-blue-600 hover:bg-white hover:border-blue-600 py-2 rounded w-full my-2 text-center transition-all duration-30 ease-in"
+            onClick={() => (window.location.href = "/auth")}
+          >
+            로그인
+          </button>
         </div>
-      </div>
-    </form>
+      </form>
+
+      {/* 📌 결과 표시 */}
+      {(phoneResult || emailResult) && (
+        <div className="mt-8 p-3 bg-gray-100 rounded text-center text-sm text-gray-800">
+          {searchType === "byPhone" && phoneResult && (
+            <p>
+              찾은 이메일: <strong>{phoneResult}</strong>
+            </p>
+          )}
+          {searchType === "byEmail" && emailResult && (
+            <p>
+              찾은 휴대폰 번호: <strong>{emailResult}</strong>
+            </p>
+          )}
+        </div>
+      )}
+    </div>
   );
 };
 

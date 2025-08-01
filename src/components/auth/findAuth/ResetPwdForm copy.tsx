@@ -1,14 +1,9 @@
 "use client";
 
-import CloseIcon from "@/components/icons/CloseIcon";
 import { useState } from "react";
 
 const ResetPwdForm = () => {
   const [checkRadio, setCheckRadio] = useState<"email" | "tempPwd">("email");
-
-  const [name, setName] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [email, setEmail] = useState("");
 
   return (
     <form className="flex flex-col gap-2 px-5">
@@ -43,61 +38,37 @@ const ResetPwdForm = () => {
 
         <div className="w-96 flex flex-col">
           <ul className="">
-            <li className="relative border border-gray-300 mb-3 p-2 rounded">
-              <label className={`hidden`}>이름</label>
+            <li className="border border-gray-300 mb-3 p-2 rounded">
+              <label className={`hidden`}>ID</label>
               <input
                 type="text"
                 className="outline-none block w-full"
-                placeholder="이름"
+                placeholder="ID"
                 maxLength={30}
                 title="아이디"
               />
-              <span
-                className="absolute top-1/2 right-3 transform -translate-y-1/2"
-                onClick={() => {
-                  setName("");
-                }}
-              >
-                <CloseIcon />
-              </span>
             </li>
             {checkRadio === "email" ? (
-              <li className="relative border border-gray-300 p-2 rounded">
-                <label className="hidden">아이디(이메일)</label>
+              <li className="border border-gray-300 p-2 rounded">
+                <label className="hidden">E-MAIL</label>
                 <input
                   type="text"
                   className="outline-none block w-full"
-                  placeholder="아이디(이메일)"
+                  placeholder="E-MAIL"
                   maxLength={80}
                   title="이멜 주소"
                 />
-                <span
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2"
-                  onClick={() => {
-                    setEmail("");
-                  }}
-                >
-                  <CloseIcon />
-                </span>
               </li>
             ) : (
-              <li className="relative border border-gray-300 p-2">
-                <label className="hidden">휴대폰 번호 -없이 (예: 01012345678)</label>
+              <li className="border border-gray-300 p-2">
+                <label className="hidden">PHONE NUMBER</label>
                 <input
                   type="text"
                   className="outline-none block w-full"
-                  placeholder="휴대폰 번호 -없이 (예: 01012345678)"
+                  placeholder="PHONE NUMBER"
                   maxLength={15}
                   title="휴대폰 번호"
                 />
-                <span
-                  className="absolute top-1/2 right-3 transform -translate-y-1/2"
-                  onClick={() => {
-                    setPhoneNumber("");
-                  }}
-                >
-                  <CloseIcon />
-                </span>
               </li>
             )}
           </ul>
