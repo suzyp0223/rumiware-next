@@ -5,14 +5,14 @@ type SearchType = "byPhone" | "byEmail";
 
 interface SearchParams {
   name: string;
-  phoneNumber?: string;
   email?: string;
+  phoneNumber?: string;
 }
 
 const useFindUser = () => {
   // 이름 + 전화번호로 아이디 찾기
   const findUser = async (type: SearchType, params: SearchParams) => {
-    const { name, phoneNumber = "", email = "" } = params;
+    const { name, email = "", phoneNumber = "" } = params;
 
     const usersRef = collection(db, "users");
     const noSpacesName = name.replace(/\s/g, "");
@@ -40,9 +40,9 @@ const useFindUser = () => {
         const userDoc = snapshot.docs[0];
         const data = userDoc.data();
         return {
+          name: data.name ?? null,
           email: data.email ?? null,
           phoneNumber: data.phoneNumber ?? null,
-          name: data.name ?? null,
         };
       }
     } catch (error) {

@@ -6,7 +6,7 @@ import ResetPwdForm from "./ResetPwdForm";
 
 const findAuthTypeList = [
   { key: "email", label: "아이디 찾기" },
-  { key: "tempPwd", label: "임시 비밀번호 발급" },
+  { key: "tempPwd", label: "비밀번호 재설정" },
 ] as const; // as const로 불변 튜플로 고정.
 type FindAuthType = (typeof findAuthTypeList)[number]["key"];
 

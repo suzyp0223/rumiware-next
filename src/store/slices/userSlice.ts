@@ -1,8 +1,8 @@
 // 프로필, 장바구니, 찜목록 등 유저 데이터 관리
 
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, getDoc, serverTimestamp, FieldValue, Timestamp } from "firebase/firestore";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc, serverTimestamp, FieldValue, Timestamp } from "firebase/firestore";
 import { auth, db } from "@/firebases/firebase";
 
 // 타입 정의
@@ -80,6 +80,7 @@ export const signUpUser = createAsyncThunk(
       console.log("📤파이어베이스에 저장 시작");
       await setDoc(doc(db, "users", user.uid), {
         ...userData,
+        isAdmin: false,
         createdAt: serverTimestamp(),
       });
       console.log("✅파이어베이스에 저장 완료...");

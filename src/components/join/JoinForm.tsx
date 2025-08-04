@@ -1,10 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+// 전체 회원가입 UI
 "use client";
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 
+import { linkWithCredential } from "firebase/auth";
+
 import { useAppDispatch } from "@/hooks/hooks";
+import usePhoneAuth from "@/hooks/usePhoneAuth";
+import { auth } from "@/firebases/firebase";
 import { checkEmailDuplicate } from "@/firebases/checkEmailDuplicate";
 
 import { signUpUser } from "../../store/slices/userSlice";
@@ -73,6 +78,7 @@ const JoinForm = () => {
     isEmailAvailable
   );
 
+  const { verifyCode } = usePhoneAuth(phoneNumber);
   const confirmPwdMessage = getConfirmPwdMessage(pwd, confirmPwd, isPwdMatch, confirmPwdFocused);
 
   const handleSignUp = async () => {
@@ -146,6 +152,13 @@ const JoinForm = () => {
           phoneNumber,
         })
       ).unwrap(); // 에러 핸들링 위해 unwrap() 사용 가능
+
+      // 🔐 전화번호 인증 credential 가져오기
+      const credential = await verifyCode(); // usePhoneAuth에서 반환
+      if (credential && auth.currentUser) {
+        await linkWithCredential(auth.currentUser, credential);
+        console.log("✅ 전화번호 연결 완료");
+      }
 
       console.log("회원가입 및 정보 저장 성공!");
       router.push("/");

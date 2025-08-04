@@ -6,7 +6,7 @@ import { getNameError, getEmailError } from "@/hooks/useAuthValidation";
 import useResetPwd from "@/hooks/useResetPwd";
 
 const ResetPwdForm = () => {
-  const [checkRadio, setCheckRadio] = useState<"email" | "tempPwd">("email");
+  const [checkRadio, setCheckRadio] = useState<"email" | "phone">("email");
 
   const [name, setName] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -53,7 +53,7 @@ const ResetPwdForm = () => {
         setEmailError(getEmailError(email));
         hasError = true;
       }
-    } else if (checkRadio === "tempPwd") {
+    } else if (checkRadio === "phone") {
       if (!phoneNumber.trim()) {
         setPhoneError("휴대폰 번호를 입력해주세요.");
         hasError = true;
@@ -62,15 +62,20 @@ const ResetPwdForm = () => {
 
     if (hasError) return;
 
+    let errMsg;
     if (checkRadio === "email") {
-      const errMsg = await sendResetLink(name, email);
-      if (errMsg) {
-        setResultMsg(errMsg);
-      } else {
-        setResultMsg("✅ 입력하신 이메일로 비밀번호 재설정 링크를 보냈습니다.");
-      }
+      errMsg = await sendResetLink(name, email, "");
+    } else if (checkRadio === "phone") {
+      errMsg = await sendResetLink(name, "", phoneNumber);
+    }
+    if (errMsg) {
+      setResultMsg(`!!${errMsg}`);
     } else {
-      setResultMsg("❗ 휴대폰 번호 발급 기능은 아직 지원되지 않습니다.");
+      setResultMsg(
+        checkRadio === "email"
+          ? `✅ 입력하신 이메일로 비밀번호 재설정 링크를 보냈습니다.`
+          : `✅ 휴대폰으로 비밀번호 재설정 링크를 이메일로 보냈습니다.`
+      );
     }
   };
 
@@ -79,9 +84,8 @@ const ResetPwdForm = () => {
       <div className="flex flex-col items-center justify-center text-lg gap-4 py-5 w-fit mx-auto">
         <div className="w-[400px]">
           <p className="text-xs text-gray-600 leading-normal">
-            가입하신 아이디+이메일 또는 휴대폰번호를 입력, 본인인증을 통해 이메일 또는 휴대폰번호로
-            임시 비밀번호를 보내드립니다. 확인 후 로그인하셔서 반드시 비밀번호를 변경하시기
-            바랍니다.
+            가입하신 이름 + 아이디(이메일) 또는 이름 + 휴대폰번호를 통해 비밀번호 재설정 링크를
+            보내드립니다.
           </p>
         </div>
 
@@ -94,16 +98,16 @@ const ResetPwdForm = () => {
               onChange={() => setCheckRadio("email")}
               className="align-middle accent-[#0073e9]"
             />
-            &nbsp;이메일로 발급
+            &nbsp;이메일로 링크 보내기
           </label>
-          <label className={`${checkRadio === "tempPwd" ? "text-[#0073e9]" : "text-black"}`}>
+          <label className={`${checkRadio === "phone" ? "text-[#0073e9]" : "text-black"}`}>
             <input
               type="radio"
-              checked={checkRadio === "tempPwd"}
-              onChange={() => setCheckRadio("tempPwd")}
+              checked={checkRadio === "phone"}
+              onChange={() => setCheckRadio("phone")}
               className="align-middle"
             />
-            &nbsp;휴대폰 번호로 발급
+            &nbsp;휴대폰 번호로 링크 보내기
           </label>
         </div>
 
@@ -156,7 +160,7 @@ const ResetPwdForm = () => {
             )}
 
             {/* 휴대폰 입력 */}
-            {checkRadio === "tempPwd" && (
+            {checkRadio === "phone" && (
               <>
                 <li className="relative border border-gray-300 mb-1 p-2 rounded">
                   <label className="hidden">휴대폰 번호</label>

@@ -1,3 +1,4 @@
+// 전화번호 인증 UI
 "use client";
 
 import React, { ChangeEvent, useEffect, useState } from "react";
