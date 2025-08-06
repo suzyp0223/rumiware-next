@@ -162,21 +162,6 @@ const CarrierChoice = ({
             {phoneError}
           </p>
         )}
-
-        {/*
-                  {(codeError || phoneError || verified) && (
-          <p
-            className={`text-sm mt-2 ml-2 ${
-              verified ? "text-blue-600" : "text-red-500"
-            }`}
-          >
-            {verified
-              ? "인증이 완료되었습니다."
-              : codeError || phoneError}
-          </p>
-        )}
-
-        */}
       </li>
     </>
   );

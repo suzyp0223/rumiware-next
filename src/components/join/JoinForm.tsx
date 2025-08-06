@@ -3,30 +3,32 @@
 "use client";
 
 import { useState, useRef } from "react";
-import { useRouter } from "next/navigation";
-
+import { useRouter, useSearchParams } from "next/navigation";
 import { linkWithCredential } from "firebase/auth";
 
 import { useAppDispatch } from "@/hooks/hooks";
 import usePhoneAuth from "@/hooks/usePhoneAuth";
 import { auth } from "@/firebases/firebase";
 import { checkEmailDuplicate } from "@/firebases/checkEmailDuplicate";
+import sendEmailVerificationLink from "@/firebases/sendEmailVerificationLink";
+import updateEmailVerified from "@/hooks/updateEmailVerified";
+import useEmailVerificationRedirect from "@/hooks/useEmailVerificationRedirect";
 
 import { signUpUser } from "../../store/slices/userSlice";
 import PasswordToggle from "../toggle/PasswordToggle";
-import CarrierChoice from "./CarrierChoice";
+// import CarrierChoice from "./CarrierChoice";
+import PhoneForm from "./PhoneForm";
 
 import {
-  isValidEmail,
   getEmailError,
   getEmailValidationMessage,
-  isValidPassword,
-  getPasswordError,
   getConfirmPwdMessage,
-  isValidKoreanName,
-  getNameError,
+  handleEmailFieldChange,
+  handlePasswordFieldChange,
+  handleConfirmPasswordFieldChange,
+  handleNameFieldChange,
+  handleBirthFieldChange,
   isValidBirthDate,
-  getBirthDateError,
 } from "@/hooks/useAuthValidation";
 
 const JoinForm = () => {
@@ -38,6 +40,7 @@ const JoinForm = () => {
   const [gender, setGender] = useState("");
   const [nationality, setNationality] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [confirmPwdFocused, setConfirmPwdFocused] = useState(false);
@@ -49,12 +52,10 @@ const JoinForm = () => {
   const [isVerifiedCode, setIsVerifiedCode] = useState(false);
 
   const [nameError, setNameError] = useState("");
-  const [confirmPwdError, setConfirmPwdError] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
   const [genderError, setGenderError] = useState("");
   const [nationalityError, setNationalityError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-
   const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
 
@@ -62,34 +63,79 @@ const JoinForm = () => {
   const emailRef = useRef<HTMLInputElement>(null);
   const pwdRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
-  const confirmPwdRef = useRef<HTMLInputElement>(null);
   const birthDateRef = useRef<HTMLInputElement>(null);
   const genderRef = useRef<HTMLDivElement>(null);
   const nationalityRef = useRef<HTMLDivElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
+  const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
   const router = useRouter();
-
-  const emailValidationMessage = getEmailValidationMessage(
-    email,
-    emailError,
-    isEmailChecked,
-    isEmailAvailable
-  );
-
   const { verifyCode } = usePhoneAuth(phoneNumber);
+
   const confirmPwdMessage = getConfirmPwdMessage(pwd, confirmPwd, isPwdMatch, confirmPwdFocused);
+
+  // 이메일 인증 후 돌아왔을 때 처리
+  useEmailVerificationRedirect({
+    setEmail,
+    setIsEmailChecked,
+    setEmailError,
+  });
+
+  // 이메일 인증 버튼 클릭시 실행
+  const handleEmailVerify = async () => {
+    const error = getEmailError(email);
+
+    if (error) {
+      setEmailError(error); // ❗️ UI에 오류 메시지 출력
+      setIsEmailChecked(false);
+      return;
+    }
+
+    try {
+      const { success } = await sendEmailVerificationLink(email);
+      if (success) {
+        setEmailError("이메일로 인증 링크를 전송했습니다. 메일함을 확인해주세요.");
+        setIsEmailChecked(true);
+        window.localStorage.setItem("emailForSignIn", email);
+      } else {
+        setEmailError("이메일 전송 실패. 다시 시도해 주세요");
+        setIsEmailChecked(false);
+      }
+    } catch (error) {
+      console.error("이메일 인증오류:", console.error());
+      setEmailError("이메일 인증 시 알 수 없는 오류가 발생했습니다.");
+      setIsEmailChecked(false);
+    }
+  };
 
   const handleSignUp = async () => {
     let isValid = true;
 
-    if (!isEmailChecked || !isEmailAvailable) {
-      setEmailError("이메일 중복 확인을 완료해주세요.");
+    const isVerified = await updateEmailVerified();
+    if (!isVerified || !isEmailAvailable) {
+      setEmailError("이메일 인증을 완료해주세요.");
       emailRef.current?.focus();
       isValid = false;
       return;
-    } else setEmailError("");
+    }
+    try {
+      const available = await checkEmailDuplicate(email);
+      if (!available) {
+        setEmailError("이미 가입된 이메일입니다");
+        setIsEmailAvailable(false); // ✅ 이메일 사용 불가 상태
+        setIsEmailChecked(true);
+        isValid = false;
+        return;
+      } else {
+        setIsEmailAvailable(true); // ✅ 이메일 사용 가능 상태
+      }
+    } catch (error) {
+      console.error("이메일 중복 확인 중 오류:", error);
+      setEmailError("서버 오류로 이메일 확인 실패");
+      isValid = false;
+      return;
+    }
 
     if (!pwd) {
       setPasswordError("비밀번호를 입력해주세요.");
@@ -171,81 +217,6 @@ const JoinForm = () => {
     }
   };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value);
-    setEmailError(getEmailError(value));
-
-    // 중복확인 상태 초기화
-    setIsEmailChecked(false);
-    setIsEmailAvailable(null);
-  };
-  const handleEmailBlur = () => {
-    setEmailError(getEmailError(email));
-  };
-
-  const handleEmailCheck = async () => {
-    const error = getEmailError(email);
-    if (error) {
-      setEmailError(error); // ❗️ UI에 오류 메시지 출력
-      return;
-    }
-
-    const available = await checkEmailDuplicate(email);
-    setIsEmailAvailable(available);
-    setIsEmailChecked(true);
-
-    if (available && isValidEmail(email)) {
-      pwdRef.current?.focus();
-    }
-  };
-
-  const handlePwdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPwd(value);
-
-    // confirmPwd가 있다면 비밀번호 일치 여부 다시 판단
-    if (confirmPwd) {
-      setIsPwdMatch(value === confirmPwd);
-    } else {
-      setIsPwdMatch(null);
-    }
-  };
-  const handlePwdBlur = () => {
-    setPasswordError(getPasswordError(pwd));
-  };
-
-  const handleConfirmPwdChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setConfirmPwd(value);
-
-    // 즉시 일치 여부 판단
-    if (pwd) {
-      setIsPwdMatch(pwd === value);
-    } else {
-      setIsPwdMatch(null);
-    }
-  };
-  const handleConfirmPwdBlur = () => {
-    setConfirmPwdFocused(false);
-  };
-  const handleConfirmPwdFocus = () => {
-    setConfirmPwdFocused(true);
-  };
-
-  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setConfirmPwdFocused(false);
-    const value = e.target.value;
-    setName(value);
-    setNameError(getNameError(value)); // 실시간 유효성 검사
-  };
-
-  const handleBirthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value.replace(/\D/g, "").slice(0, 6); // 숫자만, 최대 6자리
-    setBirthDate(value);
-    setBirthDateError(getBirthDateError(value)); // 실시간 에러 업데이트
-  };
-
   return (
     <form name="form" id="form" className="flex flex-col px-5">
       <div
@@ -258,36 +229,40 @@ const JoinForm = () => {
             <li className="mb-4">
               <div className="relative py-2 px-2 border border-gray-300 rounded-t">
                 <input
-                  type="text"
+                  type="email"
                   placeholder="아이디(이메일)"
                   value={email}
-                  // onChange={(e) => setEmail(e.target.value)}
-                  onChange={handleEmailChange}
-                  onBlur={handleEmailBlur}
+                  onChange={(e) =>
+                    handleEmailFieldChange(
+                      e.target.value,
+                      setEmail,
+                      setIsEmailChecked,
+                      setIsEmailAvailable,
+                      setEmailError
+                    )
+                  }
                   className="outline-none w-96 pl-3
                     border-b border-transparent focus:border-[#0073e9] rounded-t"
                 />
                 <button
                   type="button"
-                  onClick={handleEmailCheck}
+                  onClick={handleEmailVerify}
                   className="absolute top-1/2 right-0 transform -translate-y-1/2 text-xs hover:bg-gray-300 p-4"
                 >
-                  아이디(이메일) 중복 확인
+                  이메일 인증
                 </button>
               </div>
 
-              <div className="flex flex-col text-xs">
-                {emailValidationMessage && (
-                  <span
-                    className={`text-xs ml-2 mt-2 text-left ${
-                      emailValidationMessage.includes("중복") ||
-                      emailValidationMessage.includes("유효한")
-                        ? "text-red-500"
-                        : "text-[var(--color-blue-500)]"
+              {/* ✅ 유효성 메시지 출력 */}
+              <div className="flex flex-col text-xs text-left">
+                {getEmailValidationMessage(email, emailError, isEmailChecked, isEmailAvailable) && (
+                  <p
+                    className={`text-sm mt-1 ml-1 ${
+                      isEmailAvailable === false || emailError ? "text-red-500" : "text-green-700"
                     }`}
                   >
-                    {emailValidationMessage}
-                  </span>
+                    {getEmailValidationMessage(email, emailError, isEmailChecked, isEmailAvailable)}
+                  </p>
                 )}
               </div>
             </li>
@@ -300,9 +275,9 @@ const JoinForm = () => {
                   type={showPwd ? "text" : "password"}
                   placeholder="비밀번호"
                   value={pwd}
-                  // onChange={(e) => setPwd(e.target.value)}
-                  onChange={handlePwdChange}
-                  onBlur={handlePwdBlur}
+                  onChange={(e) =>
+                    handlePasswordFieldChange(e.target.value, confirmPwd, setPwd, setIsPwdMatch)
+                  }
                   className="outline-none w-96 pl-3
                   border-b border-transparent focus:border-[#0073e9] rounded-t"
                 />
@@ -320,9 +295,14 @@ const JoinForm = () => {
                   type={showConfirmPwd ? "text" : "password"}
                   placeholder="비밀번호 확인"
                   value={confirmPwd}
-                  onChange={handleConfirmPwdChange}
-                  onFocus={() => setConfirmPwdFocused(true)}
-                  onBlur={() => setConfirmPwdFocused(false)}
+                  onChange={(e) =>
+                    handleConfirmPasswordFieldChange(
+                      pwd,
+                      e.target.value,
+                      setConfirmPwd,
+                      setIsPwdMatch
+                    )
+                  }
                   className="outline-none w-96 pl-3
                 border-b border-transparent focus:border-[#0073e9] rounded-t"
                 />
@@ -356,7 +336,14 @@ const JoinForm = () => {
                   type="text"
                   placeholder="이름"
                   value={name}
-                  onChange={handleNameChange}
+                  onChange={(e) =>
+                    handleNameFieldChange(
+                      e.target.value,
+                      setName,
+                      setNameError,
+                      setConfirmPwdFocused
+                    )
+                  }
                   className="outline-none w-96 pl-3
                 border-b border-transparent focus:border-[#0073e9] rounded-t"
                 />
@@ -375,7 +362,9 @@ const JoinForm = () => {
                   type="text"
                   placeholder="생년월일 6자리(YYMMDD)"
                   value={birthDate}
-                  onChange={handleBirthChange}
+                  onChange={(e) =>
+                    handleBirthFieldChange(e.target.value, setBirthDate, setBirthDateError)
+                  }
                   className="outline-none w-96 pl-3
                 border-b border-transparent focus:border-[#0073e9]"
                 />
@@ -463,7 +452,13 @@ const JoinForm = () => {
             <li className="py-2">
               <div className="">
                 <ul className="text-s">
-                  <CarrierChoice
+                  <PhoneForm
+                    phoneNumber={phoneNumber}
+                    setPhoneNumber={setPhoneNumber}
+                    phoneError={phoneError}
+                    setPhoneError={setPhoneError}
+                  />
+                  {/* <CarrierChoice
                     phoneNumber={phoneNumber}
                     setPhoneNumber={setPhoneNumber}
                     setVerified={setIsPhoneVerified}
@@ -471,7 +466,7 @@ const JoinForm = () => {
                     phoneError={phoneError}
                     setPhoneError={setPhoneError}
                     submitButtonRef={submitButtonRef}
-                  />
+                  /> */}
                   {/* {phoneError && (
                     <p className="text-[var(--color-red-500)] text-xs text-left ml-2 mt-1">
                       {phoneError}
