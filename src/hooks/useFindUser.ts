@@ -7,7 +7,7 @@ interface SearchParams {
   name?: string;
   email?: string;
   phoneNumber?: string;
-  emailVerified: boolean;
+  emailVerified?: boolean;
 }
 
 const useFindUser = () => {
@@ -17,8 +17,6 @@ const useFindUser = () => {
 
     const noSpacesName = params.name?.replace(/\s/g, "") ?? "";
     const noSpacesPhone = params.phoneNumber?.replace(/\D/g, "") ?? "";
-    console.log("noSpacesPhone: ", noSpacesPhone);
-    console.log("noSpacesPhone 타입은??: ", typeof noSpacesPhone);
 
     const noSpacesEmail = params.email?.trim().toLowerCase() ?? "";
 

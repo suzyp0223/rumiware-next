@@ -2,7 +2,7 @@
 
 import React, { ChangeEvent } from "react";
 
-import { formatPhoneNumber, validatePhoneNumber } from "@/hooks/useAuthValidation";
+import { formatPhoneNumber, getPhoneError } from "@/hooks/useAuthValidation";
 import useFindUser from "@/hooks/useFindUser";
 
 interface PhoneFormProps {
@@ -38,15 +38,13 @@ const PhoneForm = ({ phoneNumber, setPhoneNumber, phoneError, setPhoneError }: P
   // ✅ 중복 확인 버튼 클릭
   const handleCheckDuplicate = async () => {
     const cleanedPhone = phoneNumber.replace(/\D/g, "");
-    console.log("cleanedPhone: ", cleanedPhone);
-    console.log("cleanedPhone 타입: ", typeof cleanedPhone);
 
     if (!phoneNumber || cleanedPhone.length < 10) {
       setPhoneError("유효한 전화번호를 입력해주세요.");
       return;
     }
 
-    const validationMessage = validatePhoneNumber(phoneNumber);
+    const validationMessage = getPhoneError(phoneNumber);
     if (validationMessage) {
       setPhoneError(validationMessage);
       return;
@@ -56,8 +54,6 @@ const PhoneForm = ({ phoneNumber, setPhoneNumber, phoneError, setPhoneError }: P
 
     if (user) {
       if (user.emailVerified === false) {
-        setPhoneError("이메일 인증을 먼저 완료해주세요.");
-      } else {
         setPhoneError("이미 가입된 전화번호입니다.");
       }
     } else {

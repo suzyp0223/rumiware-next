@@ -6,16 +6,16 @@
     Redux 상태에 저장하여 로그인 상태 유지
  */
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, serverTimestamp, FieldValue, Timestamp } from "firebase/firestore";
+import { doc, setDoc, serverTimestamp, FieldValue, Timestamp, getDoc } from "firebase/firestore";
 import { auth, db } from "@/firebases/firebase";
+import { updatePassword } from "firebase/auth";
 
 // 타입 정의
 interface PhoneUser {
   uid: string;
   phoneNumber: string;
   isAdmin: boolean;
-  createdAt: FieldValue | Timestamp | null;
+  createdAt?: FieldValue | Timestamp | null;
 }
 
 interface EmailUser extends PhoneUser {
@@ -44,13 +44,12 @@ const initialState: State = {
   error: null,
 };
 
-// 🔐 회원가입 (Firebase + Firestore 저장)
+// 🔐 회원가입 (이메일 인증 링크 클릭 후 Firestore 저장만 진행)
 export const signUpUser = createAsyncThunk(
   "user/signUpUser", // 액션 이름
 
   async (
     {
-      email,
       password,
       name,
       birthDate,
@@ -58,7 +57,6 @@ export const signUpUser = createAsyncThunk(
       nationality,
       phoneNumber,
     }: {
-      email: string;
       password: string;
       name: string;
       birthDate: string;
@@ -69,42 +67,66 @@ export const signUpUser = createAsyncThunk(
     thunkAPI
   ) => {
     try {
-      // 1) Firebase Auth 회원 생성
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
+      const user = auth.currentUser;
 
-      // 2) 유저 데이터 구성
-      const userData: UserState = {
+      if (!user || !user.email) {
+        return thunkAPI.rejectWithValue(
+          "사용자 인증이 필요합니다.  이메일 인증을 먼저 진행해주세요."
+        );
+      }
+
+      // 🔄 이메일 인증 상태 갱신
+      await user.reload();
+
+      // ✅ 비밀번호 설정 시도
+      try {
+        await updatePassword(user, password);
+        console.log("🔐 비밀번호 설정 완료");
+      } catch (error) {
+        if (error === "auth/requires-recent-login") {
+          console.warn("🔐 최근 로그인 필요 - 인증 링크를 다시 클릭해주세요.");
+          return thunkAPI.rejectWithValue(
+            "비밀번호 설정 시간이 만료되었습니다. 인증 링크를 다시 클릭해주세요."
+          );
+        } else {
+          console.error("❌ 비밀번호 설정 실패:", error);
+          return thunkAPI.rejectWithValue("비밀번호 설정 중 오류가 발생했습니다.");
+        }
+      }
+
+      // ✅ Firestore 문서 확인
+      const userDocRef = doc(db, "users", user.uid);
+      const snapshot = await getDoc(userDocRef);
+
+      if (snapshot.exists()) {
+        return thunkAPI.rejectWithValue("이미 가입된 사용자입니다.");
+      }
+
+      // ✅ 사용자 정보 구성
+      const userData: EmailUser = {
         uid: user.uid,
-        email: email.replace(/\s/g, "").toLowerCase() ?? "", // **?? "" (null 병합 연산자)** 결과가 null 또는 undefined인 경우 빈 문자열로 대체
-        name: name.replace(/\s/g, ""),
+        email: user.email.toLowerCase(),
+        name: name.trim(),
         birthDate,
         gender,
         nationality,
         phoneNumber: phoneNumber.replace(/\D/g, ""),
         emailVerified: user.emailVerified,
         isAdmin: false,
-        createdAt: serverTimestamp(),
+        createdAt: serverTimestamp(), // Firestore에는 저장됨
       };
 
-      // 3) Firestore 저장
-      console.log("📤파이어베이스에 저장 시작");
-      await setDoc(doc(db, "users", user.uid), {
-        ...userData,
-        isAdmin: false,
-        createdAt: serverTimestamp(),
-      });
-      console.log("✅파이어베이스에 저장 완료...");
+      // ✅ Firestore 저장
+      await setDoc(userDocRef, userData);
+      console.log("✅ Firestore 저장 완료");
 
-      return userData;
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error("❌ Firestore 저장 실패:", error.message);
-        return thunkAPI.rejectWithValue(error.message);
-      } else {
-        console.error("❌ Firestore 저장 실패: 알 수 없는 에러");
-        return thunkAPI.rejectWithValue("알 수 없는 에러");
-      }
+      //  Redux 상태에 저장할 데이터에서 createdAt 제거
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { createdAt: _unused, ...userWithoutTimestamp } = userData;
+      return userWithoutTimestamp as EmailUser; // ⚠️ 직렬화 경고 방지
+    } catch (error) {
+      console.error("❌ Firestore 저장 실패:", error);
+      return thunkAPI.rejectWithValue(error || "알 수 없는 오류가 발생했습니다.");
     }
   }
 );

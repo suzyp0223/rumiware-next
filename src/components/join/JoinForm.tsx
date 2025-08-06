@@ -2,9 +2,9 @@
 // 전체 회원가입 UI
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { linkWithCredential } from "firebase/auth";
+import { isSignInWithEmailLink, linkWithCredential, signInWithEmailLink } from "firebase/auth";
 
 import { useAppDispatch } from "@/hooks/hooks";
 import usePhoneAuth from "@/hooks/usePhoneAuth";
@@ -29,6 +29,8 @@ import {
   handleNameFieldChange,
   handleBirthFieldChange,
   isValidBirthDate,
+  isValidEmail,
+  validateSignUpFields,
 } from "@/hooks/useAuthValidation";
 
 const JoinForm = () => {
@@ -45,18 +47,19 @@ const JoinForm = () => {
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [confirmPwdFocused, setConfirmPwdFocused] = useState(false);
 
+  const [emailVerified, setEmailVerified] = useState(false);
   const [isEmailChecked, setIsEmailChecked] = useState(false);
   const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
+  const [showEmptyMessage, setShowEmptyMessage] = useState(false);
   const [isPwdMatch, setIsPwdMatch] = useState<boolean | null>(null); // 비밀번호 일치 여부
-  const [isPhoneVerified, setIsPhoneVerified] = useState(false);
-  const [isVerifiedCode, setIsVerifiedCode] = useState(false);
+  const [emailTouched, setEmailTouched] = useState(false);
 
+  const [emailError, setEmailError] = useState("");
   const [nameError, setNameError] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
   const [genderError, setGenderError] = useState("");
   const [nationalityError, setNationalityError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [emailError, setEmailError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
 
   // 필드별 ref 선언
@@ -66,130 +69,115 @@ const JoinForm = () => {
   const birthDateRef = useRef<HTMLInputElement>(null);
   const genderRef = useRef<HTMLDivElement>(null);
   const nationalityRef = useRef<HTMLDivElement>(null);
+  const phoneNumberRef = useRef<HTMLInputElement>(null);
   const submitButtonRef = useRef<HTMLButtonElement>(null);
 
-  const searchParams = useSearchParams();
+  const rawParams = useSearchParams();
+  const searchParams = rawParams ?? new URLSearchParams();
+
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { verifyCode } = usePhoneAuth(phoneNumber);
+  // const { verifyCode } = usePhoneAuth(phoneNumber);
 
   const confirmPwdMessage = getConfirmPwdMessage(pwd, confirmPwd, isPwdMatch, confirmPwdFocused);
 
-  // 이메일 인증 후 돌아왔을 때 처리
-  useEmailVerificationRedirect({
-    setEmail,
-    setIsEmailChecked,
-    setEmailError,
-  });
-
   // 이메일 인증 버튼 클릭시 실행
   const handleEmailVerify = async () => {
-    const error = getEmailError(email);
-
-    if (error) {
-      setEmailError(error); // ❗️ UI에 오류 메시지 출력
+    if (!email.trim() || !isValidEmail(email)) {
       setIsEmailChecked(false);
+      setIsEmailAvailable(null);
       return;
     }
 
     try {
       const { success } = await sendEmailVerificationLink(email);
       if (success) {
-        setEmailError("이메일로 인증 링크를 전송했습니다. 메일함을 확인해주세요.");
         setIsEmailChecked(true);
-        window.localStorage.setItem("emailForSignIn", email);
+        setEmailError("이메일로 인증 링크를 전송했습니다. 메일함을 확인해주세요.");
+        window.localStorage.setItem("emailForVerification", email);
       } else {
-        setEmailError("이메일 전송 실패. 다시 시도해 주세요");
         setIsEmailChecked(false);
+        setEmailError("이메일 인증에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (error) {
-      console.error("이메일 인증오류:", console.error());
-      setEmailError("이메일 인증 시 알 수 없는 오류가 발생했습니다.");
+      console.error("이메일 인증 오류:", error);
       setIsEmailChecked(false);
+      setEmailError("이메일 인증에 실패했습니다. 다시 시도해주세요.");
     }
   };
 
-  const handleSignUp = async () => {
-    let isValid = true;
+  // 1. 인증 링크 클릭 후 돌아왔을 때 처리
+  useEffect(() => {
+    const verifyEmailLink = async () => {
+      const storedEmail = localStorage.getItem("emailForVerification");
+      const url = window.location.href;
+      const queryEmail = searchParams?.get("email");
+      const finalEmail = queryEmail || storedEmail;
 
-    const isVerified = await updateEmailVerified();
-    if (!isVerified || !isEmailAvailable) {
-      setEmailError("이메일 인증을 완료해주세요.");
-      emailRef.current?.focus();
-      isValid = false;
-      return;
-    }
-    try {
-      const available = await checkEmailDuplicate(email);
-      if (!available) {
-        setEmailError("이미 가입된 이메일입니다");
-        setIsEmailAvailable(false); // ✅ 이메일 사용 불가 상태
-        setIsEmailChecked(true);
-        isValid = false;
-        return;
-      } else {
-        setIsEmailAvailable(true); // ✅ 이메일 사용 가능 상태
+      if (!finalEmail) return;
+
+      if (isSignInWithEmailLink(auth, url)) {
+        try {
+          await signInWithEmailLink(auth, finalEmail, url);
+          setEmail(finalEmail);
+          setEmailVerified(true);
+          setIsEmailAvailable(true);
+          localStorage.removeItem("emailForVerification");
+          console.log("✅ 이메일 인증 성공 및 로그인 완료");
+        } catch (error) {
+          console.error("❌ 링크 인증 실패:", error);
+        }
       }
-    } catch (error) {
-      console.error("이메일 중복 확인 중 오류:", error);
-      setEmailError("서버 오류로 이메일 확인 실패");
-      isValid = false;
-      return;
-    }
+    };
 
-    if (!pwd) {
-      setPasswordError("비밀번호를 입력해주세요.");
-      pwdRef.current?.focus();
-      isValid = false;
-      return;
-    } else setPasswordError("");
+    verifyEmailLink();
+  }, [searchParams]);
 
-    if (!name) {
-      setNameError("이름을 입력해주세요.");
-      nameRef.current?.focus();
-      isValid = false;
-      return;
-    } else setNameError("");
+  const handleSignUp = async () => {
+    setShowEmptyMessage(true);
 
-    if (!birthDate && !isValidBirthDate(birthDate)) {
-      setBirthDateError("생년월일은 숫자 6자리(YYMMDD)로 입력해주세요.");
-      birthDateRef.current?.focus();
-      isValid = false;
-      return;
-    } else setBirthDateError("");
+    // 🔍 공통 유효성 검사
+    const { isValid, errors } = validateSignUpFields({
+      email,
+      isEmailAvailable,
+      emailVerified,
+      pwd,
+      name,
+      birthDate,
+      gender,
+      nationality,
+      phoneNumber,
+      setEmailError,
+      setPasswordError,
+      setNameError,
+      setBirthDateError,
+      setGenderError,
+      setNationalityError,
+      setPhoneError,
+      emailRef,
+      pwdRef,
+      nameRef,
+      birthDateRef,
+      genderRef,
+      nationalityRef,
+      phoneNumberRef,
+    });
 
-    if (!gender) {
-      setGenderError("성별을 선택해주세요.");
-      genderRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      isValid = false;
-      return;
-    } else setGenderError("");
-
-    if (!nationality) {
-      setNationalityError("내/외국적을 선택해주세요.");
-      nationalityRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-      isValid = false;
-      return;
-    } else setNationalityError("");
+    // 🔴 유효성 오류 메시지 반영 (useState로 연결된 메시지 세팅)
+    setEmailError(errors.email || "");
+    setPasswordError(errors.password || "");
+    setNameError(errors.name || "");
+    setBirthDateError(errors.birthDate || "");
+    setGenderError(errors.gender || "");
+    setNationalityError(errors.nationality || "");
+    setPhoneError(errors.phoneNumber || "");
 
     if (!isValid) return;
 
-    if (!isPhoneVerified) {
-      setPhoneError("휴대폰 인증을 완료해주세요.");
-      document.getElementById("phone-input")?.focus(); // ✅ 인증 인풋으로 포커스
-      return;
-    }
-
-    if (!isVerifiedCode) {
-      setPhoneError("인증번호 6자리를 입력해주세요.");
-      document.getElementById("phone-code")?.focus();
-      return;
-    }
-
     try {
+      // 🧩 Redux Thunk로 사용자 생성 및 Firestore 저장
       await dispatch(
         signUpUser({
-          email,
           password: pwd,
           name,
           birthDate,
@@ -198,16 +186,41 @@ const JoinForm = () => {
           phoneNumber,
         })
       ).unwrap(); // 에러 핸들링 위해 unwrap() 사용 가능
+      console.log("회원가입 및 정보 저장 성공!");
 
-      // 🔐 전화번호 인증 credential 가져오기
-      const credential = await verifyCode(); // usePhoneAuth에서 반환
-      if (credential && auth.currentUser) {
-        await linkWithCredential(auth.currentUser, credential);
-        console.log("✅ 전화번호 연결 완료");
+      // 🔐 이메일 인증 여부 확인 (인증 안 되었으면 중단)
+      const isVerified = await updateEmailVerified();
+      if (!isVerified || !isEmailAvailable) {
+        emailRef.current?.focus();
+        return;
       }
 
-      console.log("회원가입 및 정보 저장 성공!");
-      router.push("/");
+      // ✅ 인증되지 않은 경우만 중복 확인
+      if (!emailVerified) {
+        try {
+          const available = await checkEmailDuplicate(email);
+          if (!available) {
+            setEmailError("이미 가입된 이메일입니다");
+            setIsEmailAvailable(false); // ✅ 이메일 사용 불가 상태
+            setIsEmailChecked(true);
+            emailRef.current?.focus();
+            return;
+          }
+        } catch (error) {
+          console.error("이메일 중복 확인 중 오류:", error);
+          setIsEmailAvailable(null); // 검사 실패로 리셋
+          return;
+        }
+      }
+
+      // // 🔐 전화번호 인증 credential 가져오기 → Firebase 계정에 연결
+      // const credential = await verifyCode(); // usePhoneAuth에서 반환
+      // if (credential && auth.currentUser) {
+      //   await linkWithCredential(auth.currentUser, credential);
+      //   console.log("✅ 전화번호 연결 완료");
+      // }
+
+      router.push("/auth");
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log("회원가입 오류:", error);
@@ -216,6 +229,15 @@ const JoinForm = () => {
       }
     }
   };
+
+  const emailMessage = getEmailValidationMessage(
+    email,
+    isEmailChecked,
+    isEmailAvailable,
+    emailVerified,
+    showEmptyMessage || emailTouched,
+    emailError
+  );
 
   return (
     <form name="form" id="form" className="flex flex-col px-5">
@@ -227,22 +249,27 @@ const JoinForm = () => {
         <ul className="flex flex-row text-center px-4">
           <div className="">
             <li className="mb-4">
-              <div className="relative py-2 px-2 border border-gray-300 rounded-t">
+              <div className="relative py-2 px-2 border border-gray-300 rounded">
                 <input
                   type="email"
+                  id="email"
                   placeholder="아이디(이메일)"
                   value={email}
-                  onChange={(e) =>
-                    handleEmailFieldChange(
-                      e.target.value,
-                      setEmail,
-                      setIsEmailChecked,
-                      setIsEmailAvailable,
-                      setEmailError
-                    )
-                  }
+                  onChange={(e) => {
+                    const newEmail = e.target.value;
+
+                    setEmail(newEmail);
+                    setEmailTouched(true); // 🔸 입력하면 touched됨
+                    setIsEmailChecked(false);
+                    setIsEmailAvailable(null);
+                    setEmailVerified(false);
+
+                    // 인증된 이메일이 입력되면 다시 입력 가능하도록 제어
+                    if (emailVerified) setEmailVerified(false);
+                  }}
+                  readOnly={emailVerified}
                   className="outline-none w-96 pl-3
-                    border-b border-transparent focus:border-[#0073e9] rounded-t"
+                    border-b border-transparent focus:border-[#0073e9]"
                 />
                 <button
                   type="button"
@@ -255,13 +282,15 @@ const JoinForm = () => {
 
               {/* ✅ 유효성 메시지 출력 */}
               <div className="flex flex-col text-xs text-left">
-                {getEmailValidationMessage(email, emailError, isEmailChecked, isEmailAvailable) && (
+                {emailMessage && (
                   <p
-                    className={`text-sm mt-1 ml-1 ${
-                      isEmailAvailable === false || emailError ? "text-red-500" : "text-green-700"
+                    className={`mt-2 ml-1  ${
+                      /완료|성공|전송|인증되었습니다/.test(emailMessage)
+                        ? "text-blue-500"
+                        : "text-red-500"
                     }`}
                   >
-                    {getEmailValidationMessage(email, emailError, isEmailChecked, isEmailAvailable)}
+                    {emailMessage}
                   </p>
                 )}
               </div>
@@ -269,15 +298,18 @@ const JoinForm = () => {
 
             {/* 비밀번호 */}
             <li className="mb-4">
-              <div className="relative py-2 px-2 border border-gray-300 ">
+              <div className="relative py-2 px-2 border border-gray-300 rounded">
                 <input
                   ref={pwdRef}
                   type={showPwd ? "text" : "password"}
                   placeholder="비밀번호"
                   value={pwd}
-                  onChange={(e) =>
-                    handlePasswordFieldChange(e.target.value, confirmPwd, setPwd, setIsPwdMatch)
-                  }
+                  onChange={(e) => {
+                    handlePasswordFieldChange(e.target.value, confirmPwd, setPwd, setIsPwdMatch);
+                    if (e.target.value.trim() !== "") {
+                      setPasswordError(""); // ✅ 입력 시 에러 초기화
+                    }
+                  }}
                   className="outline-none w-96 pl-3
                   border-b border-transparent focus:border-[#0073e9] rounded-t"
                 />
@@ -290,7 +322,7 @@ const JoinForm = () => {
                   <span className="text-red-500 ml-2 mt-2 text-left">{passwordError}</span>
                 )}
               </div>
-              <div className="relative py-2 px-2 border border-gray-300 rounded-b">
+              <div className="relative py-2 px-2 border border-gray-300 rounded">
                 <input
                   type={showConfirmPwd ? "text" : "password"}
                   placeholder="비밀번호 확인"
@@ -467,11 +499,6 @@ const JoinForm = () => {
                     setPhoneError={setPhoneError}
                     submitButtonRef={submitButtonRef}
                   /> */}
-                  {/* {phoneError && (
-                    <p className="text-[var(--color-red-500)] text-xs text-left ml-2 mt-1">
-                      {phoneError}
-                    </p>
-                  )} */}
                 </ul>
               </div>
             </li>

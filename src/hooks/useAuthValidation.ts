@@ -12,20 +12,25 @@ export const getEmailError = (email: string): string => {
 
 export const getEmailValidationMessage = (
   email: string,
-  emailError: string,
   isEmailChecked: boolean,
-  isEmailAvailable: boolean | null
+  isEmailAvailable: boolean | null,
+  emailVerified: boolean,
+  showEmptyMessage: boolean = false,
+  emailError: string = ""
 ): string | null => {
-  if (emailError) return emailError;
-  if (isValidEmail(email) && !isEmailChecked) {
-    return "이메일 인증을 완료해주세요.";
+  if (emailError) return emailError; // ✅ 이 줄 추가!
+
+  if (email.trim() === "") {
+    if (showEmptyMessage) return "아이디(이메일)를 입력해주세요.";
+    return null;
   }
-  if (isEmailChecked && isEmailAvailable === false) {
+  if (!isValidEmail(email)) return "유효한 이메일 형식이 아닙니다.";
+  if (isEmailChecked && isEmailAvailable === false)
     return "아이디(이메일)가 중복입니다. 다시 입력해주세요.";
-  }
-  if (isEmailChecked && isEmailAvailable === true) {
-    return "사용 가능한 아이디(이메일)입니다.";
-  }
+  if (isEmailChecked && isEmailAvailable === true) return "사용 가능한 아이디(이메일)입니다.";
+
+  if (emailVerified) return "✔ 이메일 인증이 완료되었습니다.";
+  if (isValidEmail(email) && !isEmailChecked) return "이메일을 인증해주세요.";
   return null;
 };
 
@@ -87,21 +92,22 @@ export const getBirthDateError = (birth: string): string => {
   return "";
 };
 
+// 전화번호 유효성 검사
+export const getPhoneError = (phoneNumber: string): string => {
+  const cleanedPhone = phoneNumber.replace(/\D/g, "");
+  if (cleanedPhone === "") return "전화번호를 입력해주세요.";
+  if (!cleanedPhone || cleanedPhone.length <= 10) {
+    return "전화번호는 숫자 11자 이상 입력해주세요.";
+  }
+  return "";
+};
+
 // 전화번호 포맷팅
 export const formatPhoneNumber = (input: string): string => {
   const onlyNumbers = input.replace(/\D/g, "");
   if (onlyNumbers.length <= 3) return onlyNumbers;
   if (onlyNumbers.length <= 7) return `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3)}`;
   return `${onlyNumbers.slice(0, 3)}-${onlyNumbers.slice(3, 7)}-${onlyNumbers.slice(7, 11)}`;
-};
-
-// 전화번호 유효성 검사
-export const validatePhoneNumber = (phoneNumber: string): string => {
-  const cleaned = phoneNumber.replace(/\D/g, "");
-  if (!cleaned || cleaned.length <= 10) {
-    return "전화번호는 숫자 11자 이상 입력해주세요.";
-  }
-  return "";
 };
 
 // 이메일 변경 핸들러
@@ -169,4 +175,80 @@ export const handleBirthFieldChange = (
   const value = raw.replace(/\D/g, "").slice(0, 6);
   setBirth(value);
   setBirthError(getBirthDateError(value));
+};
+
+// ✅ 전체 회원가입 유효성 검사 함수
+interface SignUpFields {
+  email: string;
+  isEmailAvailable: boolean | null;
+  emailVerified: boolean;
+  pwd: string;
+  name: string;
+  birthDate: string;
+  gender: string;
+  nationality: string;
+  phoneNumber: string;
+  setEmailError: (msg: string) => void;
+  setPasswordError: (msg: string) => void;
+  setNameError: (msg: string) => void;
+  setBirthDateError: (msg: string) => void;
+  setGenderError: (msg: string) => void;
+  setNationalityError: (msg: string) => void;
+  setPhoneError: (msg: string) => void;
+  emailRef: React.RefObject<HTMLInputElement | null>;
+  pwdRef: React.RefObject<HTMLInputElement | null>;
+  nameRef: React.RefObject<HTMLInputElement | null>;
+  birthDateRef: React.RefObject<HTMLInputElement | null>;
+  genderRef: React.RefObject<HTMLDivElement | null>;
+  nationalityRef: React.RefObject<HTMLDivElement | null>;
+  phoneNumberRef: React.RefObject<HTMLInputElement | null>;
+}
+
+interface SignUpValidationResult {
+  isValid: boolean;
+  errors: {
+    email?: string;
+    password?: string;
+    name?: string;
+    birthDate?: string;
+    gender?: string;
+    nationality?: string;
+    phoneNumber?: string;
+  };
+}
+
+export const validateSignUpFields = ({
+  email,
+  pwd,
+  name,
+  birthDate,
+  gender,
+  nationality,
+  phoneNumber,
+  setEmailError,
+  emailRef,
+}: SignUpFields): SignUpValidationResult => {
+  const errors: SignUpValidationResult["errors"] = {};
+
+  // 1️⃣ 이메일 유효성 검사
+  if (!email.trim()) {
+    setEmailError("이메일을 입력해주세요.");
+    emailRef.current?.focus();
+  }
+
+  if (!email) errors.password = "아이디(이메일)를 입력해주세요.";
+  if (!pwd) errors.password = "비밀번호를 입력해주세요.";
+
+  if (!name) errors.name = "이름을 입력해주세요.";
+  if (!birthDate || !isValidBirthDate(birthDate)) {
+    errors.birthDate = "생년월일은 숫자 6자리(YYMMDD)로 입력해주세요.";
+  }
+  if (!gender) errors.gender = "성별을 선택해주세요.";
+  if (!nationality) errors.nationality = "내/외국적을 선택해주세요.";
+  if (!phoneNumber) errors.phoneNumber = "전화번호를 입력해주세요.";
+
+  return {
+    isValid: Object.keys(errors).length === 0,
+    errors,
+  };
 };

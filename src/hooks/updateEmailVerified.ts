@@ -1,25 +1,42 @@
 import { auth, db } from "@/firebases/firebase";
-import { reload } from "firebase/auth";
-import { doc, updateDoc } from "firebase/firestore";
+import { doc, getDoc, updateDoc } from "firebase/firestore";
 
 /**
- * 이메일 인증 상태를 다시 확인하고 Firestore에 업데이트합니다.
+ * 이메일 인증 상태를 확인하고 Firestore에 반영
+ * @returns 이메일 인증 여부 (true/false)
  */
-const updateEmailVerified = async () => {
-  if (!auth.currentUser) return;
+const updateEmailVerified = async (): Promise<boolean> => {
+  const user = auth.currentUser;
+
+  if (!user) {
+    console.error("❌ 유저가 로그인되어 있지 않습니다.");
+    return false;
+  }
 
   try {
-    await auth.currentUser.reload(); // 최신 상태로 리로드
-    const isVerified = auth.currentUser.emailVerified;
+    // 1️⃣ 인증 상태를 최신으로 가져옴
+    await user.reload();
+    const isVerified = user.emailVerified;
 
-    if (isVerified) {
-      const userRef = doc(db, "users", auth.currentUser.uid);
-      await updateDoc(userRef, { emailVerified: true });
+    if (!isVerified) {
+      console.warn("⚠️ 이메일 인증이 아직 완료되지 않았습니다.");
+      return false;
     }
 
-    return isVerified;
+    // 2️⃣ Firestore에 문서가 있을 때만 업데이트 시도
+    const userRef = doc(db, "users", user.uid);
+    const userSnapshot = await getDoc(userRef);
+
+    if (userSnapshot.exists()) {
+      await updateDoc(userRef, { emailVerified: true });
+      console.log("✅ Firestore에 이메일 인증 상태 반영됨");
+    } else {
+      console.log("ℹ️ 인증은 완료됐지만, Firestore 문서가 없어 업데이트 생략");
+    }
+
+    return true;
   } catch (error) {
-    console.error("이메일 인증 상태 확인 실패:", error);
+    console.error("❌ 이메일 인증 상태 확인 실패:", error);
     return false;
   }
 };
