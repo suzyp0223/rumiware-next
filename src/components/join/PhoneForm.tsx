@@ -19,30 +19,16 @@ const PhoneForm = ({ phoneNumber, setPhoneNumber, phoneError, setPhoneError }: P
     const formatted = formatPhoneNumber(e.target.value);
     setPhoneNumber(formatted);
     setPhoneError("");
-
-    // await validateAndCheckPhone(formatted, name);
   };
-
-  // // 🔽 이름이 변경될 때도 중복 검사 다시 실행
-  // useEffect(() => {
-  //   if (!phoneNumber || phoneNumber.replace(/\D/g, "").length < 10) return;
-
-  //   // 이름이 비어 있으면 에러 출력
-  //   if (!name.trim()) {
-  //     setPhoneError("이름을 먼저 입력해주세요.");
-  //     return;
-  //   }
-  //   validateAndCheckPhone(phoneNumber, name);
-  // }, [name]);
 
   // ✅ 중복 확인 버튼 클릭
   const handleCheckDuplicate = async () => {
     const cleanedPhone = phoneNumber.replace(/\D/g, "");
 
-    if (!phoneNumber || cleanedPhone.length < 10) {
-      setPhoneError("유효한 전화번호를 입력해주세요.");
-      return;
-    }
+    // if (!phoneNumber || cleanedPhone.length < 10) {
+    //   setPhoneError("유효한 전화번호를 입력해주세요.");
+    //   return;
+    // }
 
     const validationMessage = getPhoneError(phoneNumber);
     if (validationMessage) {
@@ -53,9 +39,7 @@ const PhoneForm = ({ phoneNumber, setPhoneNumber, phoneError, setPhoneError }: P
     const user = await findUser("byPhone", { phoneNumber: cleanedPhone });
 
     if (user) {
-      if (user.emailVerified === false) {
-        setPhoneError("이미 가입된 전화번호입니다.");
-      }
+      setPhoneError("이미 가입된 전화번호입니다.");
     } else {
       setPhoneError("사용 가능한 전화번호입니다.");
     }

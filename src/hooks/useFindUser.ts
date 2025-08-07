@@ -13,29 +13,23 @@ interface SearchParams {
 const useFindUser = () => {
   // 이름 + 전화번호로 아이디 찾기
   const findUser = async (type: SearchType, params: SearchParams) => {
-    const usersRef = collection(db, "users");
-
     const noSpacesName = params.name?.replace(/\s/g, "") ?? "";
     const noSpacesPhone = params.phoneNumber?.replace(/\D/g, "") ?? "";
-
     const noSpacesEmail = params.email?.trim().toLowerCase() ?? "";
+
+    const usersRef = collection(db, "users");
 
     let q;
 
     if (type === "byPhone" && noSpacesPhone) {
-      if (noSpacesName) {
-        // ✅ 이름 + 전화번호로 검색
-        q = query(
-          usersRef,
-          where("phoneNumber", "==", noSpacesPhone),
-          where("name", "==", noSpacesName)
-        );
-      } else if (noSpacesPhone) {
-        // ✅ 전화번호만으로 검색
-        q = query(usersRef, where("phoneNumber", "==", noSpacesPhone));
-      } else {
-        throw new Error("전화번호가 필요합니다.");
-      }
+      // ✅ 이름 + 전화번호로 검색
+      q = noSpacesName
+        ? query(
+            usersRef,
+            where("phoneNumber", "==", noSpacesPhone),
+            where("name", "==", noSpacesName)
+          )
+        : query(usersRef, where("phoneNumber", "==", noSpacesPhone));
     } else if (type === "byEmail" && noSpacesEmail && noSpacesName) {
       // ✅ 이름 + 이메일로 검색
       q = query(usersRef, where("email", "==", noSpacesEmail), where("name", "==", noSpacesName));

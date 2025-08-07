@@ -11,27 +11,31 @@ export const getEmailError = (email: string): string => {
 };
 
 export const getEmailValidationMessage = (
-  email: string,
-  isEmailChecked: boolean,
-  isEmailAvailable: boolean | null,
-  emailVerified: boolean,
-  showEmptyMessage: boolean = false,
-  emailError: string = ""
+  email: string, // 현재 입력된 이메일
+  isEmailDuplicateChecked: boolean, //이메일 중복 체크를 실행한 상태인지(true면 검사함)
+  isEmailAvailable: boolean | null, // 이메일이 사용 가능한 상태인지 (true면 중복 아님)
+  emailVerified: boolean, // 이메일 인증 여부 (인증 완료 시 true)
+  emailTouched: boolean = false, // 사용자가 입력을 시작했는지 여부
+  emailError: string | null = ""
 ): string | null => {
-  if (emailError) return emailError; // ✅ 이 줄 추가!
-
-  if (email.trim() === "") {
-    if (showEmptyMessage) return "아이디(이메일)를 입력해주세요.";
-    return null;
-  }
-  if (!isValidEmail(email)) return "유효한 이메일 형식이 아닙니다.";
-  if (isEmailChecked && isEmailAvailable === false)
-    return "아이디(이메일)가 중복입니다. 다시 입력해주세요.";
-  if (isEmailChecked && isEmailAvailable === true) return "사용 가능한 아이디(이메일)입니다.";
+  if (emailError) return emailError;
 
   if (emailVerified) return "✔ 이메일 인증이 완료되었습니다.";
-  if (isValidEmail(email) && !isEmailChecked) return "이메일을 인증해주세요.";
-  return null;
+  if (isValidEmail(email) && !isEmailDuplicateChecked) return "이메일을 인증해주세요.";
+
+  if (email.trim() === "") {
+    if (emailTouched) return "아이디(이메일)를 입력해주세요.";
+    return null;
+  }
+
+  if (!isValidEmail(email)) return "유효한 이메일 형식이 아닙니다.";
+
+  if (isEmailDuplicateChecked && isEmailAvailable === true)
+    return "사용 가능한 아이디(이메일)입니다. 이메일을 인증해주세요.";
+  if (isEmailDuplicateChecked && isEmailAvailable === false)
+    return "아이디(이메일)가 중복입니다. 다시 입력해주세요.";
+
+  return emailError || "";
 };
 
 // 비밀번호 유효성 검사

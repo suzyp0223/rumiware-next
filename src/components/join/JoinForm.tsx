@@ -6,11 +6,12 @@ import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { isSignInWithEmailLink, linkWithCredential, signInWithEmailLink } from "firebase/auth";
 
-import { useAppDispatch } from "@/hooks/hooks";
-import usePhoneAuth from "@/hooks/usePhoneAuth";
 import { auth } from "@/firebases/firebase";
 import { checkEmailDuplicate } from "@/firebases/checkEmailDuplicate";
 import sendEmailVerificationLink from "@/firebases/sendEmailVerificationLink";
+
+import { useAppDispatch } from "@/hooks/hooks";
+import usePhoneAuth from "@/hooks/usePhoneAuth";
 import updateEmailVerified from "@/hooks/updateEmailVerified";
 import useEmailVerificationRedirect from "@/hooks/useEmailVerificationRedirect";
 
@@ -20,7 +21,7 @@ import PasswordToggle from "../toggle/PasswordToggle";
 import PhoneForm from "./PhoneForm";
 
 import {
-  getEmailError,
+  // getEmailError,
   getEmailValidationMessage,
   getConfirmPwdMessage,
   handleEmailFieldChange,
@@ -48,13 +49,16 @@ const JoinForm = () => {
   const [confirmPwdFocused, setConfirmPwdFocused] = useState(false);
 
   const [emailVerified, setEmailVerified] = useState(false);
-  const [isEmailChecked, setIsEmailChecked] = useState(false);
+  const [isEmailDuplicateChecked, setIsEmailDuplicateChecked] = useState(false);
   const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
+  const [emailTouched, setEmailTouched] = useState(false);
   const [showEmptyMessage, setShowEmptyMessage] = useState(false);
   const [isPwdMatch, setIsPwdMatch] = useState<boolean | null>(null); // 비밀번호 일치 여부
-  const [emailTouched, setEmailTouched] = useState(false);
 
-  const [emailError, setEmailError] = useState("");
+  const [isPhoneDuplicateChecked, setIsPhoneDuplicateChecked] = useState(false);
+  const [isPhoneAvailable, setIsPhoneAvailable] = useState<boolean | null>(null);
+
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [nameError, setNameError] = useState("");
   const [birthDateError, setBirthDateError] = useState("");
   const [genderError, setGenderError] = useState("");
@@ -80,11 +84,51 @@ const JoinForm = () => {
   // const { verifyCode } = usePhoneAuth(phoneNumber);
 
   const confirmPwdMessage = getConfirmPwdMessage(pwd, confirmPwd, isPwdMatch, confirmPwdFocused);
+  const confirmEmailMessage = getEmailValidationMessage(
+    email,
+    isEmailDuplicateChecked,
+    isEmailAvailable,
+    emailVerified,
+    showEmptyMessage || emailTouched,
+
+    emailError ?? "" // 널 병합 연산자
+    //emailError가 null 또는 undefined이면, ""(빈 문자열)을 사용하고,
+    // 그렇지 않으면 emailError를 그대로 사용한다.
+  );
+
+  // 이메일 중복 체크
+  const handleEmailCheck = async () => {
+    if (!email.trim() || !isValidEmail(email)) {
+      setIsEmailDuplicateChecked(false);
+      setIsEmailAvailable(null);
+      setEmailError(getEmailValidationMessage(email, false, null, emailVerified, emailTouched, ""));
+      return;
+    }
+
+    const isDuplicate = await checkEmailDuplicate(email);
+    const available = !isDuplicate;
+
+    setIsEmailDuplicateChecked(true);
+    setIsEmailAvailable(available);
+    setEmailError(
+      getEmailValidationMessage(email, true, available, emailVerified, emailTouched, "")
+    );
+  };
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (isValidEmail(email)) {
+        handleEmailCheck();
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [email]);
 
   // 이메일 인증 버튼 클릭시 실행
   const handleEmailVerify = async () => {
     if (!email.trim() || !isValidEmail(email)) {
-      setIsEmailChecked(false);
+      setIsEmailDuplicateChecked(false);
       setIsEmailAvailable(null);
       return;
     }
@@ -92,16 +136,16 @@ const JoinForm = () => {
     try {
       const { success } = await sendEmailVerificationLink(email);
       if (success) {
-        setIsEmailChecked(true);
+        setIsEmailDuplicateChecked(true);
         setEmailError("이메일로 인증 링크를 전송했습니다. 메일함을 확인해주세요.");
         window.localStorage.setItem("emailForVerification", email);
       } else {
-        setIsEmailChecked(false);
+        setIsEmailDuplicateChecked(false);
         setEmailError("이메일 인증에 실패했습니다. 다시 시도해주세요.");
       }
     } catch (error) {
       console.error("이메일 인증 오류:", error);
-      setIsEmailChecked(false);
+      setIsEmailDuplicateChecked(false);
       setEmailError("이메일 인증에 실패했습니다. 다시 시도해주세요.");
     }
   };
@@ -202,7 +246,7 @@ const JoinForm = () => {
           if (!available) {
             setEmailError("이미 가입된 이메일입니다");
             setIsEmailAvailable(false); // ✅ 이메일 사용 불가 상태
-            setIsEmailChecked(true);
+            setIsEmailDuplicateChecked(true);
             emailRef.current?.focus();
             return;
           }
@@ -213,13 +257,6 @@ const JoinForm = () => {
         }
       }
 
-      // // 🔐 전화번호 인증 credential 가져오기 → Firebase 계정에 연결
-      // const credential = await verifyCode(); // usePhoneAuth에서 반환
-      // if (credential && auth.currentUser) {
-      //   await linkWithCredential(auth.currentUser, credential);
-      //   console.log("✅ 전화번호 연결 완료");
-      // }
-
       router.push("/auth");
     } catch (error: unknown) {
       if (error instanceof Error) {
@@ -229,15 +266,6 @@ const JoinForm = () => {
       }
     }
   };
-
-  const emailMessage = getEmailValidationMessage(
-    email,
-    isEmailChecked,
-    isEmailAvailable,
-    emailVerified,
-    showEmptyMessage || emailTouched,
-    emailError
-  );
 
   return (
     <form name="form" id="form" className="flex flex-col px-5">
@@ -255,12 +283,13 @@ const JoinForm = () => {
                   id="email"
                   placeholder="아이디(이메일)"
                   value={email}
+                  onBlur={handleEmailCheck}
                   onChange={(e) => {
                     const newEmail = e.target.value;
 
                     setEmail(newEmail);
                     setEmailTouched(true); // 🔸 입력하면 touched됨
-                    setIsEmailChecked(false);
+                    setIsEmailDuplicateChecked(false);
                     setIsEmailAvailable(null);
                     setEmailVerified(false);
 
@@ -274,7 +303,14 @@ const JoinForm = () => {
                 <button
                   type="button"
                   onClick={handleEmailVerify}
-                  className="absolute top-1/2 right-0 transform -translate-y-1/2 text-xs hover:bg-gray-300 p-4"
+                  disabled={isEmailAvailable === false}
+                  className={`absolute top-1/2 right-0 transform -translate-y-1/2 text-xs p-4
+                  ${
+                    isEmailAvailable === false
+                      ? "bg-gray-300 cursor-not-allowed"
+                      : "hover:bg-gray-300 cursor-pointer"
+                  }
+                  `}
                 >
                   이메일 인증
                 </button>
@@ -282,15 +318,15 @@ const JoinForm = () => {
 
               {/* ✅ 유효성 메시지 출력 */}
               <div className="flex flex-col text-xs text-left">
-                {emailMessage && (
+                {confirmEmailMessage && (
                   <p
                     className={`mt-2 ml-1  ${
-                      /완료|성공|전송|인증되었습니다/.test(emailMessage)
+                      /완료|성공|전송|인증되었습니다/.test(confirmEmailMessage)
                         ? "text-blue-500"
                         : "text-red-500"
                     }`}
                   >
-                    {emailMessage}
+                    {confirmEmailMessage}
                   </p>
                 )}
               </div>
@@ -520,3 +556,6 @@ const JoinForm = () => {
 };
 
 export default JoinForm;
+function verifyCode() {
+  throw new Error("Function not implemented.");
+}
