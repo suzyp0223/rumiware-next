@@ -23,21 +23,17 @@ const Header = () => {
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  // const { initialized } = useSelector((s: RootState) => s.userReducer);
-
   const user = useSelector((state: RootState) => state.userReducer.user);
+  // console.log("현재 유저상태 user: ", user);
 
   const nowEmailUser = isEmailUser(user) ? user : null;
   const nowSocialUser = isSocialUser(user) ? user : null;
-
-  console.log("현재 유저상태 user: ", user);
 
   const cartItems = useSelector((state: RootState) => state.cartReducer.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const { logout } = useLogout();
 
-  // if (!initialized) return null;
   return (
     <header className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
       <div className="mb-10">

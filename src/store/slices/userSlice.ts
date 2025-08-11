@@ -39,9 +39,10 @@ export interface SocialUser extends BaseUser {
   photoURL?: string;
 }
 
-// ✨ 변경: Redux에 직렬화 경고가 나지 않도록 createdAt을 제거한 형태를 상태로 사용
-type EmailUserForRedux = Omit<EmailUser, "createdAt">; // ✨ 변경
-type SocialUserForRedux = Omit<SocialUser, "createdAt">; // ✨ 변경
+// ✨ Redux에 직렬화 경고가 나지 않도록 createdAt을 제거한 형태를 상태로 사용
+type EmailUserForRedux = Omit<EmailUser, "createdAt">;
+type SocialUserForRedux = Omit<SocialUser, "createdAt">;
+type FirestoreUser = EmailUser | SocialUser;
 export type UserState = EmailUser | SocialUser;
 
 // Redux Slice
@@ -151,6 +152,31 @@ export const signUpUser = createAsyncThunk<
   }
 );
 
+// ✅ 추가: 저장된 프로필 조회 Thunk
+export const fetchUserProfile = createAsyncThunk<
+  EmailUserForRedux | SocialUserForRedux,
+  string,
+  { rejectValue: string }
+>("user/fetchUserProfile", async (uid, thunkAPI) => {
+  try {
+    const ref = doc(db, "users", uid); // ★ 변경: Firestore 문서 참조
+    const snap = await getDoc(ref); // ★ 변경: 1회 조회
+    if (!snap.exists()) {
+      return thunkAPI.rejectWithValue("프로필 문서가 없습니다.");
+    }
+    // const data = snap.data();
+
+    const raw = snap.data() as FirestoreUser; // ★ 변경
+
+    // createdAt 같은 비직렬화 필드 제거
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { createdAt: _unused, ...userForRedux } = raw;
+    return userForRedux as EmailUserForRedux | SocialUserForRedux; // ★ 변경: Redux에 넣을 순수 객체 반환
+  } catch {
+    return thunkAPI.rejectWithValue("프로필 조회 중 오류가 발생했습니다.");
+  }
+});
+
 // Slice 생성
 const userSlice = createSlice({
   name: "user",
@@ -193,6 +219,21 @@ const userSlice = createSlice({
       .addCase(signUpUser.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) ?? action.error.message ?? "회원가입 실패";
+      })
+      // 프로필 가져오기 성공 시 전역 상태 갱신
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload; //  전역 유저 상태 갱신
+        state.isLoggedIn = true; //  로그인 유지 표식
+        state.loading = false; //  로딩 종료
+        state.error = null; //  에러 초기화
+      })
+      .addCase(fetchUserProfile.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(fetchUserProfile.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload ?? "프로필 조회 실패";
       });
   },
 });
