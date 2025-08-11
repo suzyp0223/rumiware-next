@@ -1,6 +1,6 @@
 import { getAnalytics, isSupported } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth"; // 로그인
+import { getAuth, GoogleAuthProvider } from "firebase/auth"; // 로그인
 import { getFirestore } from "firebase/firestore"; // 업로드
 import { getStorage } from "firebase/storage"; //
 // TODO: Add SDKs for Firebase products that you want to use
@@ -39,3 +39,4 @@ export { app, analytics };
 export const storage = getStorage(app);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+export const googleProvider = new GoogleAuthProvider();

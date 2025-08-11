@@ -9,12 +9,7 @@ import PasswordToggle from "../../toggle/PasswordToggle";
 import SocialLogin from "./SocialLogin";
 import { useLogin } from "../../../hooks/useLogin";
 
-import {
-  isValidEmail,
-  isValidPassword,
-  getEmailError,
-  getPasswordError,
-} from "@/hooks/useAuthValidation";
+import { getEmailError, getPasswordError } from "@/hooks/useAuthValidation";
 import { getStoredEmail, storeEmail, removeStoredEmail } from "../../utils/emailStorage";
 
 const LoginForm = () => {
@@ -180,7 +175,7 @@ const LoginForm = () => {
       <div className="flex flex-col">
         <button
           type="submit"
-          className="bg-blue-600 text-white border hover:text-blue-600 hover:bg-white hover:border-blue-600 py-2 rounded w-96 my-2 text-center"
+          className="bg-blue-600 text-white border hover:text-blue-600 hover:bg-white hover:border-blue-600 mt-4 py-2 rounded w-96 my-2 text-center"
           onClick={handleLogin}
         >
           로그인

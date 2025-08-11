@@ -4,32 +4,33 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { isSignInWithEmailLink, linkWithCredential, signInWithEmailLink } from "firebase/auth";
+
+import {
+  isSignInWithEmailLink,
+  linkWithCredential,
+  signInWithEmailLink,
+  signOut,
+} from "firebase/auth";
 
 import { auth } from "@/firebases/firebase";
 import { checkEmailDuplicate } from "@/firebases/checkEmailDuplicate";
 import sendEmailVerificationLink from "@/firebases/sendEmailVerificationLink";
 
 import { useAppDispatch } from "@/hooks/hooks";
-import usePhoneAuth from "@/hooks/usePhoneAuth";
 import updateEmailVerified from "@/hooks/updateEmailVerified";
-import useEmailVerificationRedirect from "@/hooks/useEmailVerificationRedirect";
 
-import { signUpUser } from "../../store/slices/userSlice";
+import { logoutUser, signUpUser } from "../../store/slices/userSlice";
 import PasswordToggle from "../toggle/PasswordToggle";
-// import CarrierChoice from "./CarrierChoice";
 import PhoneForm from "./PhoneForm";
 
 import {
   // getEmailError,
   getEmailValidationMessage,
   getConfirmPwdMessage,
-  handleEmailFieldChange,
   handlePasswordFieldChange,
   handleConfirmPasswordFieldChange,
   handleNameFieldChange,
   handleBirthFieldChange,
-  isValidBirthDate,
   isValidEmail,
   validateSignUpFields,
 } from "@/hooks/useAuthValidation";
@@ -222,6 +223,7 @@ const JoinForm = () => {
       // 🧩 Redux Thunk로 사용자 생성 및 Firestore 저장
       await dispatch(
         signUpUser({
+          email,
           password: pwd,
           name,
           birthDate,
@@ -229,7 +231,8 @@ const JoinForm = () => {
           nationality,
           phoneNumber,
         })
-      ).unwrap(); // 에러 핸들링 위해 unwrap() 사용 가능
+      ).unwrap(); // ✅ dispatch 타입이 AppDispatch면 정상 동작
+
       console.log("회원가입 및 정보 저장 성공!");
 
       // 🔐 이메일 인증 여부 확인 (인증 안 되었으면 중단)
@@ -257,7 +260,9 @@ const JoinForm = () => {
         }
       }
 
-      router.push("/auth");
+      dispatch(logoutUser());
+      await signOut(auth);
+      router.push("/auth/login");
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.log("회원가입 오류:", error);

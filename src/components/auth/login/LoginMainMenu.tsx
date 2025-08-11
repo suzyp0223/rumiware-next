@@ -14,7 +14,7 @@ const loginTypeList: { key: "email" | "qr" | "nonMember"; label: string }[] = [
 type LoginType = (typeof loginTypeList)[number]["key"];
 
 // 로그인 그룹
-const AuthMainMenu = () => {
+const LoginMainMenu = () => {
   const [activeTab, setActiveTab] = useState<LoginType>("email");
 
   return (
@@ -43,4 +43,4 @@ const AuthMainMenu = () => {
   );
 };
 
-export default AuthMainMenu;
+export default LoginMainMenu;

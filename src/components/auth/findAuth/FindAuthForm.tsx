@@ -186,7 +186,7 @@ const FindAuthForm = () => {
           <button
             type="button"
             className="block bg-blue-600 text-white border hover:text-blue-600 hover:bg-white hover:border-blue-600 py-2 rounded w-full my-2 text-center transition-all duration-30 ease-in"
-            onClick={() => (window.location.href = "/auth")}
+            onClick={() => (window.location.href = "/auth/login")}
           >
             로그인
           </button>

@@ -18,9 +18,9 @@ const Carousel = () => {
       autoplay={{ delay: 3000, disableOnInteraction: false }} // 자동 재생 설정
       pagination={{ clickable: true }} // 페이지 점 표시 설정
       navigation={true} // 자동 재생 설정
-      onSlideChange={(swiper) => {
-        console.log("🔄 슬라이드 변경:", swiper.activeIndex);
-      }}
+      // onSlideChange={(swiper) => {
+      //   console.log("🔄 슬라이드 변경:", swiper.activeIndex);
+      // }}
       onInit={(swiper) => {
         swiper.update();
       }}

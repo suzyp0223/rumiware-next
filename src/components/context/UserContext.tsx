@@ -4,10 +4,21 @@ import { createContext, useContext, useState, useEffect } from "react";
 import { auth } from "@/firebases/firebase";
 
 export type User = {
-  uid: string;
-  email: string | undefined;
+  uid?: string; // ← 옵셔널
+  email?: string;
+  phoneNumber?: string;
   name?: string;
+  displayName?: string;
   picture?: string;
+
+  birthDate?: string;
+  gender?: string;
+  nationality?: string;
+  emailVerified?: boolean;
+  isAdmin?: boolean;
+
+  type?: "email" | "social";
+  provider?: "google" | "kakao";
 } | null;
 
 const UserContext = createContext<{ user: User }>({ user: null });

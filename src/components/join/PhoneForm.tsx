@@ -25,11 +25,6 @@ const PhoneForm = ({ phoneNumber, setPhoneNumber, phoneError, setPhoneError }: P
   const handleCheckDuplicate = async () => {
     const cleanedPhone = phoneNumber.replace(/\D/g, "");
 
-    // if (!phoneNumber || cleanedPhone.length < 10) {
-    //   setPhoneError("유효한 전화번호를 입력해주세요.");
-    //   return;
-    // }
-
     const validationMessage = getPhoneError(phoneNumber);
     if (validationMessage) {
       setPhoneError(validationMessage);

@@ -8,8 +8,6 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { RootState } from "@/store/store";
-// import type { User as FirebaseUser } from "firebase/auth";
-import type { SessionUser } from "../types/auth";
 
 import cart from "../../assets/icon/cart.svg";
 import myPage from "../../assets/icon/my-page.svg";
@@ -18,22 +16,28 @@ import rumiLogo from "../../assets/img/rumiLogo1.jpg";
 import CopyUrlBtn from "../button/CopyUrlBtn";
 import SearchToggle from "../toggle/SearchToggle";
 import TabsDropDown from "./TabsDropDown";
+import { isEmailUser, isSocialUser } from "@/components/utils/typeGuards";
 
-interface HeaderProps {
-  user: SessionUser | null;
-}
-
-const Header = ({ user }: HeaderProps) => {
+const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   const toggleSidebar = () => setIsSidebarOpen((prev) => !prev);
   const closeSidebar = () => setIsSidebarOpen(false);
 
-  const cartItems = useSelector((state: RootState) => state.cart.items);
+  // const { initialized } = useSelector((s: RootState) => s.userReducer);
+
+  const user = useSelector((state: RootState) => state.userReducer.user);
+
+  const nowEmailUser = isEmailUser(user) ? user : null;
+  const nowSocialUser = isSocialUser(user) ? user : null;
+
+  console.log("현재 유저상태 user: ", user);
+
+  const cartItems = useSelector((state: RootState) => state.cartReducer.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
   const { logout } = useLogout();
 
+  // if (!initialized) return null;
   return (
     <header className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
       <div className="mb-10">
@@ -43,7 +47,10 @@ const Header = ({ user }: HeaderProps) => {
             {/* 로그인, 로그아웃  */}
             {user ? (
               <div>
-                <span className="mr-8">{user.email} 님</span>
+                {nowEmailUser && <span className="mr-8">{nowEmailUser.email} 님</span>}
+                {nowSocialUser && (
+                  <span className="mr-8">{nowSocialUser.email ?? "소셜 유저"} 님</span>
+                )}
                 <button
                   onClick={logout}
                   className="hover:underline hover:text-[var(--color-red-400)]"
@@ -53,7 +60,10 @@ const Header = ({ user }: HeaderProps) => {
               </div>
             ) : (
               <>
-                <Link href="/auth" className="hover:underline hover:text-[var(--color-red-400)]">
+                <Link
+                  href="/auth/login"
+                  className="hover:underline hover:text-[var(--color-red-400)]"
+                >
                   로그인
                 </Link>
                 <Link href="/join" className="hover:underline hover:text-[var(--color-red-400)]">

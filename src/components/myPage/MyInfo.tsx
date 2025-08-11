@@ -1,8 +1,17 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
+
+import { updateDoc, doc } from "firebase/firestore";
+
+import { RootState } from "@/store/store";
+import { db } from "@/firebases/firebase";
+import type { UserState, EmailUser } from "@/store/slices/userSlice";
+
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+
 import KakaoMap from "../maps/KakaoMap";
 import MyPageSideNav from "./MyPageSideNav";
 
@@ -11,17 +20,62 @@ const MyInfo = () => {
   const [emailSelected, setEmailSelected] = useState<string>("yesEmail");
   const [genderSelected, setGenderSelected] = useState<string>("non");
 
-  // const handleDomainChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const selected = e.target.value;
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [birthDate, setBirthDate] = useState("");
+  const [gender, setGender] = useState("");
+  const [nationality, setNationality] = useState("");
 
-  //   if (selected === "direct") {
-  //     setIsCustom(true);
-  //     setEmailDomain("");
-  //   } else {
-  //     setIsCustom(false);
-  //     setEmailDomain(selected);
-  //   }
-  // };
+  const [cancel, setCancel] = useState("");
+
+  const { user } = useSelector((state: RootState) => state.userReducer);
+
+  const isEmailUser = (user: UserState): user is EmailUser => {
+    return "email" in user && "name" in user;
+  };
+  if (user && !isEmailUser(user)) {
+    console.log("이 사용자는 소셜 로그인 유저입니다!");
+  }
+
+  useEffect(() => {
+    if (user && isEmailUser(user)) {
+      setName(user.name ?? "");
+      setPhone(user.phoneNumber ?? "");
+      setBirthDate(user.birthDate ?? "");
+      setGender(user.gender ?? "");
+      setNationality(user.nationality ?? "");
+    } else if (user) {
+      // 소셜(전화번호 로그인) 유저의 경우
+      setPhone(user.provider ?? "");
+    }
+  }, [user]);
+
+  const isSocialUser = user && !isEmailUser(user);
+
+  const handleUpdate = async () => {
+    if (!user) return;
+
+    if (!isSocialUser && password !== confirmPassword) {
+      alert("비밀번호가 일치하지 않습니다.");
+      return;
+    }
+
+    try {
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        name,
+        phoneNumber: phone,
+        birthDate,
+        ...(password && !isSocialUser ? { password } : {}),
+      });
+      alert("회원 정보가 수정되었습니다.");
+    } catch (error) {
+      console.error("회원정보 수정 실패:", error);
+      alert("수정 중 오류가 발생했습니다.");
+    }
+  };
 
   return (
     <div className="mt-12 w-full flex gap-6 justify-center px-[26px]">
@@ -44,13 +98,32 @@ const MyInfo = () => {
               <col className="w-auto" />
             </colgroup>
             <tbody className="">
-              <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
-                  <label htmlFor="id" className="head-cell">
-                    <span className="text-red-400">*</span>&nbsp;아이디(이메일)
+              <tr className="border-y border-gray-300 ">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
+                  <label htmlFor="hname" className="head-cell">
+                    <span className="text-red-400 ">*</span>&nbsp;이름
                   </label>
                 </th>
-                <td className="p-2 m-4">
+                <td className="pl-2 align-middle">
+                  <input
+                    type="text"
+                    className="w-[200px] border-gray-300 outline-none px-4 py-2 border-b hover:border-b-peach-600 focus:border-b-peach-600"
+                    id="hname"
+                    size={15}
+                    maxLength={30}
+                  />
+                </td>
+              </tr>
+
+              <tr className="border-b border-gray-300 ">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
+                  <label htmlFor="id" className="head-cell">
+                    <span className="text-red-400">*</span>&nbsp;아이디
+                    <br />
+                    (이메일)
+                  </label>
+                </th>
+                <td className="p-2 m-4 align-middle">
                   <span className="inline-block px-4 py-2">2021234@naver.com</span>
                   <input type="hidden" className="p-4" id="id" value="suzy2020" />
                   <Link
@@ -82,69 +155,61 @@ const MyInfo = () => {
                 </td>
               </tr>
 
-              <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
-                  <label htmlFor="password1" className="head-cell">
-                    <span className="text-red-400">*</span>&nbsp;비밀번호
-                  </label>
-                </th>
-                <td className="p-4 pb-0">
-                  <input
-                    type="password"
-                    className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
-                    id="password1"
-                    size={15}
-                    maxLength={20}
-                  />
-                  <span className="block text-sm pt-2 pb-2 pl-2">
-                    * 영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10~16자
-                  </span>
-                </td>
-              </tr>
+              {!isSocialUser && (
+                <>
+                  <tr className="border-b border-gray-300 ">
+                    <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
+                      <label htmlFor="password1" className="head-cell">
+                        <span className="text-red-400">*</span>&nbsp;비밀번호
+                      </label>
+                    </th>
+                    <td className="p-4 pb-0 align-middle">
+                      <input
+                        type="password"
+                        className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
+                        id="password1"
+                        size={15}
+                        maxLength={20}
+                      />
+                      <button
+                        type="button"
+                        className="ml-4 p-2 text-sm border border-gray-300  hover:border-peach-300 hover:text-gray-800 rounded"
+                      >
+                        재설정
+                      </button>
+                      <span className="block text-sm text-red-500 pb-2 pl-2">
+                        비밀번호가 일치하지 않습니다.
+                      </span>
+                    </td>
+                  </tr>
+
+                  {/* <tr className="border-b border-gray-300 ">
+                    <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                      <label htmlFor="password2" className="">
+                        <span className="text-red-400">*</span>&nbsp;비밀번호 확인
+                      </label>
+                    </th>
+                    <td className="p-4 pb-0">
+                      <input
+                        type="password"
+                        className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
+                        id="password2"
+                      />
+                      <span className="block text-sm text-red-500 pb-2 pl-2">
+                        비밀번호가 일치하지 않습니다.
+                      </span>
+                    </td>
+                  </tr> */}
+                </>
+              )}
 
               <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
-                  <label htmlFor="password2" className="">
-                    <span className="text-red-400">*</span>&nbsp;비밀번호 확인
-                  </label>
-                </th>
-                <td className="p-4 pb-0">
-                  <input
-                    type="password"
-                    className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
-                    id="password2"
-                  />
-                  <span className="block text-sm text-red-500 pb-2 pl-2">
-                    비밀번호가 일치하지 않습니다.
-                  </span>
-                </td>
-              </tr>
-
-              <tr className="border-y border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
-                  <label htmlFor="hname" className="head-cell">
-                    <span className="text-red-400 ">*</span>&nbsp;이름
-                  </label>
-                </th>
-                <td className="pl-2">
-                  <input
-                    type="text"
-                    className=" w-[200px] border-gray-300 outline-none px-4 py-2 border-b hover:border-b-peach-600 focus:border-b-peach-600"
-                    id="hname"
-                    // value="박수지"
-                    size={15}
-                    maxLength={30}
-                  />
-                </td>
-              </tr>
-
-              <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                   <label className="head-cell">
                     <span className="text-red-400">*</span>&nbsp;휴대폰
                   </label>
                 </th>
-                <td className="p-4">
+                <td className="p-4 align-middle">
                   <select className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-1 mr-4">
                     <option value="">선택</option>
                     <option value="010">010</option>
@@ -173,12 +238,12 @@ const MyInfo = () => {
                 </td>
               </tr>
               <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                   <label className="head-cell">
                     <span className="text-red-400">*</span>&nbsp;수신설정
                   </label>
                 </th>
-                <td className="p-4">
+                <td className="p-4 align-middle">
                   <div className="p-2 mt-4">
                     <span className="text-sm">이메일 수신 여부</span>
                     <label
@@ -249,12 +314,12 @@ const MyInfo = () => {
               </tr>
 
               <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                   <label htmlFor="birthYear" className="">
                     <span className="text-red-400">*</span>&nbsp;생년월일
                   </label>
                 </th>
-                <td className="p-4">
+                <td className="p-4 align-middle">
                   <select
                     id="birthYear"
                     className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2"
@@ -301,10 +366,10 @@ const MyInfo = () => {
               </tr>
 
               <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                   <span className="text-red-400">*</span>&nbsp;성별
                 </th>
-                <td className="p-4">
+                <td className="p-4 align-middle">
                   {[
                     { label: "선택안함", value: "non" },
                     { label: "남", value: "male" },
@@ -331,7 +396,7 @@ const MyInfo = () => {
               </tr>
 
               <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                   <label htmlFor="address" className="">
                     <span className="text-red-400">*</span>&nbsp;주소
                   </label>
@@ -342,12 +407,12 @@ const MyInfo = () => {
 
               {/* 0개 + 버튼만 2개이상은 1개만 보여주고 더보기 구현 */}
               <tr className="border-b border-gray-300 ">
-                <th className="bg-peach-100 px-5 py-4 align-middle text-left">
+                <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                   <label className="" htmlFor="email1">
                     <span className="text-red-400">*</span>&nbsp;배송지
                   </label>
                 </th>
-                <td className="pl-4 py-4">
+                <td className="pl-4 py-4 align-middle">
                   <div className="relative p-2 m-2">
                     <button
                       type="button"
@@ -395,6 +460,26 @@ const MyInfo = () => {
                         삭제
                       </button>
                     </div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td colSpan={2} className="text-center py-4">
+                  <div className="inline-flex mt-8 gap-8">
+                    <button
+                      onClick={handleUpdate}
+                      className="items-center justify-center px-6 py-2 bg-peach-400 rounded border border-peach-400 hover:bg-white hover:border border-peach-400 whitespace-nowrap"
+                    >
+                      정보 수정
+                    </button>
+                    <button
+                      onClick={() => {
+                        setCancel("");
+                      }}
+                      className="items-center justify-center px-6 py-2 border border-peach-400 rounded hover:bg-peach-400 whitespace-nowrap"
+                    >
+                      취소
+                    </button>
                   </div>
                 </td>
               </tr>

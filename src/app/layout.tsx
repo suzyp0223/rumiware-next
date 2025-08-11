@@ -32,7 +32,7 @@ const geistMono = Geist_Mono({
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   // ✅ 세션 쿠키 확인 및 사용자 정보 불러오기
   const cookieStore = await cookies();
-  const session = cookieStore.get("session")?.value;
+  const session = cookieStore.get("session")?.value ?? "";
 
   const user = session ? await verifySession(session) : null;
 
