@@ -32,6 +32,7 @@ const MyInfo = () => {
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false); // ✅ 저장 중 표시용
   const [editingEmail, setEditingEmail] = useState(false);
+  const [editingName, setEditingName] = useState(false);
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -174,6 +175,7 @@ const MyInfo = () => {
       await updateDoc(ref, { name });
 
       dispatch(setUser({ ...user, name }));
+      setEditingName(false);
     } catch (e) {
       console.error("이름 저장 오류:", e);
     } finally {
@@ -245,15 +247,40 @@ const MyInfo = () => {
                           maxLength={30}
                           value={name}
                           onChange={(e) => setName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" && editingName && !saving && name.trim()) {
+                              handleSaveName();
+                            }
+                          }}
                         />
                         <button
                           type="button"
-                          onClick={handleSaveName} // ★ 변경: 저장
+                          onClick={() => {
+                            if (!editingName) {
+                              setEditingName(true);
+                            } else {
+                              if (!saving && name.trim()) handleSaveName();
+                            }
+                          }}
                           disabled={saving || name.trim() === ""}
                           className="ml-4 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
                         >
-                          {saving ? "저장중..." : "저장"}
+                          {saving ? "저장중..." : editingName ? "저장" : "수정"}
                         </button>
+
+                        {editingName && (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setName(user.name); // ★ 변경: 원복
+                              setEditingName(false); // ★ 변경: 편집 취소
+                            }}
+                            disabled={saving}
+                            className="ml-2 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded disabled:opacity-50"
+                          >
+                            취소
+                          </button>
+                        )}
                       </>
                     )}
                   </td>
