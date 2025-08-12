@@ -22,6 +22,7 @@ import MyPageSideNav from "./MyPageSideNav";
 import { onAuthStateChanged } from "firebase/auth";
 import { useAppDispatch } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
+import useEmailLinkVerification from "@/hooks/useEmailLinkVerification";
 
 const MyInfo = () => {
   const [smsSelected, setSmsSelected] = useState<string>("yesSms");
@@ -30,6 +31,7 @@ const MyInfo = () => {
 
   const [name, setName] = useState("");
   const [saving, setSaving] = useState(false); // ✅ 저장 중 표시용
+  const [editingEmail, setEditingEmail] = useState(false);
 
   const [phone, setPhone] = useState("");
   const [password, setPassword] = useState("");
@@ -45,6 +47,7 @@ const MyInfo = () => {
   // const { user } = useSelector((state: RootState) => state.userReducer);
   const { user, initialized, isLoggedIn, loading } = useSelector((s: RootState) => s.userReducer);
   console.log("마이인포 user정보: ", user);
+  const [displayEmail, setDisplayEmail] = useState<string>(() => user?.email ?? "");
 
   const isEmailUser = (user: UserState): user is EmailUser => {
     return "email" in user && "name" in user;
@@ -52,6 +55,46 @@ const MyInfo = () => {
   if (user && !isEmailUser(user)) {
     console.log("이 사용자는 소셜 로그인 유저입니다!");
   }
+
+  const {
+    email,
+    setEmail,
+    isEmailAvailable,
+    uiMessage,
+    readOnly,
+    handleEmailCheck,
+    handleEmailVerify,
+    consumeLinkFromURL,
+    resetEmailState,
+  } = useEmailLinkVerification({
+    redirectPath: "/myPage/myInfo",
+    onVerified: (verifiedEmail) => {
+      setDisplayEmail(verifiedEmail); // 화면 즉시 갱신
+      setEditingEmail(false); // 편집 종료(원하면 유지 가능)
+    },
+  });
+
+  useEffect(() => {
+    setDisplayEmail(user?.email ?? "");
+  }, [user]);
+
+  useEffect(() => {
+    const url = window.location.href;
+    const params = new URLSearchParams(window.location.search);
+    consumeLinkFromURL(url, params); // 돌아왔을 때 새 이메일 반영
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 편집 시작/취소
+  const startEdit = () => {
+    resetEmailState();
+    setEditingEmail(true);
+  };
+
+  const cancelEdit = () => {
+    resetEmailState();
+    setEditingEmail(false);
+  };
 
   // useEffect(() => {
   //   if (user && isEmailUser(user)) {
@@ -69,7 +112,6 @@ const MyInfo = () => {
   let phoneValue = "";
   let phone1 = "";
   let phone2 = "";
-  let birth = "";
   let birthY = "";
   let birthM = "";
   let birthD = "";
@@ -78,17 +120,11 @@ const MyInfo = () => {
     phone1 = user.phoneNumber.slice(3, 7);
     phone2 = user.phoneNumber.slice(7, 11);
     phoneValue = "010" + "-" + phone1 + "-" + phone2;
-    console.log("phoneValue: ", phoneValue);
 
     birthY = user.birthDate.slice(0, 2);
-    console.log("birthY: ", birthY);
     birthM = user.birthDate.slice(2, 4);
-    console.log("birthM: ", birthM);
     birthD = user.birthDate.slice(4, 6);
-    console.log("birthD: ", birthD);
 
-    birth = user.birthDate;
-    console.log("birth: ", birth);
     genderValue = user.gender;
   }
 
@@ -232,34 +268,70 @@ const MyInfo = () => {
                     </label>
                   </th>
                   <td className="p-2 m-4 align-middle">
-                    <span className="inline-block px-4 py-2">{user.email}</span>
-                    <input type="hidden" className="p-4" id="id" value="suzy2020" />
-                    <Link
-                      href={""}
-                      className="m-2 p-2 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
-                    >
-                      이메일 변경
-                    </Link>
-                    <Link
-                      href={""}
-                      className="m-2 p-2 text-xs border border-gray-300 hover:border-peach-600 hover:text-gray-800 rounded hidden"
-                    >
-                      이메일 변경 취소
-                    </Link>
-                    <div className="p-2 w-[600px]">
-                      <input
-                        type="text"
-                        className="w-[300px] border-gray-300 outline-none p-2 border-b hover:border-b-peach-600 focus:border-b-peach-600"
-                      />
+                    {!editingEmail ? (
+                      <>
+                        <span className="inline-block px-4 py-2">{displayEmail}</span>
+                        <input type="hidden" id="id" />
+                        <button
+                          type="button"
+                          onClick={startEdit}
+                          className="m-2 p-2 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
+                        >
+                          이메일 변경
+                        </button>
+                      </>
+                    ) : (
+                      <>
+                        {/* 입력 UI */}
+                        <div className="relative inline-flex items-center py-2 px-2 ">
+                          <input
+                            type="email"
+                            placeholder={displayEmail} // ★ 기존 메일을 placeholder로
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            onBlur={handleEmailCheck}
+                            readOnly={readOnly} // 인증 완료 시 lock
+                            className="outline-none w-80 pl-3 border-transparent border border-b-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
+                          />
 
-                      {/* 인증메일 전송 버튼 클릭시 이멜중복검사 통과시 인증메일 전송 */}
-                      <button
-                        type="submit"
-                        className="ml-4 p-2 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
-                      >
-                        인증메일 전송
-                      </button>
-                    </div>
+                          {/* 링크 전송 버튼 */}
+                          <button
+                            type="button"
+                            onClick={handleEmailVerify}
+                            disabled={isEmailAvailable === false}
+                            className={`ml-4 text-xs px-3 py-2 border rounded ${
+                              isEmailAvailable === false
+                                ? "bg-gray-300 cursor-not-allowed"
+                                : "hover:bg-gray-200"
+                            }`}
+                          >
+                            이멜링크보내기
+                          </button>
+
+                          {/* 취소 버튼 */}
+                          <button
+                            type="button"
+                            onClick={cancelEdit}
+                            className="ml-2 text-xs px-3 py-2 border rounded hover:bg-gray-200"
+                          >
+                            취소
+                          </button>
+                        </div>
+
+                        {/* 메시지 */}
+                        {uiMessage && (
+                          <p
+                            className={`mt-2 text-xs ${
+                              /완료|성공|전송|인증되었습니다/.test(uiMessage)
+                                ? "text-blue-500"
+                                : "text-red-500"
+                            }`}
+                          >
+                            {uiMessage}
+                          </p>
+                        )}
+                      </>
+                    )}
                   </td>
                 </tr>
 
@@ -324,7 +396,7 @@ const MyInfo = () => {
                       id="etcphone"
                       size={11}
                       maxLength={11}
-                      value={user && user.type === "email" ? user.phoneNumber : ""}
+                      value={phoneValue}
                     />
                     {/* <select className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-1 mr-4">
                       <option value="">선택</option>

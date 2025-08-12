@@ -2,9 +2,9 @@ import { auth } from "@/firebases/firebase";
 import { ActionCodeSettings, sendSignInLinkToEmail } from "firebase/auth";
 
 // 인증 메일 전송 함수
-const sendEmailVerificationLink = async (email: string) => {
+const sendEmailVerificationLink = async (email: string, redirectPath: string) => {
   const actionCodeSettings: ActionCodeSettings = {
-    url: `${window.location.origin}/join?verified=true&email=${email}`, // 인증 완료 후 리다이렉트될 주소
+    url: `${window.location.origin}${redirectPath}?verified=true&email=${email}`, // 인증 완료 후 리다이렉트될 주소
     handleCodeInApp: true, // 링크 클릭 시 앱 내부에서 처리
   };
 

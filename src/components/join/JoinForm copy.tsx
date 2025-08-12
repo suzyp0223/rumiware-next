@@ -18,7 +18,6 @@ import sendEmailVerificationLink from "@/firebases/sendEmailVerificationLink";
 
 import { useAppDispatch } from "@/hooks/hooks";
 import updateEmailVerified from "@/hooks/updateEmailVerified";
-import useEmailLinkVerification from "@/hooks/useEmailLinkVerification";
 
 import { logoutUser, signUpUser } from "../../store/slices/userSlice";
 import PasswordToggle from "../toggle/PasswordToggle";
@@ -86,23 +85,97 @@ const JoinForm = () => {
   // const { verifyCode } = usePhoneAuth(phoneNumber);
 
   const confirmPwdMessage = getConfirmPwdMessage(pwd, confirmPwd, isPwdMatch, confirmPwdFocused);
+  const confirmEmailMessage = getEmailValidationMessage(
+    email,
+    isEmailDuplicateChecked,
+    isEmailAvailable,
+    emailVerified,
+    showEmptyMessage || emailTouched,
 
-  const {
-    // email,
-    // setEmail, // 기존 setEmail 대체
-    // emailVerified,
-    // isEmailAvailable,
-    uiMessage, // 기존 confirmEmailMessage 대체 가능
-    readOnly,
-    handleEmailCheck,
-    handleEmailVerify,
-    consumeLinkFromURL,
-  } = useEmailLinkVerification({ redirectPath: "/join" });
+    emailError ?? "" // 널 병합 연산자
+    //emailError가 null 또는 undefined이면, ""(빈 문자열)을 사용하고,
+    // 그렇지 않으면 emailError를 그대로 사용한다.
+  );
+
+  // 이메일 중복 체크
+  const handleEmailCheck = async () => {
+    if (!email.trim() || !isValidEmail(email)) {
+      setIsEmailDuplicateChecked(false);
+      setIsEmailAvailable(null);
+      setEmailError(getEmailValidationMessage(email, false, null, emailVerified, emailTouched, ""));
+      return;
+    }
+
+    const isDuplicate = await checkEmailDuplicate(email);
+    const available = !isDuplicate;
+
+    setIsEmailDuplicateChecked(true);
+    setIsEmailAvailable(available);
+    setEmailError(
+      getEmailValidationMessage(email, true, available, emailVerified, emailTouched, "")
+    );
+  };
 
   useEffect(() => {
-    const url = window.location.href;
-    consumeLinkFromURL(url, searchParams); // 인증 링크 확인
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const timer = setTimeout(() => {
+      if (isValidEmail(email)) {
+        handleEmailCheck();
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [email]);
+
+  // 이메일 인증 버튼 클릭시 실행
+  const handleEmailVerify = async () => {
+    if (!email.trim() || !isValidEmail(email)) {
+      setIsEmailDuplicateChecked(false);
+      setIsEmailAvailable(null);
+      return;
+    }
+
+    try {
+      const { success } = await sendEmailVerificationLink(email, "/join");
+      if (success) {
+        setIsEmailDuplicateChecked(true);
+        setEmailError("이메일로 인증 링크를 전송했습니다. 메일함을 확인해주세요.");
+        window.localStorage.setItem("emailForVerification", email);
+      } else {
+        setIsEmailDuplicateChecked(false);
+        setEmailError("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+      }
+    } catch (error) {
+      console.error("이메일 인증 오류:", error);
+      setIsEmailDuplicateChecked(false);
+      setEmailError("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+    }
+  };
+
+  // 1. 인증 링크 클릭 후 돌아왔을 때 처리
+  useEffect(() => {
+    const verifyEmailLink = async () => {
+      const storedEmail = localStorage.getItem("emailForVerification");
+      const url = window.location.href;
+      const queryEmail = searchParams?.get("email");
+      const finalEmail = queryEmail || storedEmail;
+
+      if (!finalEmail) return;
+
+      if (isSignInWithEmailLink(auth, url)) {
+        try {
+          await signInWithEmailLink(auth, finalEmail, url);
+          setEmail(finalEmail);
+          setEmailVerified(true);
+          setIsEmailAvailable(true);
+          localStorage.removeItem("emailForVerification");
+          console.log("✅ 이메일 인증 성공 및 로그인 완료");
+        } catch (error) {
+          console.error("❌ 링크 인증 실패:", error);
+        }
+      }
+    };
+
+    verifyEmailLink();
   }, [searchParams]);
 
   const handleSignUp = async () => {
@@ -216,19 +289,18 @@ const JoinForm = () => {
                   placeholder="아이디(이메일)"
                   value={email}
                   onBlur={handleEmailCheck}
-                  onChange={(e) => setEmail(e.target.value)}
-                  // onChange={(e) => {
-                  //   const newEmail = e.target.value;
+                  onChange={(e) => {
+                    const newEmail = e.target.value;
 
-                  //   setEmail(newEmail);
-                  //   setEmailTouched(true); // 🔸 입력하면 touched됨
-                  //   setIsEmailDuplicateChecked(false);
-                  //   setIsEmailAvailable(null);
-                  //   setEmailVerified(false);
+                    setEmail(newEmail);
+                    setEmailTouched(true); // 🔸 입력하면 touched됨
+                    setIsEmailDuplicateChecked(false);
+                    setIsEmailAvailable(null);
+                    setEmailVerified(false);
 
-                  //   // 인증된 이메일이 입력되면 다시 입력 가능하도록 제어
-                  //   if (emailVerified) setEmailVerified(false);
-                  // }}
+                    // 인증된 이메일이 입력되면 다시 입력 가능하도록 제어
+                    if (emailVerified) setEmailVerified(false);
+                  }}
                   readOnly={emailVerified}
                   className="outline-none w-96 pl-3
                     border-b border-transparent focus:border-[#0073e9]"
@@ -251,15 +323,15 @@ const JoinForm = () => {
 
               {/* ✅ 유효성 메시지 출력 */}
               <div className="flex flex-col text-xs text-left">
-                {uiMessage && (
+                {confirmEmailMessage && (
                   <p
                     className={`mt-2 ml-1  ${
-                      /완료|성공|전송|인증되었습니다/.test(uiMessage)
+                      /완료|성공|전송|인증되었습니다/.test(confirmEmailMessage)
                         ? "text-blue-500"
                         : "text-red-500"
                     }`}
                   >
-                    {uiMessage}
+                    {confirmEmailMessage}
                   </p>
                 )}
               </div>
