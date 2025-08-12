@@ -29,6 +29,8 @@ const Layout = ({ children }: LayoutProps) => {
     const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
       // 👇 이 콜백은 “반드시 1회 이상” 불립니다.
       if (!fbUser) {
+        dispatch(logoutUser());
+
         // SSR에서 이미 세팅했으면 initialized는 true 상태일 수 있음
         dispatch(setAuthInitialized()); // ✨ 추가: 깜빡임 방지
         return;
