@@ -252,6 +252,10 @@ const MyInfo = () => {
                               handleSaveName();
                             }
                           }}
+                          disabled={
+                            saving ||
+                            (editingName && (!name.trim() || name.trim() === (user.name ?? "")))
+                          }
                         />
                         <button
                           type="button"
