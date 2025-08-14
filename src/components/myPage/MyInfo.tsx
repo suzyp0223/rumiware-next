@@ -24,17 +24,23 @@ import { useAppDispatch } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
 import useEmailLinkVerification from "@/hooks/useEmailLinkVerification";
 
+import NameEditRow from "./profile/NameEditRow";
+import PhoneEditRow from "./profile/PhoneEditRow";
+import EmailEditRow from "./profile/EmailEditRow";
+import BirthDateEditRow from "./profile/BirthDateEditRow";
+import AddressEditRow from "./profile/AddressEditRow";
+
 const MyInfo = () => {
   const [smsSelected, setSmsSelected] = useState<string>("yesSms");
   const [emailSelected, setEmailSelected] = useState<string>("yesEmail");
   const [genderSelected, setGenderSelected] = useState<string>("non");
 
   const [name, setName] = useState("");
-  const [saving, setSaving] = useState(false); // ✅ 저장 중 표시용
   const [editingEmail, setEditingEmail] = useState(false);
-  const [editingName, setEditingName] = useState(false);
-
   const [phone, setPhone] = useState("");
+  const [editingPhone, setEditingPhone] = useState(false);
+  const [savingPhone, setSavingPhone] = useState(false); // ✅ 저장 중 표시용
+
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [birthDate, setBirthDate] = useState("");
@@ -57,45 +63,9 @@ const MyInfo = () => {
     console.log("이 사용자는 소셜 로그인 유저입니다!");
   }
 
-  const {
-    email,
-    setEmail,
-    isEmailAvailable,
-    uiMessage,
-    readOnly,
-    handleEmailCheck,
-    handleEmailVerify,
-    consumeLinkFromURL,
-    resetEmailState,
-  } = useEmailLinkVerification({
-    redirectPath: "/myPage/myInfo",
-    onVerified: (verifiedEmail) => {
-      setDisplayEmail(verifiedEmail); // 화면 즉시 갱신
-      setEditingEmail(false); // 편집 종료(원하면 유지 가능)
-    },
-  });
-
   useEffect(() => {
     setDisplayEmail(user?.email ?? "");
   }, [user]);
-
-  useEffect(() => {
-    const url = window.location.href;
-    const params = new URLSearchParams(window.location.search);
-    consumeLinkFromURL(url, params); // 돌아왔을 때 새 이메일 반영
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // 편집 시작/취소
-  const startEdit = () => {
-    resetEmailState();
-    setEditingEmail(true);
-  };
-
-  const cancelEdit = () => {
-    resetEmailState();
-    setEditingEmail(false);
-  };
 
   // useEffect(() => {
   //   if (user && isEmailUser(user)) {
@@ -167,22 +137,6 @@ const MyInfo = () => {
 
   const isSocialUser = user && !isEmailUser(user);
 
-  const handleSaveName = async () => {
-    if (!user || user.type !== "email") return;
-    try {
-      setSaving(true);
-      const ref = doc(db, "users", user.uid);
-      await updateDoc(ref, { name });
-
-      dispatch(setUser({ ...user, name }));
-      setEditingName(false);
-    } catch (e) {
-      console.error("이름 저장 오류:", e);
-    } finally {
-      setSaving(false); // ★ 변경
-    }
-  };
-
   const handleUpdate = async () => {
     if (!user) return;
 
@@ -230,148 +184,16 @@ const MyInfo = () => {
                 <col className="w-auto" />
               </colgroup>
               <tbody className="">
-                <tr className="border-y border-gray-300 ">
-                  <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                    <label htmlFor="hname" className="head-cell">
-                      <span className="text-red-400 "></span>&nbsp;이름
-                    </label>
-                  </th>
-                  <td className="pl-2 align-middle">
-                    {user && user.type === "email" && (
-                      <>
-                        <input
-                          type="text"
-                          className="w-[200px] border-gray-300 outline-none px-4 py-2 border-b hover:border-b-peach-600 focus:border-b-peach-600"
-                          id="hname"
-                          size={15}
-                          maxLength={30}
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter" && editingName && !saving && name.trim()) {
-                              handleSaveName();
-                            }
-                          }}
-                          disabled={
-                            saving ||
-                            (editingName && (!name.trim() || name.trim() === (user.name ?? "")))
-                          }
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            if (!editingName) {
-                              setEditingName(true);
-                            } else {
-                              if (!saving && name.trim()) handleSaveName();
-                            }
-                          }}
-                          disabled={saving || name.trim() === ""}
-                          className="ml-4 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
-                        >
-                          {saving ? "저장중..." : editingName ? "저장" : "수정"}
-                        </button>
+                <NameEditRow user={user} />
 
-                        {editingName && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setName(user.name); // ★ 변경: 원복
-                              setEditingName(false); // ★ 변경: 편집 취소
-                            }}
-                            disabled={saving}
-                            className="ml-2 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded disabled:opacity-50"
-                          >
-                            취소
-                          </button>
-                        )}
-                      </>
-                    )}
-                  </td>
-                </tr>
-
-                <tr className="border-b border-gray-300 ">
-                  <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                    <label htmlFor="id" className="head-cell">
-                      &nbsp;아이디
-                      <br />
-                      (이메일)
-                    </label>
-                  </th>
-                  <td className="p-2 m-4 align-middle">
-                    {!editingEmail ? (
-                      <>
-                        <span className="inline-block px-4 py-2">{displayEmail}</span>
-                        <input type="hidden" id="id" />
-                        <button
-                          type="button"
-                          onClick={startEdit}
-                          className="m-2 p-2 text-sm border border-gray-300 hover:border-peach-300 hover:text-gray-800 rounded"
-                        >
-                          이메일 변경
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        {/* 입력 UI */}
-                        <div className="relative inline-flex items-center py-2 px-2 ">
-                          <input
-                            type="email"
-                            placeholder={displayEmail} // ★ 기존 메일을 placeholder로
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onBlur={handleEmailCheck}
-                            readOnly={readOnly} // 인증 완료 시 lock
-                            className="outline-none w-80 pl-3 border-transparent border border-b-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
-                          />
-
-                          {/* 링크 전송 버튼 */}
-                          <button
-                            type="button"
-                            onClick={handleEmailVerify}
-                            disabled={isEmailAvailable === false}
-                            className={`ml-4 text-xs px-3 py-2 border rounded ${
-                              isEmailAvailable === false
-                                ? "bg-gray-300 cursor-not-allowed"
-                                : "hover:bg-gray-200"
-                            }`}
-                          >
-                            이멜링크보내기
-                          </button>
-
-                          {/* 취소 버튼 */}
-                          <button
-                            type="button"
-                            onClick={cancelEdit}
-                            className="ml-2 text-xs px-3 py-2 border rounded hover:bg-gray-200"
-                          >
-                            취소
-                          </button>
-                        </div>
-
-                        {/* 메시지 */}
-                        {uiMessage && (
-                          <p
-                            className={`mt-2 text-xs ${
-                              /완료|성공|전송|인증되었습니다/.test(uiMessage)
-                                ? "text-blue-500"
-                                : "text-red-500"
-                            }`}
-                          >
-                            {uiMessage}
-                          </p>
-                        )}
-                      </>
-                    )}
-                  </td>
-                </tr>
+                <EmailEditRow user={user} />
 
                 {!isSocialUser && (
                   <>
                     <tr className="border-b border-gray-300 ">
                       <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                         <label htmlFor="password1" className="head-cell">
-                          <span className="text-red-400">*</span>&nbsp;비밀번호
+                          <span className="text-red-400"></span>&nbsp;비밀번호
                         </label>
                       </th>
                       <td className="p-4 pb-0 align-middle">
@@ -393,70 +215,12 @@ const MyInfo = () => {
                         </span>
                       </td>
                     </tr>
-
-                    {/* <tr className="border-b border-gray-300 ">
-                    <th className="bg-peach-100 px-5 py-4 align-middle text-left">
-                      <label htmlFor="password2" className="">
-                        <span className="text-red-400">*</span>&nbsp;비밀번호 확인
-                      </label>
-                    </th>
-                    <td className="p-4 pb-0">
-                      <input
-                        type="password"
-                        className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
-                        id="password2"
-                      />
-                      <span className="block text-sm text-red-500 pb-2 pl-2">
-                        비밀번호가 일치하지 않습니다.
-                      </span>
-                    </td>
-                  </tr> */}
                   </>
                 )}
 
-                <tr className="border-b border-gray-300 ">
-                  <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                    <label className="head-cell">
-                      <span className="text-red-400">*</span>&nbsp;휴대폰
-                    </label>
-                  </th>
-                  <td className="p-4 align-middle">
-                    <input
-                      type="text"
-                      className="outline-none w-[200px] mx-2 px-2 border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
-                      id="etcphone"
-                      size={11}
-                      maxLength={11}
-                      value={phoneValue}
-                    />
-                    {/* <select className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-1 mr-4">
-                      <option value="">선택</option>
-                      <option value="010">010</option>
-                      <option value="011">011</option>
-                      <option value="011">016</option>
-                      <option value="011">017</option>
-                      <option value="011">018</option>
-                      <option value="011">019</option>
-                    </select>
-                    -
-                    <input
-                      type="text"
-                      className="outline-none w-[80px] mx-2 px-2 border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
-                      id="etcphone2"
-                      size={4}
-                      maxLength={4}
-                    />
-                    -
-                    <input
-                      type="text"
-                      className="outline-none w-[80px] mx-2 px-2 border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600"
-                      id="etcphone3"
-                      size={4}
-                      maxLength={4}
-                    /> */}
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-300 ">
+                <PhoneEditRow user={user} />
+
+                {/* <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                     <label className="head-cell">
                       <span className="text-red-400">*</span>&nbsp;수신설정
@@ -530,26 +294,9 @@ const MyInfo = () => {
                       </label>
                     </div>
                   </td>
-                </tr>
+                </tr> */}
 
-                <tr className="border-b border-gray-300 ">
-                  <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                    <label htmlFor="birthYear" className="">
-                      &nbsp;생년월일
-                    </label>
-                  </th>
-                  <td className="p-4 align-middle">
-                    <span className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2">
-                      {birthY ? `${birthY} 년` : "-"}
-                    </span>
-                    <span className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2">
-                      {birthM ? `${birthM} 월` : "-"}
-                    </span>
-                    <span className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2">
-                      {birthD ? `${birthD} 일` : "-"}
-                    </span>
-                  </td>
-                </tr>
+                <BirthDateEditRow user={user} />
 
                 <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
@@ -581,9 +328,10 @@ const MyInfo = () => {
                 </tr>
 
                 <tr className="border-b border-gray-300 ">
+                  {/* <AddressEditRow user={user} /> */}
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                     <label htmlFor="address" className="">
-                      <span className="text-red-400">*</span>&nbsp;주소
+                      <span className="text-red-400"></span>&nbsp;주소
                     </label>
                   </th>
 
@@ -594,7 +342,7 @@ const MyInfo = () => {
                 <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                     <label className="" htmlFor="email1">
-                      <span className="text-red-400">*</span>&nbsp;배송지
+                      <span className="text-red-400"></span>&nbsp;배송지
                     </label>
                   </th>
                   <td className="pl-4 py-4 align-middle">
