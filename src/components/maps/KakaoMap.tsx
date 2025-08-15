@@ -36,7 +36,7 @@ const AddressForm = () => {
             </div>
             <div>
               <span className="hidden">수령인</span>
-              <span className="font-bold ">박수지</span>
+              <span className="font-bold "></span>
             </div>
           </div>
           <div className="flex items-center gap-2 mr-4">

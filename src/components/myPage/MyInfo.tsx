@@ -7,22 +7,15 @@ import { updateDoc, doc } from "firebase/firestore";
 
 import { RootState } from "@/store/store";
 import { auth, db } from "@/firebases/firebase";
-import {
-  type UserState,
-  type EmailUser,
-  fetchUserProfile,
-  setUser,
-} from "@/store/slices/userSlice";
+import { type UserState, type EmailUser, fetchUserProfile } from "@/store/slices/userSlice";
 
 import Image from "next/image";
 import Link from "next/link";
 
-import KakaoMap from "../maps/KakaoMap";
 import MyPageSideNav from "./MyPageSideNav";
 import { onAuthStateChanged } from "firebase/auth";
 import { useAppDispatch } from "@/hooks/hooks";
 import { useRouter } from "next/navigation";
-import useEmailLinkVerification from "@/hooks/useEmailLinkVerification";
 
 import NameEditRow from "./profile/NameEditRow";
 import PhoneEditRow from "./profile/PhoneEditRow";
@@ -31,21 +24,14 @@ import BirthDateEditRow from "./profile/BirthDateEditRow";
 import AddressEditRow from "./profile/AddressEditRow";
 
 const MyInfo = () => {
-  const [smsSelected, setSmsSelected] = useState<string>("yesSms");
-  const [emailSelected, setEmailSelected] = useState<string>("yesEmail");
   const [genderSelected, setGenderSelected] = useState<string>("non");
 
   const [name, setName] = useState("");
-  const [editingEmail, setEditingEmail] = useState(false);
   const [phone, setPhone] = useState("");
-  const [editingPhone, setEditingPhone] = useState(false);
-  const [savingPhone, setSavingPhone] = useState(false); // ✅ 저장 중 표시용
 
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [gender, setGender] = useState("");
-  const [nationality, setNationality] = useState("");
 
   const [cancel, setCancel] = useState("");
 
@@ -53,8 +39,11 @@ const MyInfo = () => {
   const dispatch = useAppDispatch();
   // const { user } = useSelector((state: RootState) => state.userReducer);
   const { user, initialized, isLoggedIn, loading } = useSelector((s: RootState) => s.userReducer);
-  console.log("마이인포 user정보: ", user);
+  // console.log("마이인포 user정보: ", user);
+  const uid = user?.uid ?? null;
+
   const [displayEmail, setDisplayEmail] = useState<string>(() => user?.email ?? "");
+  // ✅ 주소 상태 구독
 
   const isEmailUser = (user: UserState): user is EmailUser => {
     return "email" in user && "name" in user;
@@ -66,38 +55,6 @@ const MyInfo = () => {
   useEffect(() => {
     setDisplayEmail(user?.email ?? "");
   }, [user]);
-
-  // useEffect(() => {
-  //   if (user && isEmailUser(user)) {
-  //     setName(user.name ?? "");
-  //     setPhone(user.phoneNumber ?? "");
-  //     setBirthDate(user.birthDate ?? "");
-  //     setGender(user.gender ?? "");
-  //     setNationality(user.nationality ?? "");
-  //   } else if (user) {
-  //     // 소셜(전화번호 로그인) 유저의 경우
-  //     setPhone(user.provider ?? "");
-  //   }
-  // }, [user]);
-
-  let phoneValue = "";
-  let phone1 = "";
-  let phone2 = "";
-  let birthY = "";
-  let birthM = "";
-  let birthD = "";
-  let genderValue = "";
-  if (initialized && user && user.type === "email") {
-    phone1 = user.phoneNumber.slice(3, 7);
-    phone2 = user.phoneNumber.slice(7, 11);
-    phoneValue = "010" + "-" + phone1 + "-" + phone2;
-
-    birthY = user.birthDate.slice(0, 2);
-    birthM = user.birthDate.slice(2, 4);
-    birthD = user.birthDate.slice(4, 6);
-
-    genderValue = user.gender;
-  }
 
   // user 데이터가 있으면 초기값 세팅
   useEffect(() => {
@@ -122,6 +79,10 @@ const MyInfo = () => {
     return () => unsub();
   }, [dispatch, router]);
 
+  let genderValue = "";
+  if (initialized && user && user.type === "email") {
+    genderValue = user.gender;
+  }
   // DB에서 genderValue가 도착하면 상태에 반영
   useEffect(() => {
     if (genderValue) {
@@ -136,7 +97,6 @@ const MyInfo = () => {
   }, [genderValue]);
 
   const isSocialUser = user && !isEmailUser(user);
-
   const handleUpdate = async () => {
     if (!user) return;
 
@@ -219,83 +179,6 @@ const MyInfo = () => {
                 )}
 
                 <PhoneEditRow user={user} />
-
-                {/* <tr className="border-b border-gray-300 ">
-                  <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                    <label className="head-cell">
-                      <span className="text-red-400">*</span>&nbsp;수신설정
-                    </label>
-                  </th>
-                  <td className="p-4 align-middle">
-                    <div className="p-2 mt-4">
-                      <span className="text-sm">이메일 수신 여부</span>
-                      <label
-                        className={`inline-block  pr-6 whitespace-nowrap pl-6 ${
-                          emailSelected === "yes" ? "text-peach-600" : "text-black"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="emailAdd"
-                          value="yesEmail"
-                          checked={emailSelected === "yesEmail"}
-                          onChange={(e) => setEmailSelected(e.target.value)}
-                          className="mr-1 accent-peach-600"
-                        />
-                        <span className="text-sm">수신함</span>
-                      </label>
-                      <label
-                        className={`inline-block  pr-6 whitespace-nowrap ${
-                          emailSelected === "no" ? "text-peach-600" : "text-black"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="emailAdd"
-                          value="noEmail"
-                          checked={emailSelected === "noEmail"}
-                          onChange={(e) => setEmailSelected(e.target.value)}
-                          className="mr-1 accent-peach-600"
-                        />
-                        <span className="text-sm">수신안함</span>
-                      </label>
-                    </div>
-                    <div className="p-2 mt-4">
-                      <span className="text-sm">문자 수신 여부</span>
-                      <label
-                        className={`inline-flex items-center px-6 cursor-pointer ${
-                          smsSelected === "yes" ? "text-peach-600" : "text-black"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="sms"
-                          value="yesSms"
-                          checked={smsSelected === "yesSms"}
-                          onChange={(e) => setSmsSelected(e.target.value)}
-                          className="mr-1 accent-peach-600"
-                        />
-                        <span className="text-sm">수신함</span>
-                      </label>
-                      <label
-                        className={`inline-flex items-center cursor-pointer ${
-                          smsSelected === "no" ? "text-peach-600" : "text-black"
-                        }`}
-                      >
-                        <input
-                          type="radio"
-                          name="sms"
-                          value="noSms"
-                          checked={smsSelected === "noSms"}
-                          onChange={(e) => setSmsSelected(e.target.value)}
-                          className="mr-1 accent-peach-600"
-                        />
-                        <span className="text-sm">수신안함</span>
-                      </label>
-                    </div>
-                  </td>
-                </tr> */}
-
                 <BirthDateEditRow user={user} />
 
                 <tr className="border-b border-gray-300 ">
@@ -327,8 +210,7 @@ const MyInfo = () => {
                   </td>
                 </tr>
 
-                <tr className="border-b border-gray-300 ">
-                  {/* <AddressEditRow user={user} /> */}
+                {/* <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                     <label htmlFor="address" className="">
                       <span className="text-red-400"></span>&nbsp;주소
@@ -336,9 +218,8 @@ const MyInfo = () => {
                   </th>
 
                   <KakaoMap />
-                </tr>
+                </tr> */}
 
-                {/* 0개 + 버튼만 2개이상은 1개만 보여주고 더보기 구현 */}
                 <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                     <label className="" htmlFor="email1">
@@ -346,7 +227,8 @@ const MyInfo = () => {
                     </label>
                   </th>
                   <td className="pl-4 py-4 align-middle">
-                    <div className="relative p-2 m-2">
+                    <AddressEditRow />
+                    {/* <div className="relative p-2 m-2">
                       <button
                         type="button"
                         className="border border-gray-300 rounded p-2 w-[600px] mb-6"
@@ -366,23 +248,20 @@ const MyInfo = () => {
                         <li className="">
                           <div className="mb-4">
                             <span className="for-a11y hidden">배송지명</span>
-                            <span>집</span>
+                            <span></span>
                           </div>
                           <div className="inline">
                             <span className="hidden">수령인</span>
-                            <span className="font-bold  mr-2">박수지</span>
+                            <span className="font-bold  mr-2"></span>
                             <span>&nbsp;|&nbsp; </span>
                           </div>
                           <div className="inline ml-2">
                             <span className="hidden">연락처</span>
-                            <span className="font-bold ">010-1234-5678</span>
+                            <span className="font-bold "></span>
                           </div>
                           <div className="mt-2">
                             <span className="hidden">주소</span>
-                            <span>
-                              서울 중구 세종대로 110 서울특별시청 서울 중구 세종대로 110
-                              서울특별시청{" "}
-                            </span>
+                            <span></span>
                           </div>
                         </li>
                       </ul>
@@ -394,9 +273,10 @@ const MyInfo = () => {
                           삭제
                         </button>
                       </div>
-                    </div>
+                    </div> */}
                   </td>
                 </tr>
+
                 <tr>
                   <td colSpan={2} className="text-center py-4">
                     <div className="inline-flex mt-8 gap-8">
@@ -429,7 +309,7 @@ const MyInfo = () => {
         </div>
 
         {/* 소셜 연결 */}
-        <ul>
+        {/* <ul>
           <li>
             <dl>
               <dt>
@@ -462,12 +342,12 @@ const MyInfo = () => {
               </dd>
             </dl>
           </li>
-        </ul>
+        </ul> */}
 
-        <div>
+        {/* <div>
           <Link href="">취소</Link>
           <Link href="">수정</Link>
-        </div>
+        </div> */}
       </section>
     </div>
   );

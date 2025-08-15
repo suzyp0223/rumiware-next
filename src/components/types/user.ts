@@ -11,5 +11,6 @@ export interface UserInfoProps {
   address: string; // 기본주소
   detailAddress: string; // 상세주소
   zoneCode: string; // 우편번호
-  createdAt: Date;
+  // createdAt: Date;
+  createdAt: number | null;
 }

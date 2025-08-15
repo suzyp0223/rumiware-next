@@ -4,11 +4,18 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { DaumPostcodeData } from "../types/daum";
 
-import { signOut } from "firebase/auth";
+import {
+  isSignInWithEmailLink,
+  linkWithCredential,
+  signInWithEmailLink,
+  signOut,
+} from "firebase/auth";
 
 import { auth } from "@/firebases/firebase";
 import { checkEmailDuplicate } from "@/firebases/checkEmailDuplicate";
+import sendEmailVerificationLink from "@/firebases/sendEmailVerificationLink";
 
 import { useAppDispatch } from "@/hooks/hooks";
 import updateEmailVerified from "@/hooks/updateEmailVerified";
@@ -19,11 +26,14 @@ import PasswordToggle from "../toggle/PasswordToggle";
 import PhoneForm from "./PhoneForm";
 
 import {
+  // getEmailError,
+  getEmailValidationMessage,
   getConfirmPwdMessage,
   handlePasswordFieldChange,
   handleConfirmPasswordFieldChange,
   handleNameFieldChange,
   handleBirthFieldChange,
+  isValidEmail,
   validateSignUpFields,
 } from "@/hooks/useAuthValidation";
 
@@ -31,6 +41,7 @@ import { addAddress } from "@/store/slices/addressesSlice";
 import AddressEditRow, { AddressFormValue } from "@/components/myPage/profile/AddressEditRow";
 
 const JoinForm = () => {
+  const [email, setEmail] = useState("");
   const [pwd, setPwd] = useState("");
   const [confirmPwd, setConfirmPwd] = useState(""); // 비밀번호 확인 입력값
   const [name, setName] = useState("");
@@ -43,7 +54,9 @@ const JoinForm = () => {
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [confirmPwdFocused, setConfirmPwdFocused] = useState(false);
 
+  const [emailVerified, setEmailVerified] = useState(false);
   const [isEmailDuplicateChecked, setIsEmailDuplicateChecked] = useState(false);
+  const [isEmailAvailable, setIsEmailAvailable] = useState<boolean | null>(null);
   const [showEmptyMessage, setShowEmptyMessage] = useState(false);
   const [isPwdMatch, setIsPwdMatch] = useState<boolean | null>(null); // 비밀번호 일치 여부
 
@@ -78,11 +91,10 @@ const JoinForm = () => {
   const confirmPwdMessage = getConfirmPwdMessage(pwd, confirmPwd, isPwdMatch, confirmPwdFocused);
 
   const {
-    email,
-    setEmail, // 기존 setEmail 대체
-    emailVerified,
-    isEmailAvailable,
-    setIsEmailAvailable,
+    // email,
+    // setEmail, // 기존 setEmail 대체
+    // emailVerified,
+    // isEmailAvailable,
     uiMessage, // 기존 confirmEmailMessage 대체 가능
     readOnly,
     handleEmailCheck,
@@ -95,10 +107,6 @@ const JoinForm = () => {
     consumeLinkFromURL(url, searchParams); // 인증 링크 확인
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams]);
-
-  const onlyDigits = (s: string) => (s ?? "").replace(/\D/g, "");
-  const isAddressValid = (a?: AddressFormValue | null) =>
-    !!a && a.zonecode?.trim() && a.address?.trim() && a.detailAddress?.trim();
 
   const handleSignUp = async () => {
     setShowEmptyMessage(true);
@@ -143,7 +151,7 @@ const JoinForm = () => {
 
     try {
       // 🧩 Redux Thunk로 사용자 생성 및 Firestore 저장
-      const created = await dispatch(
+      await dispatch(
         signUpUser({
           email,
           password: pwd,
@@ -154,46 +162,20 @@ const JoinForm = () => {
           phoneNumber,
         })
       ).unwrap(); // ✅ dispatch 타입이 AppDispatch면 정상 동작
-
-      // signUpUser가 반환하는 객체에서 uid 확보
-      const uidFromThunk = (created as { uid?: string })?.uid;
-      const uid = uidFromThunk ?? auth.currentUser?.uid;
       console.log("회원가입 및 정보 저장 성공!");
-
-      console.log("[JOIN] uidFromThunk:", uidFromThunk, "auth.uid:", auth.currentUser?.uid);
-      console.log("[JOIN] addressDraft:", addressDraft);
-      console.log("[JOIN] addressValid:", isAddressValid(addressDraft));
 
       //  주소 초안이 있다면 서브컬렉션에 추가 (기본 배송지)
       //    auth.currentUser가 존재하는 이메일 링크 가입 흐름이라면 uid 사용 가능
-      if (uid && isAddressValid(addressDraft)) {
-        try {
-          await dispatch(
-            addAddress({
-              uid,
-              value: {
-                // ✅ 주소 폼에서 받은 주소 3종
-                label: addressDraft!.label ?? "집",
-                zonecode: addressDraft!.zonecode,
-                address: addressDraft!.address,
-                detailAddress: addressDraft!.detailAddress,
-
-                // ✅ 첫 주소는 기본으로
-                isDefault: true,
-
-                // ✅ 이름/전화번호는 회원가입 입력값으로 고정 주입
-                recipient: name.trim(),
-                phone: onlyDigits(phoneNumber),
-              },
-            })
-          ).unwrap();
-          console.log("✅ 주소 저장 성공");
-        } catch (err) {
-          console.error("❌ 주소 저장 실패:", err);
-        }
-      } else {
-        if (!uid) console.error("❌ UID 없음: addAddress 호출 불가");
-        if (!isAddressValid(addressDraft)) console.error("❌ 주소 유효성 실패: addAddress 건너뜀");
+      if (addressDraft && auth.currentUser?.uid) {
+        await dispatch(
+          addAddress({
+            uid: auth.currentUser.uid,
+            value: {
+              ...addressDraft,
+              isDefault: true, // 회원가입 첫 주소 = 기본
+            },
+          })
+        ).unwrap();
       }
 
       // 🔐 이메일 인증 여부 확인 (인증 안 되었으면 중단)
@@ -251,7 +233,7 @@ const JoinForm = () => {
                   value={email}
                   onBlur={handleEmailCheck}
                   onChange={(e) => setEmail(e.target.value)}
-                  readOnly={readOnly}
+                  readOnly={emailVerified}
                   className="w-full outline-none w-96 pl-3
                     border-b border-transparent focus:border-[#0073e9]"
                 />
@@ -475,11 +457,11 @@ const JoinForm = () => {
             {/* 주소 */}
             {/* <KakaoMap /> */}
             <AddressEditRow
-              onChange={(v) => {
+              onSubmit={(v) => {
                 // 폼 내부 "저장" 클릭 시 로컬 상태에 저장
                 setAddressDraft(v);
               }}
-              showActions={false}
+              // renderMap={({ address }) => <KakaoMap address={address} />} // (선택) 지도 연결
             />
             {!addressDraft && (
               <p className="text-xs text-gray-500 mt-1">

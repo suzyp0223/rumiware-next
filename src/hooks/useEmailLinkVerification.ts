@@ -149,6 +149,7 @@ export default function useEmailLinkVerification(options?: Options) {
     emailVerified,
     isEmailDuplicateChecked,
     isEmailAvailable,
+    setIsEmailAvailable,
     uiMessage,
 
     // 파생

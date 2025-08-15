@@ -6,10 +6,25 @@
     Redux 상태에 저장하여 로그인 상태 유지
  */
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
-import { doc, setDoc, serverTimestamp, FieldValue, Timestamp, getDoc } from "firebase/firestore";
+import {
+  doc,
+  setDoc,
+  serverTimestamp,
+  FieldValue,
+  Timestamp,
+  getDoc,
+  updateDoc,
+} from "firebase/firestore";
+import {
+  FirestoreUser as FSUser,
+  EmailUserForRedux as EmailUserRedux,
+  SocialUserForRedux as SocialUserRedux,
+} from "../../components/types/firestoreUser";
+
 import { auth, db } from "@/firebases/firebase";
 import { updatePassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
+import { UserProfile } from "@/store/types";
 
 // 타입 정의
 export interface BaseUser {
@@ -47,7 +62,7 @@ export type UserState = EmailUser | SocialUser;
 
 // Redux Slice
 export interface State {
-  user: EmailUserForRedux | SocialUserForRedux | null;
+  user: EmailUserForRedux | SocialUserForRedux | UserProfile | null;
   initialized: boolean;
   isLoggedIn: boolean;
   loading: boolean;
@@ -63,6 +78,15 @@ const initialState: State = {
   error: null,
 };
 
+const mapGender = (label: string): "male" | "female" | "non" => {
+  // JoinForm은 "남자"/"여자"를 씁니다 → 표준값으로 매핑
+  if (label === "남자") return "male";
+  if (label === "여자") return "female";
+  return "non";
+};
+
+const onlyDigits = (s: string) => (s ?? "").replace(/\D/g, "");
+
 // 🔐 회원가입 (이메일 인증 링크 클릭 후 Firestore 저장만 진행)
 export const signUpUser = createAsyncThunk<
   EmailUserForRedux,
@@ -74,12 +98,28 @@ export const signUpUser = createAsyncThunk<
     gender: string;
     nationality: string;
     phoneNumber: string;
+    zoneCode: string;
+    address: string;
+    detailAddress: string;
   },
   { rejectValue: string } // ✨ 변경: reject payload 타입 명시
 >(
   "user/signUpUser", // 액션 이름
 
-  async ({ password, name, birthDate, gender, nationality, phoneNumber }, thunkAPI) => {
+  async (
+    {
+      password,
+      name,
+      birthDate,
+      gender,
+      nationality,
+      phoneNumber,
+      zoneCode,
+      address,
+      detailAddress,
+    },
+    thunkAPI
+  ) => {
     try {
       const user = auth.currentUser;
 
@@ -112,13 +152,12 @@ export const signUpUser = createAsyncThunk<
       // ✅ Firestore 문서 확인
       const userDocRef = doc(db, "users", user.uid);
       const snapshot = await getDoc(userDocRef);
-
       if (snapshot.exists()) {
         return thunkAPI.rejectWithValue("이미 가입된 사용자입니다.");
       }
 
-      // ✅ 사용자 정보 구성
-      const userData: EmailUser = {
+      // ✅ Firestore 저장 데이터 (createdAt 포함)
+      const userData: FirestoreUser = {
         type: "email",
         uid: user.uid,
         email: (user.email ?? "").toLowerCase(),
@@ -127,6 +166,11 @@ export const signUpUser = createAsyncThunk<
         gender,
         nationality,
         phoneNumber: phoneNumber.replace(/\D/g, ""),
+
+        zoneCode,
+        address,
+        detailAddress,
+
         emailVerified: user.emailVerified,
         isAdmin: false,
         createdAt: serverTimestamp(), // Firestore에는 저장됨
@@ -138,13 +182,12 @@ export const signUpUser = createAsyncThunk<
 
       //  Redux 상태에 저장할 데이터에서 createdAt 제거
 
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { createdAt: _unused, ...userForRedux } = userData;
+      // const { createdAt: _unused, ...userForRedux } = userData;
 
       // ✅ 여기서 직접 Redux에 저장!
       // thunkAPI.dispatch(setUser(userForRedux));
 
-      return userForRedux as EmailUserForRedux; // ⚠️ 직렬화 경고 방지
+      return userData; // ⚠️ 직렬화 경고 방지
     } catch (err: unknown) {
       const fbErr = err as FirebaseError; // ✨ 변경
       console.error("❌ Firestore 저장 실패:", fbErr);
@@ -165,7 +208,6 @@ export const fetchUserProfile = createAsyncThunk<
     if (!snap.exists()) {
       return thunkAPI.rejectWithValue("프로필 문서가 없습니다.");
     }
-    // const data = snap.data();
 
     const raw = snap.data() as FirestoreUser; // ★ 변경
 
@@ -175,6 +217,19 @@ export const fetchUserProfile = createAsyncThunk<
     return userForRedux as EmailUserForRedux | SocialUserForRedux; // ★ 변경: Redux에 넣을 순수 객체 반환
   } catch {
     return thunkAPI.rejectWithValue("프로필 조회 중 오류가 발생했습니다.");
+  }
+});
+
+export const updateUserField = createAsyncThunk<
+  { field: string; value: any },
+  { uid: string; field: string; value: any },
+  { rejectValue: string }
+>("user/updateUserField", async ({ uid, field, value }, { rejectWithValue }) => {
+  try {
+    await updateDoc(doc(db, "users", uid), { [field]: value });
+    return { field, value };
+  } catch (err: any) {
+    return rejectWithValue(err?.message ?? "updateUserField failed");
   }
 });
 
@@ -235,6 +290,12 @@ const userSlice = createSlice({
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload ?? "프로필 조회 실패";
+      })
+      .addCase(updateUserField.fulfilled, (state, action) => {
+        if (state.user) {
+          const { field, value } = action.payload;
+          (state.user as any)[field] = value; // 낙관적 동기화
+        }
       });
   },
 });

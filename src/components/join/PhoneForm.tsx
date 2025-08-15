@@ -52,7 +52,7 @@ const PhoneForm = ({ phoneNumber, setPhoneNumber, phoneError, setPhoneError }: P
               onChange={handlePhoneFormat}
               type="tel"
               placeholder="휴대전화번호"
-              className="outline-none w-full max-w-md pl-3 border-b border-transparent focus:border-blue-600"
+              className="w-full outline-none w-96 pl-3 border-b border-transparent focus:border-blue-600"
             />
             <button
               type="button"
