@@ -101,7 +101,7 @@ const Footer: React.FC = (): React.ReactElement => {
           <div className="flex items-center flex-wrap">
             {[
               "https://unsplash.com/favicon-32x32.png",
-              "https://www.pexels.com/assets/static/images/meta/pexels-icon.png",
+              "https://static.pexels.com/1/images/meta/favicon.ico",
               "https://pixabay.com/favicon-32x32.png",
               "https://cdn.shopify.com/shopifycloud/growth_tools/assets/global/favicon-ab7018e1fe708a49edcfecce3166032fbeeb1fd7ba4a078c366de344d32ee193.png",
               "https://cdn-front.freepik.com/favicons/favicon.svg?v=2",

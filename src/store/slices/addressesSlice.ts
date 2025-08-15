@@ -1,6 +1,5 @@
 "use client";
 
-import { Timestamp } from "firebase/firestore";
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import {
   collection,
@@ -61,36 +60,53 @@ export const startAddressesListener = createAsyncThunk<
       unsubscribe = null;
     }
 
+    // ✅ 먼저 '구독 중인 uid'를 표시 (중복 시작 방지에 도움)
+    dispatch(addressesSlice.actions.setListeningUid(uid));
+
     const colRef = collection(db, "users", uid, "addresses");
     const q = query(colRef, orderBy("createdAt", "desc"));
 
     unsubscribe = onSnapshot(
       q,
       (snap) => {
-        const rows: AddressDoc[] = snap.docs.map((d) => {
-          // d.data()는 DocumentData -> 런타임 구조 가정 하에 명시적 단언
-          const data = d.data() as Record<string, unknown>;
-          const createdAtMs = toMillis(data?.createdAt);
+        console.log(
+          "[addresses] snap size:",
+          snap.size,
+          snap.docs.map((d) => d.id)
+        );
 
-          const safeRow: AddressDoc = {
-            id: d.id,
-            label: (data.label as string | undefined) ?? undefined,
-            receiverName: data.receiverName as string | undefined,
-            phone: data.phone as string | undefined,
-            zonecode: (data.zonecode as string | undefined) ?? undefined,
-            address: (data.address as string) ?? "",
-            detailAddress: (data.detailAddress as string | undefined) ?? undefined,
-            memo: (data.memo as string | undefined) ?? undefined,
-            isDefault: Boolean(data.isDefault),
-            createdAt: createdAtMs, // ✅ 직렬화 안전
-          };
+        const rows: AddressDoc[] = [];
+        for (const d of snap.docs) {
+          try {
+            const data = d.data() as Record<string, unknown>;
+            const createdAtMs = toMillis(data?.createdAt);
 
-          return safeRow;
-        });
+            const safeRow: AddressDoc = {
+              id: d.id,
+              label: data.label as string | undefined,
+              receiverName: data.receiverName as string | undefined,
+              phone: data.phone as string | undefined,
+              zonecode: data.zonecode as string | undefined,
+              address: (data.address as string) ?? "",
+              detailAddress: data.detailAddress as string | undefined,
+              memo: data.memo as string | undefined,
+              isDefault: Boolean(data.isDefault),
+              createdAt: createdAtMs, // ✅ 직렬화 안전 (number|null)
+            };
+
+            rows.push(safeRow);
+          } catch (e) {
+            // 개별 문서 파싱 실패해도 전체 진행
+            console.error("[addresses] doc parse error:", d.id, e);
+          }
+        }
+
+        // ✅ 비어 있어도 반드시 setItems 호출 → loading=false 보장
         dispatch(addressesSlice.actions.setItems(rows));
-        dispatch(addressesSlice.actions.setListeningUid(uid));
+        // listeningUid는 '시작' 시점에 이미 설정했으므로 중복 설정 불필요
       },
       (err) => {
+        console.error("[addresses] onSnapshot error:", err);
         dispatch(addressesSlice.actions.setError(toErrorMessage(err)));
       }
     );
@@ -242,12 +258,15 @@ const addressesSlice = createSlice({
         s.loading = true;
         s.error = null;
       })
+      .addCase(startAddressesListener.fulfilled, (s) => {
+        s.loading = false;
+      })
       .addCase(startAddressesListener.rejected, (s, a) => {
         s.loading = false;
         s.error = (a.payload as string) ?? "구독 시작 실패";
       })
       .addCase(stopAddressesListener.fulfilled, (s) => {
-        s.listeningUid = null;
+        s.loading = false;
       })
       .addCase(addAddress.rejected, (s, a) => {
         s.error = (a.payload as string) ?? "추가 실패";

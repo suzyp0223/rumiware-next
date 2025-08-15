@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "@/hooks/hooks";
 import type { RootState } from "../../../store/store"; // ✅ 프로젝트 경로에 맞게 수정
@@ -53,34 +53,21 @@ export default function AddressEditRow() {
     // ✅ 언마운트/uid 변경 시 정리
     return () => {
       dispatch(stopAddressesListener());
-      dispatch(clearAddresses()); // 🔧 변경점: 컴포넌트 빠질 때 목록 비우기 (옵션)
+      // dispatch(clearAddresses()); // 🔧 변경점: 컴포넌트 빠질 때 목록 비우기 (옵션)
     };
   }, [uid, listeningUid, dispatch]);
 
-  if (!isLoggedIn || !uid) {
-    return <p className="text-sm text-gray-500 px-4">로그인 후 배송지를 관리하실 수 있습니다.</p>;
-  }
-
-  if (loading && items.length === 0) {
-    return <p className="text-sm text-gray-500 px-4">배송지 불러오는 중…</p>;
-  }
-
-  if (error) {
-    return <p className="text-sm text-red-600 px-4">오류: {error}</p>;
-  }
-
   // ✅ 기본배송지를 맨 위로 정렬 (UI 편의)
-  const sorted = useMemo(
-    () => [...items].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0)),
-    [items]
-  );
+  const sorted = [...items].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
 
   if (!isLoggedIn || !uid) {
     return <p className="text-sm text-gray-500 px-4">로그인 후 배송지를 관리하실 수 있습니다.</p>;
   }
-  if (loading && items.length === 0) {
+
+  if (!listeningUid && loading) {
     return <p className="text-sm text-gray-500 px-4">배송지 불러오는 중…</p>;
   }
+
   if (error) {
     return <p className="text-sm text-red-600 px-4">오류: {error}</p>;
   }
@@ -151,7 +138,7 @@ export default function AddressEditRow() {
   const handleSearchAddress = () => {
     // detailRef로 포커스, zonecode/address는 setForm으로 갱신
     handleAddressSearch(
-      detailRef, // ✅ 변경: ref 직접 전달
+      detailRef, // ref 직접 전달
       (code) => setForm((f) => ({ ...f, zonecode: code })),
       (addr) => setForm((f) => ({ ...f, address: addr }))
     );

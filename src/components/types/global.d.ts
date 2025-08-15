@@ -8,7 +8,7 @@ declare global {
     recaptchaVerifier?: RecaptchaVerifier;
     confirmationResult?: ConfirmationResult;
     recaptchaWidgetId?: number; // 위젯 ID는 number 타입
-    daum: {
+    daum?: {
       Postcode: new (options: {
         popupTitle?: string;
         popupKey?: string;
