@@ -1,16 +1,14 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-
 import { updateDoc, doc } from "firebase/firestore";
 
 import { RootState } from "@/store/store";
 import { auth, db } from "@/firebases/firebase";
 import { type UserState, type EmailUser, fetchUserProfile } from "@/store/slices/userSlice";
-
-import Image from "next/image";
-import Link from "next/link";
+import WithdrawButton from "@/components/account/WithdrawButton"; // 🔧 경로는 실제 위치에 맞게 조정
 
 import MyPageSideNav from "./MyPageSideNav";
 import { onAuthStateChanged } from "firebase/auth";
@@ -22,6 +20,8 @@ import PhoneEditRow from "./profile/PhoneEditRow";
 import EmailEditRow from "./profile/EmailEditRow";
 import BirthDateEditRow from "./profile/BirthDateEditRow";
 import AddressEditRow from "./profile/AddressEditRow";
+import SocialLinks from "./profile/SocialLinks";
+import PasswordEditRow from "./profile/PasswordEditRow";
 
 const MyInfo = () => {
   const [genderSelected, setGenderSelected] = useState<string>("non");
@@ -35,12 +35,14 @@ const MyInfo = () => {
 
   const [cancel, setCancel] = useState("");
 
+  const [canEdit, setCanEdit] = useState(false); // 비번 검증 통과 여부
+  const [isEditing, setIsEditing] = useState(false);
+
   const router = useRouter();
   const dispatch = useAppDispatch();
   // const { user } = useSelector((state: RootState) => state.userReducer);
   const { user, initialized, isLoggedIn, loading } = useSelector((s: RootState) => s.userReducer);
   // console.log("마이인포 user정보: ", user);
-  const uid = user?.uid ?? null;
 
   const [displayEmail, setDisplayEmail] = useState<string>(() => user?.email ?? "");
   // ✅ 주소 상태 구독
@@ -97,6 +99,7 @@ const MyInfo = () => {
   }, [genderValue]);
 
   const isSocialUser = user && !isEmailUser(user);
+
   const handleUpdate = async () => {
     if (!user) return;
 
@@ -137,6 +140,12 @@ const MyInfo = () => {
 
         <div className="">
           <span className="w-full mx-auto text-sm px-2">변경할 부분만 수정해주세요</span>
+
+          {/* 회원탈퇴 */}
+          <div className="w-full flex justify-end items-center text-sm px-2">
+            <WithdrawButton />
+          </div>
+
           {isLoggedIn && user && (
             <table className=" mx-auto w-full mt-4">
               <colgroup>
@@ -148,35 +157,16 @@ const MyInfo = () => {
 
                 <EmailEditRow user={user} />
 
-                {!isSocialUser && (
-                  <>
-                    <tr className="border-b border-gray-300 ">
-                      <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                        <label htmlFor="password1" className="head-cell">
-                          <span className="text-red-400"></span>&nbsp;비밀번호
-                        </label>
-                      </th>
-                      <td className="p-4 pb-0 align-middle">
-                        <input
-                          type="password"
-                          className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
-                          id="password1"
-                          size={15}
-                          maxLength={20}
-                        />
-                        <button
-                          type="button"
-                          className="ml-4 p-2 text-sm border border-gray-300  hover:border-peach-300 hover:text-gray-800 rounded"
-                        >
-                          재설정
-                        </button>
-                        <span className="block text-sm text-red-500 pb-2 pl-2">
-                          비밀번호가 일치하지 않습니다.
-                        </span>
-                      </td>
-                    </tr>
-                  </>
-                )}
+                <PasswordEditRow
+                  isSocialUser={!!isSocialUser} // 소셜 로그인 전용 계정이면 숨김
+                  onVerified={() => setCanEdit(true)} // 검증 통과 시 부모 상태 변경
+                  onEdit={() => setIsEditing(true)} // "수정" 눌렀을 때 편집 모드 진입
+                  onCancel={() => {
+                    // "취소" 눌렀을 때 원복
+                    setIsEditing(false);
+                    setCanEdit(false);
+                  }}
+                />
 
                 <PhoneEditRow user={user} />
                 <BirthDateEditRow user={user} />
@@ -210,15 +200,7 @@ const MyInfo = () => {
                   </td>
                 </tr>
 
-                {/* <tr className="border-b border-gray-300 ">
-                  <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
-                    <label htmlFor="address" className="">
-                      <span className="text-red-400"></span>&nbsp;주소
-                    </label>
-                  </th>
-
-                  <KakaoMap />
-                </tr> */}
+                {/*  <KakaoMap />  */}
 
                 <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
@@ -228,52 +210,6 @@ const MyInfo = () => {
                   </th>
                   <td className="pl-4 py-4 align-middle">
                     <AddressEditRow />
-                    {/* <div className="relative p-2 m-2">
-                      <button
-                        type="button"
-                        className="border border-gray-300 rounded p-2 w-[600px] mb-6"
-                      >
-                        <span className="before:content-['+'] before:mr-2">배송지 추가하기</span>
-                      </button>
-
-                      <h4 className="for-a11y hidden">배송지목록</h4>
-
-                      <ul className="w-[500px]">
-                        <button
-                          type="button"
-                          className="absolute top-17 right-2 mr-2 px-3 py-1 rounded border border-blue-600 text-sm text-blue-600 hover:underline"
-                        >
-                          수정
-                        </button>
-                        <li className="">
-                          <div className="mb-4">
-                            <span className="for-a11y hidden">배송지명</span>
-                            <span></span>
-                          </div>
-                          <div className="inline">
-                            <span className="hidden">수령인</span>
-                            <span className="font-bold  mr-2"></span>
-                            <span>&nbsp;|&nbsp; </span>
-                          </div>
-                          <div className="inline ml-2">
-                            <span className="hidden">연락처</span>
-                            <span className="font-bold "></span>
-                          </div>
-                          <div className="mt-2">
-                            <span className="hidden">주소</span>
-                            <span></span>
-                          </div>
-                        </li>
-                      </ul>
-                      <div className="flex justify-end ">
-                        <button
-                          type="button"
-                          className="text-sm text-red-500 border border-red-500 mr-2 px-3 py-1 rounded hover:underline"
-                        >
-                          삭제
-                        </button>
-                      </div>
-                    </div> */}
                   </td>
                 </tr>
 
@@ -300,54 +236,18 @@ const MyInfo = () => {
               </tbody>
             </table>
           )}
-
-          <div>
-            <span>
-              <Link href="">회원탈퇴</Link>
-            </span>
-          </div>
         </div>
 
         {/* 소셜 연결 */}
-        {/* <ul>
-          <li>
-            <dl>
-              <dt>
-                네이버
-                <Image src="" alt="네이버" className="" />
-              </dt>
-              <dd>
-                <Link href="">
-                  <Image src="" alt="연결하기" className="" />
-                </Link>
-                <Link href="">
-                  <Image src="" alt="연결끊기" className="" />
-                </Link>
-              </dd>
-            </dl>
-          </li>
-          <li>
-            <dl>
-              <dt>
-                카카오
-                <Image src="" alt="카카오" className="" />
-              </dt>
-              <dd>
-                <Link href="">
-                  <Image src="" alt="연결하기" className="" />
-                </Link>
-                <Link href="">
-                  <Image src="" alt="연결끊기" className="" />
-                </Link>
-              </dd>
-            </dl>
-          </li>
-        </ul> */}
-
-        {/* <div>
-          <Link href="">취소</Link>
-          <Link href="">수정</Link>
-        </div> */}
+        {isLoggedIn && user ? (
+          <>
+            {/* ...기존 섹션들... */}
+            <h3 className="text-lg font-medium mt-8 mb-3">소셜 계정 연동</h3>
+            <SocialLinks />
+          </>
+        ) : (
+          <p className="text-sm text-gray-500">로그인 후 소셜 계정을 연동할 수 있습니다.</p>
+        )}
       </section>
     </div>
   );

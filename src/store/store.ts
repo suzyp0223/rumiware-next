@@ -32,4 +32,4 @@ export const store = makeStore();
 
 // 5) AppStore / AppDispatch 타입 ---------------------------- ✨ 위치/정의 정리
 export type AppStore = ReturnType<typeof makeStore>;
-export type AppDispatch = ReturnType<AppStore["dispatch"]>;
+export type AppDispatch = typeof store.dispatch;

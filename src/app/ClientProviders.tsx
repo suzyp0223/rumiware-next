@@ -4,7 +4,7 @@ import { ReactNode, useRef } from "react";
 import { Provider } from "react-redux";
 
 import { QueryClientProvider } from "@tanstack/react-query";
-import { makeStore } from "@/store/store";
+import { makeStore, store } from "@/store/store";
 import { queryClient } from "@/lib/queryClient";
 import { UserProvider, User } from "@/components/context/UserContext";
 import type { State as UserSliceState } from "@/store/slices/userSlice";
@@ -65,7 +65,7 @@ export default function ClientProviders({ children, initialUser }: Props) {
   }
 
   return (
-    <Provider store={storeRef.current}>
+    <Provider store={store}>
       <QueryClientProvider client={queryClient}>
         <UserProvider initialUser={initialUser}>{children}</UserProvider>
       </QueryClientProvider>

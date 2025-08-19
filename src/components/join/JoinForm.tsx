@@ -182,7 +182,7 @@ const JoinForm = () => {
                 isDefault: true,
 
                 // ✅ 이름/전화번호는 회원가입 입력값으로 고정 주입
-                recipient: name.trim(),
+                receiverName: name.trim(),
                 phone: onlyDigits(phoneNumber),
               },
             })
@@ -476,7 +476,6 @@ const JoinForm = () => {
             {/* <KakaoMap /> */}
             <AddressEditRow
               onChange={(v) => {
-                // 폼 내부 "저장" 클릭 시 로컬 상태에 저장
                 setAddressDraft(v);
               }}
               showActions={false}

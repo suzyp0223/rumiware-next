@@ -7,7 +7,6 @@ import type { RootState } from "../../../store/store"; // ✅ 프로젝트 경�
 import {
   startAddressesListener,
   stopAddressesListener,
-  clearAddresses,
   makeDefaultAddress,
   deleteAddressById,
   updateAddress,
@@ -16,9 +15,14 @@ import {
 import { AddressDoc } from "@/components/types/address";
 import { handleAddressSearch } from "@/hooks/useAddressSearch";
 
-type FormValue = Omit<AddressDoc, "id" | "createdAt">;
+export type AddressFormValue = Omit<AddressDoc, "id" | "createdAt">;
 
-export default function AddressEditRow() {
+type Props = {
+  onChange?: (v: AddressFormValue | null) => void; // 부모에 임시 주소 전달
+  showActions?: boolean; // 목록/수정/삭제/기본지정 같은 액션 노출 여부
+};
+
+export default function AddressEditRow({ onChange, showActions = true }: Props) {
   const dispatch = useAppDispatch();
 
   // ✅ 로그인 유저 uid 가져오기 (userReducer 이름은 프로젝트에 맞게)
@@ -31,7 +35,7 @@ export default function AddressEditRow() {
   const [isOpen, setIsOpen] = useState(false); // ✅ 변경
   const [mode, setMode] = useState<"add" | "edit">("add"); // ✅ 변경
   const [editingId, setEditingId] = useState<string | null>(null); // ✅ 변경
-  const [form, setForm] = useState<FormValue>({
+  const [form, setForm] = useState<AddressFormValue>({
     label: "",
     receiverName: "",
     phone: "",
@@ -45,54 +49,76 @@ export default function AddressEditRow() {
   const detailRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
+    if (!showActions) return; // 가입 폼에서 임시 주소만 받을 때는 구독 불필요
+
     // ✅ uid가 있고, 아직 해당 uid로 구독 중이 아닐 때만 시작
     if (uid && listeningUid !== uid) {
+      // console.log("[addresses] start listener with uid:", uid);
       dispatch(startAddressesListener({ uid })); // TS에서 Thunk 타입 충돌 시 as any 임시 처리
     }
+  }, [uid, listeningUid, dispatch, showActions]);
 
+  // 2) 컴포넌트 언마운트 시에만 해제
+  useEffect(() => {
+    if (!showActions) return;
     // ✅ 언마운트/uid 변경 시 정리
     return () => {
+      // console.log("[addresses] stop listener"); // 언마운트 때만
       dispatch(stopAddressesListener());
-      // dispatch(clearAddresses()); // 🔧 변경점: 컴포넌트 빠질 때 목록 비우기 (옵션)
     };
-  }, [uid, listeningUid, dispatch]);
+  }, [dispatch, showActions]);
 
   // ✅ 기본배송지를 맨 위로 정렬 (UI 편의)
-  const sorted = [...items].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+  // const sorted = [...items].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
+  const sorted = [...items].sort((a, b) => {
+    const byDefault = Number(b.isDefault) - Number(a.isDefault);
+    if (byDefault !== 0) return byDefault;
+    return (b.createdAt ?? 0) - (a.createdAt ?? 0);
+  });
 
-  if (!isLoggedIn || !uid) {
+  if (showActions && (!isLoggedIn || !uid)) {
     return <p className="text-sm text-gray-500 px-4">로그인 후 배송지를 관리하실 수 있습니다.</p>;
   }
 
-  if (!listeningUid && loading) {
+  if (showActions && !listeningUid && loading) {
     return <p className="text-sm text-gray-500 px-4">배송지 불러오는 중…</p>;
   }
 
-  if (error) {
+  if (showActions && error) {
     return <p className="text-sm text-red-600 px-4">오류: {error}</p>;
   }
+
+  const setFormAndNotify = (updater: (f: AddressFormValue) => AddressFormValue) => {
+    setForm((prev) => {
+      const next = updater(prev);
+      onChange?.(next); // 부모(JoinForm)에 즉시 반영
+      return next;
+    });
+  };
 
   // 🔶 모달 열기: 추가 / 수정
   const openAddModal = () => {
     setMode("add"); // ✅ 변경
     setEditingId(null); // ✅ 변경
-    setForm({
+    const initial: AddressFormValue = {
       label: "",
       receiverName: "",
-      phone: "",
+      phone: "", // 🔧 가입 폼에서는 부모가 phone을 채워줄 예정이라 비워둠
       zonecode: "",
       address: "",
       detailAddress: "",
       memo: "",
-      isDefault: items.length === 0, // 첫 배송지면 기본지정 제안
-    });
+      isDefault: items.length === 0,
+    };
+    setForm(initial);
+    onChange?.(initial); // 🔧 변경: 초기값도 부모에 전달
     setIsOpen(true);
   };
 
   const openEditModal = (addr: AddressDoc) => {
     setMode("edit"); // ✅ 변경
     setEditingId(addr.id); // ✅ 변경
-    setForm({
+    const next: AddressFormValue = {
       label: addr.label ?? "",
       receiverName: addr.receiverName ?? "",
       phone: addr.phone ?? "",
@@ -101,7 +127,9 @@ export default function AddressEditRow() {
       detailAddress: addr.detailAddress ?? "",
       memo: addr.memo ?? "",
       isDefault: !!addr.isDefault,
-    });
+    };
+    setForm(next);
+    onChange?.(next);
     setIsOpen(true);
   };
 
@@ -115,6 +143,16 @@ export default function AddressEditRow() {
       return;
     }
 
+    if (!showActions) {
+      // 가입폼 모드: DB에 쓰지 않고 부모로만 전달
+      onChange?.(form);
+      setIsOpen(false);
+      return;
+    }
+
+    // 관리 모드: Firestore에 반영
+    if (!uid) return;
+
     if (mode === "add") {
       await dispatch(addAddress({ uid, value: form }));
     } else if (mode === "edit" && editingId) {
@@ -125,12 +163,12 @@ export default function AddressEditRow() {
 
   // 🔶 기본지정/삭제
   const handleMakeDefault = (id: string) => {
-    if (!uid) return;
+    if (!showActions || !uid) return;
     dispatch(makeDefaultAddress({ uid, id }));
   };
 
   const handleDelete = (id: string) => {
-    if (!uid) return;
+    if (!showActions || !uid) return;
     dispatch(deleteAddressById({ uid, id }));
   };
 
@@ -156,75 +194,79 @@ export default function AddressEditRow() {
           <span className="before:content-['+'] before:mr-2">배송지 추가하기</span>
         </button>
 
-        <h4 className="for-a11y hidden">배송지목록</h4>
+        {showActions && (
+          <>
+            <h4 className="for-a11y hidden">배송지목록</h4>
+            {sorted.length === 0 ? (
+              <p className="text-sm text-gray-500">등록된 배송지가 없습니다. 추가해 주세요.</p>
+            ) : (
+              <ul className="w-[500px] space-y-4">
+                {sorted.map((addr) => (
+                  <li key={addr.id} className="border-b border-gray-200 pb-3">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold">{addr.label ?? "배송지"}</span>
+                        {addr.isDefault && (
+                          <span className="text-xs text-white bg-blue-600 rounded px-2 py-0.5">
+                            기본
+                          </span>
+                        )}
+                      </div>
 
-        {sorted.length === 0 ? (
-          <p className="text-sm text-gray-500">등록된 배송지가 없습니다. 추가해 주세요.</p>
-        ) : (
-          <ul className="w-[500px] space-y-4">
-            {sorted.map((addr) => (
-              <li key={addr.id} className="border-b border-gray-200 pb-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-semibold">{addr.label ?? "배송지"}</span>
-                    {addr.isDefault && (
-                      <span className="text-xs text-white bg-blue-600 rounded px-2 py-0.5">
-                        기본
-                      </span>
-                    )}
-                  </div>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          className="px-3 py-1 rounded border border-blue-600 text-sm text-blue-600 hover:underline"
+                          onClick={() => openEditModal(addr)}
+                        >
+                          수정
+                        </button>
 
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      className="px-3 py-1 rounded border border-blue-600 text-sm text-blue-600 hover:underline"
-                      onClick={() => openEditModal(addr)}
-                    >
-                      수정
-                    </button>
+                        {!addr.isDefault && (
+                          <button
+                            type="button"
+                            className="text-sm text-green-600 border border-green-600 px-3 py-1 rounded hover:underline"
+                            onClick={() => handleMakeDefault(addr.id)}
+                          >
+                            기본지정
+                          </button>
+                        )}
 
-                    {!addr.isDefault && (
-                      <button
-                        type="button"
-                        className="text-sm text-green-600 border border-green-600 px-3 py-1 rounded hover:underline"
-                        onClick={() => handleMakeDefault(addr.id)}
-                      >
-                        기본지정
-                      </button>
-                    )}
+                        <button
+                          type="button"
+                          className="text-sm text-red-500 border border-red-500 px-3 py-1 rounded hover:underline"
+                          onClick={() => handleDelete(addr.id)}
+                        >
+                          삭제
+                        </button>
+                      </div>
+                    </div>
 
-                    <button
-                      type="button"
-                      className="text-sm text-red-500 border border-red-500 px-3 py-1 rounded hover:underline"
-                      onClick={() => handleDelete(addr.id)}
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </div>
-
-                {/* DB에서 가져온 값만 표시 */}
-                <div className="mt-2 text-sm">
-                  <div>
-                    <span className="font-bold mr-2">{addr.receiverName ?? ""}</span>
-                    <span>&nbsp;|&nbsp;</span>
-                    <span className="ml-2 font-bold">{addr.phone ?? ""}</span>
-                  </div>
-                  <div className="mt-1">
-                    <span>
-                      {addr.zonecode
-                        ? `[${addr.zonecode}] ${addr.address} ${addr.detailAddress ?? ""}`.trim()
-                        : `${addr.address} ${addr.detailAddress ?? ""}`.trim()}
-                    </span>
-                  </div>
-                  {addr.memo && <div className="mt-1 text-gray-500">메모: {addr.memo}</div>}
-                </div>
-              </li>
-            ))}
-          </ul>
+                    <div className="mt-2 text-sm">
+                      <div>
+                        <span className="font-bold mr-2">{addr.receiverName ?? ""}</span>
+                        <span>&nbsp;|&nbsp;</span>
+                        <span className="ml-2 font-bold">{addr.phone ?? ""}</span>
+                      </div>
+                      <div className="mt-1">
+                        <span>
+                          {addr.zonecode
+                            ? `[${addr.zonecode}] ${addr.address} ${
+                                addr.detailAddress ?? ""
+                              }`.trim()
+                            : `${addr.address} ${addr.detailAddress ?? ""}`.trim()}
+                        </span>
+                      </div>
+                      {addr.memo && <div className="mt-1 text-gray-500">메모: {addr.memo}</div>}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </>
         )}
 
-        {/* ✅ 모달 (간단 예시)            */}
+        {/* ✅ 모달 (간단 예시) */}
         {isOpen && (
           <div
             className="fixed inset-0 bg-black/40 z-[1000] flex items-center justify-center"
