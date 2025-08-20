@@ -265,6 +265,7 @@ const addressesSlice = createSlice({
       })
       .addCase(stopAddressesListener.fulfilled, (s) => {
         s.loading = false;
+        s.listeningUid = null;
       })
       .addCase(addAddress.rejected, (s, a) => {
         s.error = (a.payload as string) ?? "추가 실패";

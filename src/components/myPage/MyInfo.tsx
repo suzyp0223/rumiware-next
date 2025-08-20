@@ -45,7 +45,10 @@ const MyInfo = () => {
   // console.log("마이인포 user정보: ", user);
 
   const [displayEmail, setDisplayEmail] = useState<string>(() => user?.email ?? "");
-  // ✅ 주소 상태 구독
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [drafts, setDrafts] = useState<Record<string, any>>({});
+  const hasDirty = Object.keys(drafts).length > 0;
 
   const isEmailUser = (user: UserState): user is EmailUser => {
     return "email" in user && "name" in user;
@@ -200,8 +203,6 @@ const MyInfo = () => {
                   </td>
                 </tr>
 
-                {/*  <KakaoMap />  */}
-
                 <tr className="border-b border-gray-300 ">
                   <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">
                     <label className="" htmlFor="email1">
@@ -215,22 +216,24 @@ const MyInfo = () => {
 
                 <tr>
                   <td colSpan={2} className="text-center py-4">
-                    <div className="inline-flex mt-8 gap-8">
-                      <button
-                        onClick={handleUpdate}
-                        className="items-center justify-center px-6 py-2 bg-peach-400 rounded border border-peach-400 hover:bg-white hover:border border-peach-400 whitespace-nowrap"
-                      >
-                        정보 수정
-                      </button>
-                      <button
-                        onClick={() => {
-                          setCancel("");
-                        }}
-                        className="items-center justify-center px-6 py-2 border border-peach-400 rounded hover:bg-peach-400 whitespace-nowrap"
-                      >
-                        취소
-                      </button>
-                    </div>
+                    {hasDirty && (
+                      <div className="inline-flex mt-8 gap-8">
+                        <button
+                          onClick={handleUpdate}
+                          className="items-center justify-center px-6 py-2 bg-peach-400 rounded border border-peach-400 hover:bg-white hover:border border-peach-400 whitespace-nowrap"
+                        >
+                          모든 변경 저장
+                        </button>
+                        <button
+                          onClick={() => {
+                            setCancel("");
+                          }}
+                          className="items-center justify-center px-6 py-2 border border-peach-400 rounded hover:bg-peach-400 whitespace-nowrap"
+                        >
+                          모두 취소
+                        </button>
+                      </div>
+                    )}
                   </td>
                 </tr>
               </tbody>

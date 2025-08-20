@@ -17,6 +17,7 @@ import CopyUrlBtn from "../button/CopyUrlBtn";
 import SearchToggle from "../toggle/SearchToggle";
 import TabsDropDown from "./TabsDropDown";
 import { isEmailUser, isSocialUser } from "@/components/utils/typeGuards";
+import { useRouter } from "next/navigation";
 
 const Header = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -32,7 +33,16 @@ const Header = () => {
   const cartItems = useSelector((state: RootState) => state.cartReducer.items);
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
+  const router = useRouter();
   const { logout } = useLogout();
+  const handleLogout = async () => {
+    try {
+      await logout();
+      router.replace("/");
+    } catch (error) {
+      console.log("로그아웃 실패:", error);
+    }
+  };
 
   return (
     <header className="w-full bg-peach-100 shadow-md border-b border-[var(--color-red-200)]">
@@ -48,10 +58,10 @@ const Header = () => {
                   <span className="mr-8">{nowSocialUser.email ?? "소셜 유저"} 님</span>
                 )}
                 <button
-                  onClick={logout}
+                  onClick={handleLogout}
                   className="hover:underline hover:text-[var(--color-red-400)]"
                 >
-                  로그아웃
+                  <Link href="/">로그아웃</Link>
                 </button>
               </div>
             ) : (
