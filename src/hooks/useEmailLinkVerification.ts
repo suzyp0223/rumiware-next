@@ -61,7 +61,7 @@ export default function useEmailLinkVerification(options?: Options) {
     }
 
     try {
-      // ★ 변경: 훅이 내부에서 공통 함수 사용
+      //      훅이 내부에서 공통 함수 사용
       const { success } = await sendEmailVerificationLink(email, redirectPath);
       if (success) {
         setIsEmailDuplicateChecked(true);
@@ -127,7 +127,7 @@ export default function useEmailLinkVerification(options?: Options) {
   // --- 유틸: 입력 시작/초기화
   const onEmailChange = (value: string) => {
     setEmail(value);
-    setEmailTouched(true); // ★ 변경: touched 처리
+    setEmailTouched(true); //      touched 처리
     setIsEmailDuplicateChecked(false);
     setIsEmailAvailable(null);
     if (emailVerified) setEmailVerified(false); // 인증 후 재입력 시 다시 편집 가능
@@ -145,7 +145,7 @@ export default function useEmailLinkVerification(options?: Options) {
   return {
     // 상태
     email,
-    setEmail: onEmailChange, // ★ 변경: 외부에선 setEmail처럼 사용
+    setEmail: onEmailChange, //      외부에선 setEmail처럼 사용
     emailVerified,
     isEmailDuplicateChecked,
     isEmailAvailable,

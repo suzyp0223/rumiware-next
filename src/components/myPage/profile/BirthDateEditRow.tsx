@@ -1,190 +1,106 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { doc, updateDoc } from "firebase/firestore";
-import { db } from "@/firebases/firebase";
-import { useAppDispatch } from "@/hooks/hooks";
-import { setUser, type UserState } from "@/store/slices/userSlice";
+import { useEffect, useState } from "react";
 
-type Props = { user: UserState | null };
+const onlyDigits = (s: string) => (s ?? "").replace(/\D/g, "");
+const splitYYMMDD = (v: string) => {
+  const s = onlyDigits(v).slice(0, 6);
+  return [s.slice(0, 2), s.slice(2, 4), s.slice(4, 6)] as const;
+};
 
-export default function BirthDateEditRow({ user }: Props) {
-  const dispatch = useAppDispatch();
+type Props = {
+  value: string; // "YYMMDD"
+  onChange: (v: string) => void; // 부모 상태 갱신
+};
 
-  // ★ 변경: 표시용 조각 상태 - YY/MM/DD (2자리 연도)
-  const [birthY, setBirthY] = useState("");
-  const [birthM, setBirthM] = useState("");
-  const [birthD, setBirthD] = useState("");
+export default function BirthDateEditRow({ value, onChange }: Props) {
+  // 표시용 조각 상태
+  const [yy, setYY] = useState("");
+  const [mm, setMM] = useState("");
+  const [dd, setDD] = useState("");
 
-  const [editing, setEditing] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // ★ 변경: YYMMDD → 조각으로 분해
-  const fromCompactYY = (yymmdd: string) => {
-    const s = (yymmdd ?? "").replace(/\D/g, "").slice(0, 6);
-    setBirthY(s.slice(0, 2)); // YY
-    setBirthM(s.slice(2, 4)); // MM
-    setBirthD(s.slice(4, 6)); // DD
-  };
-
-  // ★ 변경: 조각 → YYMMDD
-  const toCompactYY = () => `${birthY}${birthM}${birthD}`;
-
-  // ★ 변경: user 갱신 시(편집 중이 아닐 때만) YYMMDD로 동기화
+  // 부모 value 바뀌면 동기화
   useEffect(() => {
-    if (user && user.type === "email" && !editing) {
-      fromCompactYY(user.birthDate ?? "");
-    }
-  }, [user, editing]);
+    const [y, m, d] = splitYYMMDD(value);
+    setYY(y);
+    setMM(m);
+    setDD(d);
+  }, [value]);
 
-  // 편집 인풋(YYMMDD 붙여서) 값
-  const editValue = useMemo(() => toCompactYY(), [birthY, birthM, birthD]);
-
-  // ★ 변경: 6자리 형식(YYMMDD) 검증
-  const isSixDigit = /^\d{6}$/.test(editValue);
-
-  // ★ 변경: 날짜 유효성 (세기 모호성 해결 위해 2000 + YY로 판정)
-  const isValidDate = (() => {
-    if (!isSixDigit) return false;
-    const yy = Number(editValue.slice(0, 2)); // 00~99
-    const mm = Number(editValue.slice(2, 4));
-    const dd = Number(editValue.slice(4, 6));
-    if (mm < 1 || mm > 12) return false;
-
-    // 2000~2099로 가정하여 윤년 계산 (YY만 있는 환경에서 합리적 가정)
-    const fullYear = 2000 + yy;
-    const lastDay = new Date(fullYear, mm, 0).getDate();
-    return dd >= 1 && dd <= lastDay;
-  })();
-
-  // ★ 변경: 동일값 비교도 YYMMDD(6자리) 기준
-  const isSameAsUser = user?.type === "email" ? editValue === (user.birthDate ?? "") : true;
-
-  const disabled = saving || (editing && (!isSixDigit || !isValidDate || isSameAsUser));
-
-  // ★ 변경: 저장 - Firestore/Redux도 YYMMDD(6자리)로 반영
-  const handleSave = async () => {
-    if (!user || user.type !== "email") return;
-
-    setError(null);
-
-    const next = editValue; // "YYMMDD"
-    if (!/^\d{6}$/.test(next)) {
-      setError("생년월일은 YYMMDD 형식으로 입력해주세요.");
-      return;
-    }
-    if (!isValidDate) {
-      setError("존재하지 않는 날짜입니다.");
-      return;
-    }
-    if (isSameAsUser) {
-      setEditing(false);
-      return;
-    }
-
-    try {
-      setSaving(true);
-      await updateDoc(doc(db, "users", user.uid), { birthDate: next }); // ★ 변경: 6자리 저장
-      dispatch(setUser({ ...user, birthDate: next })); // ★ 변경: 전역 동기화
-      setEditing(false);
-    } catch (e) {
-      console.error("생년월일 저장 오류:", e);
-      setError("저장 중 오류가 발생했습니다.");
-    } finally {
-      setSaving(false);
-    }
+  // 입력 핸들러(숫자/길이 제한 → 부모로 합쳐서 전달)
+  const onYY = (raw: string) => {
+    const next = onlyDigits(raw).slice(0, 2);
+    setYY(next);
+    onChange(onlyDigits(`${next}${mm}${dd}`).slice(0, 6));
   };
+  const onMM = (raw: string) => {
+    const next = onlyDigits(raw).slice(0, 2);
+    setMM(next);
+    onChange(onlyDigits(`${yy}${next}${dd}`).slice(0, 6));
+  };
+  const onDD = (raw: string) => {
+    const next = onlyDigits(raw).slice(0, 2);
+    setDD(next);
+    onChange(onlyDigits(`${yy}${mm}${next}`).slice(0, 6));
+  };
+
+  // 유효성(선택)
+  const isSix = /^\d{6}$/.test(value);
+  let validMsg: string | null = null;
+  if (isSix) {
+    const nYY = Number(value.slice(0, 2));
+    const nMM = Number(value.slice(2, 4));
+    const nDD = Number(value.slice(4, 6));
+    if (nMM < 1 || nMM > 12) validMsg = "월은 01~12여야 합니다.";
+    else {
+      const fullYear = 2000 + nYY; // 필요 시 19xx/20xx 판별 정책 추가
+      const last = new Date(fullYear, nMM, 0).getDate();
+      if (nDD < 1 || nDD > last) validMsg = "존재하지 않는 날짜입니다.";
+    }
+  } else if (value) {
+    validMsg = "YYMMDD 형식으로 입력하세요.";
+  }
 
   return (
     <tr className="border-b border-gray-300">
       <th className="bg-peach-100 px-5 py-4 align-middle text-left whitespace-nowrap">생년월일</th>
       <td className="p-4 align-middle">
-        {!editing ? (
-          // ★ 표시 모드: 년/월/일 각각 border 유지 (YY 년 / MM 월 / DD 일)
-          <div className="flex items-center">
-            <span className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2">
-              {birthY ? `${birthY} 년` : "-"}
-            </span>
-            <span className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2">
-              {birthM ? `${birthM} 월` : "-"}
-            </span>
-            <span className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 mr-2">
-              {birthD ? `${birthD} 일` : "-"}
-            </span>
+        <div className="flex items-center">
+          <input
+            type="text"
+            value={yy}
+            onChange={(e) => onYY(e.target.value)}
+            maxLength={2}
+            placeholder="YY"
+            inputMode="numeric"
+            className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 w-[50px] text-center"
+          />
+          <span className="mx-1">년</span>
 
-            <button
-              type="button"
-              onClick={() => {
-                // 편집 시작 시 최신 유저 값으로 세팅
-                if (user && user.type === "email") fromCompactYY(user.birthDate ?? "");
-                setError(null);
-                setEditing(true);
-              }}
-              className="ml-4 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 rounded"
-            >
-              수정
-            </button>
-          </div>
-        ) : (
-          // ★ 편집 모드: 한 개 인풋에서 YYMMDD로 붙여 입력
-          <div className="flex items-center">
-            <input
-              type="text"
-              value={birthY}
-              onChange={(e) => setBirthY(e.target.value.replace(/\D/g, "").slice(0, 2))}
-              maxLength={2}
-              placeholder="YY"
-              inputMode="numeric"
-              className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 w-[50px] text-center"
-            />
-            <span className="mx-1">년</span>
+          <input
+            type="text"
+            value={mm}
+            onChange={(e) => onMM(e.target.value)}
+            maxLength={2}
+            placeholder="MM"
+            inputMode="numeric"
+            className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 w-[40px] text-center"
+          />
+          <span className="mx-1">월</span>
 
-            <input
-              type="text"
-              value={birthM}
-              onChange={(e) => setBirthM(e.target.value.replace(/\D/g, "").slice(0, 2))}
-              maxLength={2}
-              placeholder="MM"
-              inputMode="numeric"
-              className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 w-[40px] text-center"
-            />
-            <span className="mx-1">월</span>
+          <input
+            type="text"
+            value={dd}
+            onChange={(e) => onDD(e.target.value)}
+            maxLength={2}
+            placeholder="DD"
+            inputMode="numeric"
+            className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 w-[40px] text-center"
+          />
+          <span className="mx-1">일</span>
+        </div>
 
-            <input
-              type="text"
-              value={birthD}
-              onChange={(e) => setBirthD(e.target.value.replace(/\D/g, "").slice(0, 2))}
-              maxLength={2}
-              placeholder="DD"
-              inputMode="numeric"
-              className="outline-none border-b border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 w-[40px] text-center"
-            />
-            <span className="mx-1">일</span>
-            <button
-              type="button"
-              onClick={handleSave}
-              disabled={disabled}
-              className="ml-4 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 rounded disabled:opacity-50"
-            >
-              {saving ? "저장중..." : "저장"}
-            </button>
-            <button
-              type="button"
-              onClick={() => {
-                if (user && user.type === "email") fromCompactYY(user.birthDate ?? "");
-                setError(null);
-                setEditing(false);
-              }}
-              disabled={saving}
-              className="ml-2 px-3 py-1 text-sm border border-gray-300 hover:border-peach-300 rounded disabled:opacity-50"
-            >
-              취소
-            </button>
-          </div>
-        )}
-
-        {error && <p className="mt-2 text-xs text-red-500">{error}</p>}
+        {validMsg && <p className="mt-2 text-xs text-red-500">{validMsg}</p>}
       </td>
     </tr>
   );

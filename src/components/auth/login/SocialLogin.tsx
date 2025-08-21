@@ -1,77 +1,156 @@
-"use client";
-
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { signInWithPopup } from "firebase/auth";
-
-import { auth, googleProvider, db } from "@/firebases/firebase";
-import { setUser, SocialUser } from "@/store/slices/userSlice";
+import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import {
+  signInWithPopup,
+  OAuthProvider,
+  setPersistence,
+  browserLocalPersistence,
+} from "firebase/auth";
+import { auth, db, googleProvider } from "@/firebases/firebase";
+import { setUser, type SocialUserForRedux } from "@/store/slices/userSlice";
 
 const SocialLogin = () => {
   const router = useRouter();
   const dispatch = useDispatch();
 
+  const upsertSocialUser = async ({
+    provider,
+    uid,
+    email,
+    name,
+    photoURL,
+  }: {
+    provider: "google" | "kakao";
+    uid: string;
+    email?: string | null;
+    name?: string | null;
+    photoURL?: string | null;
+  }): Promise<SocialUserForRedux> => {
+    const ref = doc(db, "users", uid);
+    const snap = await getDoc(ref);
+
+    // 공통 스키마에 맞춰 기본값 채움 (소셜도 빈 문자열 허용)
+    const data = {
+      uid,
+      type: "social" as const,
+      provider,
+      email: (email ?? "").toLowerCase(),
+      name: name ?? "소셜유저",
+      photoURL: photoURL ?? null,
+
+      // 이메일 전용 필드도 기본값 채워 UI 안전
+      birthDate: "",
+      gender: "",
+      nationality: "",
+      phoneNumber: "",
+      emailVerified: null as boolean | null,
+
+      // 주소 필드 기본값
+      zoneCode: "",
+      address: "",
+      detailAddress: "",
+
+      isAdmin: false,
+      updatedAt: serverTimestamp(),
+      ...(snap.exists() ? {} : { createdAt: serverTimestamp() }),
+    };
+
+    // 🔴 핵심 수정: 항상 병합 저장해서 기존 문서에도 type/provider 등 채워 넣기
+    await setDoc(ref, data, { merge: true });
+
+    const forRedux: SocialUserForRedux = {
+      uid: data.uid,
+      type: "social",
+      provider: data.provider,
+      email: data.email,
+      name: data.name,
+      photoURL: data.photoURL,
+      birthDate: "",
+      gender: "",
+      nationality: "",
+      phoneNumber: "",
+      emailVerified: null,
+      zoneCode: "",
+      address: "",
+      detailAddress: "",
+      isAdmin: false,
+    };
+    return forRedux;
+  };
+
   const handleGoogleLogin = async () => {
     try {
-      const result = await signInWithPopup(auth, googleProvider);
-      const user = result.user;
+      await setPersistence(auth, browserLocalPersistence);
+      const cred = await signInWithPopup(auth, googleProvider);
+      const u = cred.user;
 
-      // Firestore에 해당 유저 문서가 있는지 확인
-      const userDocRef = doc(db, "users", user.uid);
-      const userSnapshot = await getDoc(userDocRef);
+      const userForRedux = await upsertSocialUser({
+        provider: "google",
+        uid: u.uid,
+        email: u.email,
+        name: u.displayName,
+        photoURL: u.photoURL,
+      });
+      dispatch(setUser(userForRedux));
 
-      // firebase 저장 등 추가 처리 가능
-      // 🔁 Firestore에 문서 없으면 새로 저장
-      if (!userSnapshot.exists()) {
-        const userData: SocialUser = {
-          type: "social",
-          provider: "google",
-          uid: user.uid,
-          email: user.email ?? "",
-          name: user.displayName ?? "소셜유저",
-          photoURL: user.photoURL ?? "",
-          isAdmin: false,
-        };
+      // ✅ 추가: ID 토큰을 서버에 보내 세션 쿠키 생성
+      const idToken = await u.getIdToken(/* forceRefresh */ true); // ✅ 변경
+      await fetch("/api/sessionLogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
 
-        await setDoc(userDocRef, userData);
-        console.log("✅ 소셜 유저 Firestore 저장 완료");
+      router.replace("/myPage/myInfo");
+    } catch (e) {
+      console.error("구글 로그인 실패:", e);
+    }
+  };
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { createdAt: _, ...userForRedux } = userData;
-        dispatch(setUser(userForRedux));
+  const handleKakaoLogin = async () => {
+    try {
+      await setPersistence(auth, browserLocalPersistence);
+      const kakao = new OAuthProvider("oidc.kakao");
+      kakao.addScope("openid");
+      // 콘솔 비즈앱 설정 이전이면 아래 두 줄은 잠시 주석
+      // kakao.addScope("profile");
+      // kakao.addScope("account_email");
+      const cred = await signInWithPopup(auth, kakao);
+      const u = cred.user;
 
-        router.push("/");
+      const userForRedux = await upsertSocialUser({
+        provider: "kakao",
+        uid: u.uid,
+        email: u.email,
+        name: u.displayName,
+        photoURL: u.photoURL,
+      });
+      dispatch(setUser(userForRedux));
 
-        // if (!userSnapshot.exists()) {
-        //   router.push("/myPage/myInfo");
-        // } else {
-        //   router.push("/");
-        // }
-      } else {
-        console.log("✅ 소셜 유저 기존 문서 존재 → Redux 저장");
-        const data = userSnapshot.data();
+      // ✅ 추가: 세션 쿠키 생성
+      const idToken = await u.getIdToken(true);
+      await fetch("/api/sessionLogin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ idToken }),
+      });
 
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { createdAt: _, ...userForRedux } = data;
-        dispatch(setUser(userForRedux as SocialUser));
-        router.push("/");
-      }
-    } catch (error) {
-      console.error("구글 로그인 실패:", error);
+      router.replace("/myPage/myInfo");
+    } catch (e) {
+      console.error("카카오 로그인 실패:", e);
     }
   };
 
   return (
     <div className="flex flex-col items-center justify-center mt-4">
-      <Link href="/login/social">카카오톡 로그인</Link>
-      <div>
-        <button type="submit" onClick={handleGoogleLogin} className="">
-          구글 로그인
-        </button>
-      </div>
+      <button type="button" onClick={handleKakaoLogin}>
+        카카오톡 로그인
+      </button>
+      <button type="button" onClick={handleGoogleLogin}>
+        구글 로그인
+      </button>
     </div>
   );
 };

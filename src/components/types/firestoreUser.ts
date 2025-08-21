@@ -1,5 +1,3 @@
-// types/firestoreUser.ts (새 파일 또는 기존 타입 위치에 추가)
-
 export type FirestoreUser = {
   // 공통
   uid: string;
@@ -7,23 +5,25 @@ export type FirestoreUser = {
 
   // 이메일 유저
   type?: "email" | "social";
+  provider?: "google" | "kakao";
   email?: string;
   emailVerified?: boolean;
 
-  // 기존 회원정보(네가 쓰는 이름에 맞춤)
+  // 기존 회원정보
   name?: string;
-  birthDate?: string; // YYMMDD (네 코드 기준)
+  birthDate?: string; // YYMMDD
   gender?: string; // "남자" | "여자" | "non" 등
   nationality?: string;
   phoneNumber?: string; // 숫자만 저장 권장
 
-  // ★ 추가: 주소 3종
+  // 주소 3종
   zoneCode?: string;
   address?: string;
   detailAddress?: string;
 
   // 서버 타임스탬프 등 직렬화 불가 필드는 fetch에서 제거
   createdAt?: unknown;
+  updatedAt?: unknown;
 };
 
 // Redux에 보관할 형태(직렬화 가능)

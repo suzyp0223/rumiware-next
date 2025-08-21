@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import "./globals.css";
-import { User } from "../components/context/UserContext";
 import Layout from "../components/layout/Layout";
 import ClientProviders from "./ClientProviders"; // ✅ 클라이언트 전용 감싸기
 import { verifySession } from "../components/utils/verifySession";
@@ -33,7 +32,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   // ✅ 세션 쿠키 확인 및 사용자 정보 불러오기
   const cookieStore = await cookies();
   const session = cookieStore.get("session")?.value ?? "";
-
   const user = session ? await verifySession(session) : null;
 
   return (
@@ -46,7 +44,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         />
 
         {/* ✅ 클라이언트 전용 상태관리 Provider 감싸기 */}
-        <ClientProviders initialUser={user as User}>
+        <ClientProviders>
           {/* user를 Layout에 props로 전달 */}
           <Layout user={user}>{children}</Layout>
         </ClientProviders>

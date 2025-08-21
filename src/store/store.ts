@@ -23,6 +23,13 @@ export function makeStore(preloadedState?: Partial<RootState>) {
   return configureStore({
     reducer: rootReducer, // ✨ object 대신 rootReducer 사용 → 타입 에러 방지
     preloadedState, // ✨ SSR 주입 지점
+    devTools: process.env.NODE_ENV !== "production",
+    middleware: (getDefault) =>
+      getDefault({
+        serializableCheck: {
+          ignoredPaths: ["userReducer.user"], // 우리는 이미 직렬화 처리했지만 혹시 모를 경고 무시
+        },
+      }),
   });
 }
 
@@ -32,4 +39,7 @@ export const store = makeStore();
 
 // 5) AppStore / AppDispatch 타입 ---------------------------- ✨ 위치/정의 정리
 export type AppStore = ReturnType<typeof makeStore>;
+// 싱글톤 store에서 사용.
 export type AppDispatch = typeof store.dispatch;
+// 여러 스토어 인스턴스를 만들 수 있는 패턴(SSR 프리로드 등)에서 사용.
+// export type AppDispatch = AppStore["dispatch"];

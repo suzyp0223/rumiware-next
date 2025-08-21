@@ -61,7 +61,7 @@ const Header = () => {
                   onClick={handleLogout}
                   className="hover:underline hover:text-[var(--color-red-400)]"
                 >
-                  <Link href="/">로그아웃</Link>
+                  로그아웃
                 </button>
               </div>
             ) : (

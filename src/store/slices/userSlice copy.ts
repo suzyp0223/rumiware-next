@@ -203,18 +203,18 @@ export const fetchUserProfile = createAsyncThunk<
   { rejectValue: string }
 >("user/fetchUserProfile", async (uid, thunkAPI) => {
   try {
-    const ref = doc(db, "users", uid); // ★ 변경: Firestore 문서 참조
-    const snap = await getDoc(ref); // ★ 변경: 1회 조회
+    const ref = doc(db, "users", uid); //       Firestore 문서 참조
+    const snap = await getDoc(ref); //       1회 조회
     if (!snap.exists()) {
       return thunkAPI.rejectWithValue("프로필 문서가 없습니다.");
     }
 
-    const raw = snap.data() as FirestoreUser; // ★ 변경
+    const raw = snap.data() as FirestoreUser;
 
     // createdAt 같은 비직렬화 필드 제거
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { createdAt: _unused, ...userForRedux } = raw;
-    return userForRedux as EmailUserForRedux | SocialUserForRedux; // ★ 변경: Redux에 넣을 순수 객체 반환
+    return userForRedux as EmailUserForRedux | SocialUserForRedux; //       Redux에 넣을 순수 객체 반환
   } catch {
     return thunkAPI.rejectWithValue("프로필 조회 중 오류가 발생했습니다.");
   }

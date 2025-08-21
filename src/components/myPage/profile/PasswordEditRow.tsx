@@ -1,20 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { auth } from "@/firebases/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 
 type Props = {
-  /** 소셜 전용 계정이면 true로 넘기면 이 행을 렌더링하지 않습니다. (기본 false) */
   isSocialUser?: boolean | null;
-
-  /** 비밀번호 검증 통과 직후 1회 호출 */
   onVerified?: () => void;
-
-  /** "수정" 클릭 시 호출 (부모에서 폼 전체를 편집 모드로 전환할 때 사용) */
   onEdit?: () => void;
-
-  /** "취소" 클릭 시 호출 (부모에서 편집 모드 해제/리셋할 때 사용) */
   onCancel?: () => void;
 };
 
@@ -29,8 +22,17 @@ export default function PasswordEditRow({
   const [canEdit, setCanEdit] = useState(false); // 비번 확인 성공 시 true
   const [authErr, setAuthErr] = useState<string | null>(null);
 
-  const social = !!isSocialUser; // ✅ null/undefined도 false로 강제
-  if (social) return null;
+  // ⌨️ Enter 키로 확인 가능
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !canEdit && pwd.trim() && !verifying) {
+        verifyPassword();
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [canEdit, pwd, verifying]);
+
   if (isSocialUser) return null; // 소셜 계정이면 행 숨김
 
   const verifyPassword = async () => {
@@ -84,7 +86,7 @@ export default function PasswordEditRow({
           onChange={(e) => setPwd(e.target.value)}
           className="outline-none border-b w-[200px] border-gray-300 hover:border-b-peach-600 focus:border-b-peach-600 p-2 text-base"
           size={15}
-          maxLength={20}
+          maxLength={50}
           disabled={canEdit} // 통과 후엔 잠가두고 싶지 않으면 이 속성 제거
         />
 
@@ -105,7 +107,7 @@ export default function PasswordEditRow({
               onClick={() => onEdit?.()}
               className="ml-4 p-2 text-sm border border-blue-600 text-blue-600 hover:bg-blue-50 rounded"
             >
-              수정
+              재설정
             </button>
             <button
               type="button"
@@ -123,7 +125,7 @@ export default function PasswordEditRow({
         ) : (
           !canEdit && (
             <span className="block text-sm text-blue-500 pb-2 pl-2">
-              비밀번호를 입력하시면 수정 버튼이 나옵니다.
+              비밀번호를 입력하시면 재설정 버튼이 나옵니다.
             </span>
           )
         )}

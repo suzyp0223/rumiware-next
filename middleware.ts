@@ -25,5 +25,5 @@ export async function middleware(req: NextRequest) {
 
 // 📌 어떤 경로에 이 미들웨어를 적용할지 지정
 export const config = {
-  matcher: ["/mypage/:path*", "/checkout/:path*"], // 보호할 경로
+  matcher: ["/myPage/:path*", "/checkout/:path*"], // 보호할 경로
 };

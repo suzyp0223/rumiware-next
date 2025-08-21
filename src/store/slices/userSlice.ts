@@ -1,24 +1,19 @@
-// 프로필, 장바구니, 찜목록 등 유저 데이터 관리
-// Redux Toolkit 기반으로 Firebase 이메일 회원가입 + Firestore 저장 + 전역 상태 관리를 위한 userSlice
-/**
- * createUserWithEmailAndPassword로 Firebase Auth에 계정 생성 →
-    Firestore users 컬렉션에 사용자 정보 저장 →
-    Redux 상태에 저장하여 로그인 상태 유지
- */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
 import { doc, setDoc, serverTimestamp, FieldValue, Timestamp, getDoc } from "firebase/firestore";
 import { auth, db } from "@/firebases/firebase";
 import { updatePassword } from "firebase/auth";
 import { FirebaseError } from "firebase/app";
 
-// 타입 정의
+/* =========================
+   타입 정의
+========================= */
 export interface BaseUser {
   uid: string;
   isAdmin: boolean;
   createdAt?: FieldValue | Timestamp | null;
 }
 
-// 이메일 유저
 export interface EmailUser extends BaseUser {
   type: "email";
   email: string;
@@ -30,31 +25,81 @@ export interface EmailUser extends BaseUser {
   emailVerified: boolean;
 }
 
-// 소셜 유저
 export interface SocialUser extends BaseUser {
   type: "social";
   provider: "google" | "kakao";
-  email?: string;
-  name?: string;
-  photoURL?: string;
+  email?: string | null;
+  name?: string | null;
+  photoURL?: string | null;
+  birthDate?: string;
+  gender?: string;
+  nationality?: string;
+  phoneNumber?: string;
+  emailVerified?: boolean | null;
+
+  zoneCode?: string;
+  address?: string;
+  detailAddress?: string;
 }
 
-// ✨ Redux에 직렬화 경고가 나지 않도록 createdAt을 제거한 형태를 상태로 사용
-type EmailUserForRedux = Omit<EmailUser, "createdAt">;
-type SocialUserForRedux = Omit<SocialUser, "createdAt">;
 type FirestoreUser = EmailUser | SocialUser;
 export type UserState = EmailUser | SocialUser;
 
-// Redux Slice
+export type EmailUserForRedux = Omit<EmailUser, "createdAt">;
+export type SocialUserForRedux = Omit<SocialUser, "createdAt">;
+export type UserStateForRedux = EmailUserForRedux | SocialUserForRedux | null;
+
 export interface State {
-  user: EmailUserForRedux | SocialUserForRedux | null;
+  user: UserStateForRedux;
   initialized: boolean;
   isLoggedIn: boolean;
   loading: boolean;
   error?: string | null;
 }
 
-// 초기 상태
+/* =========================
+   직렬화 유틸 (any 금지)
+========================= */
+type Serializable =
+  | string
+  | number
+  | boolean
+  | null
+  | Serializable[]
+  | { [key: string]: Serializable };
+
+interface FirestoreTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
+function normalizeForRedux<T>(obj: T): T | Serializable {
+  if (obj == null || typeof obj !== "object") return obj as T;
+
+  const ts = obj as Partial<FirestoreTimestamp>;
+  if (
+    typeof ts.seconds === "number" &&
+    typeof ts.nanoseconds === "number" &&
+    Object.keys(obj as object).length === 2
+  ) {
+    const ms = ts.seconds * 1000 + Math.floor(ts.nanoseconds / 1e6);
+    return new Date(ms).toISOString();
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map((v) => normalizeForRedux(v)) as Serializable;
+  }
+
+  const out: Record<string, Serializable> = {};
+  for (const [k, v] of Object.entries(obj as Record<string, unknown>)) {
+    out[k] = normalizeForRedux(v) as Serializable;
+  }
+  return out as unknown as T | Serializable;
+}
+
+/* =========================
+   초기 상태
+========================= */
 const initialState: State = {
   user: null,
   initialized: false,
@@ -63,7 +108,9 @@ const initialState: State = {
   error: null,
 };
 
-// 🔐 회원가입 (이메일 인증 링크 클릭 후 Firestore 저장만 진행)
+/* =========================
+   회원가입 (이메일 링크 인증 이후)
+========================= */
 export const signUpUser = createAsyncThunk<
   EmailUserForRedux,
   {
@@ -75,49 +122,57 @@ export const signUpUser = createAsyncThunk<
     nationality: string;
     phoneNumber: string;
   },
-  { rejectValue: string } // ✨ 변경: reject payload 타입 명시
+  { rejectValue: string }
 >(
-  "user/signUpUser", // 액션 이름
-
+  "user/signUpUser",
   async ({ password, name, birthDate, gender, nationality, phoneNumber }, thunkAPI) => {
     try {
       const user = auth.currentUser;
 
       if (!user || !user.email) {
         return thunkAPI.rejectWithValue(
-          "사용자 인증이 필요합니다.  이메일 인증을 먼저 진행해주세요."
+          "사용자 인증이 필요합니다. 이메일 인증을 먼저 진행해주세요."
         );
       }
 
-      // 🔄 이메일 인증 상태 갱신
+      // 최신 인증 상태 반영
       await user.reload();
 
-      // ✅ 비밀번호 설정 시도
+      // 비밀번호 설정
       try {
         await updatePassword(user, password);
-        console.log("🔐 비밀번호 설정 완료");
       } catch (err: unknown) {
-        const fbErr = err as FirebaseError; // ✨ 변경
+        const fbErr = err as FirebaseError;
         if (fbErr?.code === "auth/requires-recent-login") {
-          // ✨ 변경: 코드 비교 방식 수정
-          console.warn("🔐 최근 로그인 필요 - 인증 링크를 다시 클릭해주세요.");
           return thunkAPI.rejectWithValue(
             "비밀번호 설정 시간이 만료되었습니다. 인증 링크를 다시 클릭해주세요."
           );
         }
-        console.error("❌ 비밀번호 설정 실패:", fbErr);
         return thunkAPI.rejectWithValue("비밀번호 설정 중 오류가 발생했습니다.");
       }
 
-      // ✅ Firestore 문서 확인
+      // 사용자 문서
       const userDocRef = doc(db, "users", user.uid);
       const snapshot = await getDoc(userDocRef);
 
       if (snapshot.exists()) {
-        return thunkAPI.rejectWithValue("이미 가입된 사용자입니다.");
+        // 기존 문서가 존재할 때: “소셜 씨드/미완성”인지 검사
+        const existing = snapshot.data() as Record<string, unknown>;
+        const existingType = existing["type"];
+        const looksSeed =
+          (existingType === "social" || existingType == null) &&
+          !existing["birthDate"] &&
+          !existing["gender"] &&
+          !existing["nationality"] &&
+          !existing["phoneNumber"];
+
+        if (!looksSeed) {
+          // 이미 정상 가입된 사용자
+          return thunkAPI.rejectWithValue("이미 가입된 사용자입니다.");
+        }
+        // 씨드/미완성 → 이메일 스키마로 업그레이드(merge)
       }
 
-      // ✅ 사용자 정보 구성
       const userData: EmailUser = {
         type: "email",
         uid: user.uid,
@@ -129,116 +184,170 @@ export const signUpUser = createAsyncThunk<
         phoneNumber: phoneNumber.replace(/\D/g, ""),
         emailVerified: user.emailVerified,
         isAdmin: false,
-        createdAt: serverTimestamp(), // Firestore에는 저장됨
+        createdAt: serverTimestamp(),
       };
 
-      // ✅ Firestore 저장
-      await setDoc(userDocRef, userData);
-      console.log("✅ 이메일 유저 Firestore 저장 완료");
+      // 새로 생성이든(없음) 업그레이드든(있음) merge 저장
+      await setDoc(userDocRef, userData, { merge: true });
 
-      //  Redux 상태에 저장할 데이터에서 createdAt 제거
-
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { createdAt: _unused, ...userForRedux } = userData;
-
-      // ✅ 여기서 직접 Redux에 저장!
-      // thunkAPI.dispatch(setUser(userForRedux));
-
-      return userForRedux as EmailUserForRedux; // ⚠️ 직렬화 경고 방지
+      return userForRedux as EmailUserForRedux;
     } catch (err: unknown) {
-      const fbErr = err as FirebaseError; // ✨ 변경
-      console.error("❌ Firestore 저장 실패:", fbErr);
-      return thunkAPI.rejectWithValue(fbErr?.message || "알 수 없는 오류가 발생했습니다."); // ✨ 변경
+      const fbErr = err as FirebaseError;
+      return thunkAPI.rejectWithValue(fbErr?.message || "알 수 없는 오류가 발생했습니다.");
     }
   }
 );
 
-// ✅ 추가: 저장된 프로필 조회 Thunk
+/* =========================
+   저장된 프로필 조회
+   - 존재하지 않으면: Firestore에 쓰지 않고 “반환만” 한다.
+========================= */
 export const fetchUserProfile = createAsyncThunk<
   EmailUserForRedux | SocialUserForRedux,
   string,
   { rejectValue: string }
 >("user/fetchUserProfile", async (uid, thunkAPI) => {
   try {
-    const ref = doc(db, "users", uid); // ★ 변경: Firestore 문서 참조
-    const snap = await getDoc(ref); // ★ 변경: 1회 조회
+    const ref = doc(db, "users", uid);
+    const snap = await getDoc(ref);
+
+    // 문서가 없으면: Firestore에 생성하지 않고, 안전한 기본 email 형태로 반환
     if (!snap.exists()) {
-      return thunkAPI.rejectWithValue("프로필 문서가 없습니다.");
+      const out: EmailUserForRedux = {
+        type: "email",
+        uid,
+        email: "",
+        name: "",
+        birthDate: "",
+        gender: "",
+        nationality: "",
+        phoneNumber: "",
+        emailVerified: false,
+        isAdmin: false,
+      };
+      return out;
     }
-    // const data = snap.data();
 
-    const raw = snap.data() as FirestoreUser; // ★ 변경
+    const raw = snap.data() as Record<string, unknown>;
+    const normalized = normalizeForRedux(raw);
+    if (normalized == null || typeof normalized !== "object") {
+      // 정규화 실패 시에도 안전 기본값 반환
+      const out: EmailUserForRedux = {
+        type: "email",
+        uid,
+        email: "",
+        name: "",
+        birthDate: "",
+        gender: "",
+        nationality: "",
+        phoneNumber: "",
+        emailVerified: false,
+        isAdmin: false,
+      };
+      return out;
+    }
 
-    // createdAt 같은 비직렬화 필드 제거
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { createdAt: _unused, ...userForRedux } = raw;
-    return userForRedux as EmailUserForRedux | SocialUserForRedux; // ★ 변경: Redux에 넣을 순수 객체 반환
+    // createdAt/updatedAt 제외
+    const { createdAt: _c, updatedAt: _u, ...rest } = normalized as Record<string, unknown>;
+
+    // type 판정: 있는 값만 신뢰
+    const storedType = rest["type"];
+    if (storedType === "social") {
+      const provider = (rest["provider"] as "google" | "kakao" | undefined) ?? "google"; // ⚠️ 레거시 보호
+      const out: SocialUserForRedux = {
+        type: "social",
+        provider,
+        uid: (rest["uid"] as string) ?? uid,
+        email: ((rest["email"] as string | null) ?? "") as string,
+        name: ((rest["name"] as string | null) ?? "") as string,
+        photoURL: ((rest["photoURL"] as string | null) ?? null) as string | null,
+        birthDate: (rest["birthDate"] as string) ?? "",
+        gender: (rest["gender"] as string) ?? "",
+        nationality: (rest["nationality"] as string) ?? "",
+        phoneNumber: (rest["phoneNumber"] as string) ?? "",
+        emailVerified: (rest["emailVerified"] as boolean | null) ?? null,
+        zoneCode: (rest["zoneCode"] as string) ?? "",
+        address: (rest["address"] as string) ?? "",
+        detailAddress: (rest["detailAddress"] as string) ?? "",
+        isAdmin: (rest["isAdmin"] as boolean) ?? false,
+      };
+      return out;
+    }
+
+    // 기본: email로 간주
+    const out: EmailUserForRedux = {
+      type: "email",
+      uid: (rest["uid"] as string) ?? uid,
+      email: ((rest["email"] as string) ?? "").toLowerCase(),
+      name: (rest["name"] as string) ?? "",
+      birthDate: (rest["birthDate"] as string) ?? "",
+      gender: (rest["gender"] as string) ?? "",
+      nationality: (rest["nationality"] as string) ?? "",
+      phoneNumber: (rest["phoneNumber"] as string) ?? "",
+      emailVerified: (rest["emailVerified"] as boolean) ?? false,
+      isAdmin: (rest["isAdmin"] as boolean) ?? false,
+    };
+    return out;
   } catch {
     return thunkAPI.rejectWithValue("프로필 조회 중 오류가 발생했습니다.");
   }
 });
 
-// Slice 생성
+/* =========================
+   Slice
+========================= */
 const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    // 로그아웃 처리
     logoutUser(state) {
       state.user = null;
       state.isLoggedIn = false;
       state.initialized = true;
     },
-
-    // 사용자 정보를 수동으로 설정
     setUser(state, action: PayloadAction<EmailUserForRedux | SocialUserForRedux>) {
       state.user = action.payload;
       state.isLoggedIn = true;
       state.initialized = true;
     },
-
-    // ✨ 추가: onAuthStateChanged 첫 콜백 시 호출
     setAuthInitialized(state) {
       state.initialized = true;
     },
   },
   extraReducers: (builder) => {
     builder
-      // 회원가입 요청 중
       .addCase(signUpUser.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      // 회원가입 성공
-      // .addCase(signUpUser.fulfilled, (state, action: PayloadAction<EmailUserForRedux>) => {
       .addCase(signUpUser.fulfilled, (state) => {
         state.loading = false;
-        // state.user = action.payload;
         state.isLoggedIn = false;
       })
-      // 회원가입 실패
       .addCase(signUpUser.rejected, (state, action) => {
         state.loading = false;
         state.error = (action.payload as string) ?? action.error.message ?? "회원가입 실패";
       })
-      // 프로필 가져오기 성공 시 전역 상태 갱신
-      .addCase(fetchUserProfile.fulfilled, (state, action) => {
-        state.user = action.payload; //  전역 유저 상태 갱신
-        state.isLoggedIn = true; //  로그인 유지 표식
-        state.loading = false; //  로딩 종료
-        state.error = null; //  에러 초기화
-      })
       .addCase(fetchUserProfile.pending, (state) => {
         state.loading = true;
         state.error = null;
+        state.initialized = true;
+      })
+      .addCase(fetchUserProfile.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.isLoggedIn = true;
+        state.loading = false;
+        state.error = null;
+        state.initialized = true;
       })
       .addCase(fetchUserProfile.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload ?? "프로필 조회 실패";
+        state.error = (action.payload as string) ?? "프로필 조회 실패";
+        state.initialized = true;
       });
   },
 });
 
-// 액션과 리듀서 내보내기
 export const { logoutUser, setUser, setAuthInitialized } = userSlice.actions;
 export default userSlice.reducer;
