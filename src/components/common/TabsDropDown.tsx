@@ -27,7 +27,8 @@ const TabsDropDown = ({ toggleSidebar, isOpen, closeSidebar }: TopNavProps) => {
           onMouseLeave={() => setActiveIndex(null)}
         >
           <Link
-            href={category.pathName}
+            // href={category.pathName}
+            href={`/c/${category.pathName}`}
             className="hover:underline hover:text-[var(--color-red-400)]"
           >
             {category.name}

@@ -44,8 +44,6 @@ export const Category = [
     name: "OUTER",
     pathName: "/outer",
     subcategories: [
-      { name: "CARDIGAN", pathName: "/outer/cardigan" },
-      { name: "VEST", pathName: "/outer/vest" },
       { name: "JACKET", pathName: "/outer/jacket" },
       { name: "COAT", pathName: "/outer/coat" },
       { name: "PADDED", pathName: "/outer/padded" },
@@ -79,7 +77,6 @@ export const Category = [
         pathName: "/top/blouse",
         thirdSubcategories: [{ name: "SHIRT", pathName: "/top/blouse/shirt" }],
       },
-      { name: "KNIT", pathName: "/top/knit" },
       { name: "SLEEVELESS", pathName: "/top/sleeveless" },
       { name: "T-SHIRT", pathName: "/top/t-shirt" },
       {

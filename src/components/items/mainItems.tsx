@@ -1,5 +1,5 @@
-const mainItems = () => {
+const MainItems = () => {
   return <>메인아이템</>;
 };
 
-export default mainItems;
+export default MainItems;

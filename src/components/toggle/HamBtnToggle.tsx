@@ -16,12 +16,10 @@ const HamBtnToggle = ({ toggleSidebar, isOpen, closeSidebar }: HamBtnToggleProps
   const btnRef = useRef<HTMLDivElement | null>(null);
 
   useClickOutside(btnRef, closeSidebar, isOpen);
-  // useClickOutside(btnRef, closeSidebar || (() => {}), isOpen);
 
   return (
     <div className="relative" ref={btnRef}>
       <button
-        // onClick={toggleSidebar}
         onMouseDown={(e) => e.stopPropagation()}
         onClick={(e) => {
           e.stopPropagation(); // ✅ 외부 클릭 이벤트로 인식되지 않게 방지
@@ -36,7 +34,7 @@ const HamBtnToggle = ({ toggleSidebar, isOpen, closeSidebar }: HamBtnToggleProps
       {/* 버튼 아래 드롭다운 */}
       {isOpen && (
         <div className="absolute top-full left-0 bg-white shadow-md z-50">
-          <Sidebar isOpen={isOpen} onClose={toggleSidebar} />
+          <Sidebar isOpen={isOpen} onClose={closeSidebar} />
         </div>
       )}
     </div>

@@ -1,5 +1,5 @@
 import { getAnalytics, isSupported } from "firebase/analytics";
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps } from "firebase/app";
 import { getAuth, GoogleAuthProvider } from "firebase/auth"; // 로그인
 import { getFirestore } from "firebase/firestore"; // 업로드
 import { getStorage } from "firebase/storage"; //
@@ -20,7 +20,8 @@ const firebaseConfig = {
 };
 
 // Firebase 앱 초기화 (중복 방지)
-const app = initializeApp(firebaseConfig);
+// const app = initializeApp(firebaseConfig);
+const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
 
 // SSR-safe하게 Analytics 초기화
 let analytics: ReturnType<typeof getAnalytics> | null = null;

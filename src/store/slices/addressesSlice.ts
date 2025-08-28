@@ -67,11 +67,11 @@ export const startAddressesListener = createAsyncThunk<
     unsubscribe = onSnapshot(
       q,
       (snap) => {
-        console.log(
-          "[addresses] snap size:",
-          snap.size,
-          snap.docs.map((d) => d.id)
-        );
+        // console.log(
+        //   "[addresses] snap size:",
+        //   snap.size,
+        //   snap.docs.map((d) => d.id)
+        // );
 
         const rows: AddressDoc[] = [];
         for (const d of snap.docs) {
