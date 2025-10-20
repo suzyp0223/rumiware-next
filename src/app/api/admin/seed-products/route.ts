@@ -1,3 +1,4 @@
+// http://localhost:3000/admin/products
 import { NextResponse } from "next/server";
 export const runtime = "nodejs";
 
