@@ -37,7 +37,9 @@ export default function useEmailLinkVerification(options?: Options) {
     if (!email.trim() || !isValidEmail(email)) {
       setIsEmailDuplicateChecked(false);
       setIsEmailAvailable(null);
-      setUiMessage(getEmailValidationMessage(email, false, null, emailVerified, emailTouched, ""));
+      setUiMessage(
+        getEmailValidationMessage(email, false, null, emailVerified, emailTouched, "") ?? ""
+      );
       return;
     }
 
@@ -47,7 +49,7 @@ export default function useEmailLinkVerification(options?: Options) {
     setIsEmailDuplicateChecked(true);
     setIsEmailAvailable(available);
     setUiMessage(
-      getEmailValidationMessage(email, true, available, emailVerified, emailTouched, "")
+      getEmailValidationMessage(email, true, available, emailVerified, emailTouched, "") ?? ""
     );
   };
 
@@ -56,7 +58,9 @@ export default function useEmailLinkVerification(options?: Options) {
     if (!email.trim() || !isValidEmail(email)) {
       setIsEmailDuplicateChecked(false);
       setIsEmailAvailable(null);
-      setUiMessage(getEmailValidationMessage(email, false, null, emailVerified, emailTouched, ""));
+      setUiMessage(
+        getEmailValidationMessage(email, false, null, emailVerified, emailTouched, "") ?? ""
+      );
       return;
     }
 

@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 
 type Props = {
   params: { slug?: string[] };
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams?: { [key: string]: string | string[] | undefined };
 };
 
 export default function CategoryPage({ params }: Props) {

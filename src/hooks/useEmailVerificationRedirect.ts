@@ -19,7 +19,7 @@ const useEmailVerificationRedirect = ({ setEmail, setIsEmailChecked, setEmailErr
       setEmailError("");
       window.history.replaceState({}, "", "/join"); // 쿼리 제거
     }
-  }, []);
+  }, [setEmail, setEmailError, setIsEmailChecked]);
 };
 
 export default useEmailVerificationRedirect;
