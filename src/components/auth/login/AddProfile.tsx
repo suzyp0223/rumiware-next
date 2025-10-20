@@ -37,6 +37,7 @@ const AddProfile = () => {
       onSubmit={handleSubmit}
       className="relative w-[360px] mx-auto mt-10 border border-gray-300 rounded-lg shadow-md p-6 flex flex-col bg-white"
     >
+      <h1 className="text-3xl mb-3 text-center">추가 회원 정보 입력</h1>
       {/* 이름 입력 */}
       <div className="mb-4 border-b border-gray-300 focus-within:border-blue-500 transition-colors">
         <input
