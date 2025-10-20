@@ -1,6 +1,5 @@
 "use client";
 
-// import { type UserState } from "@/store/slices/userSlice";
 import { useEffect, useState } from "react";
 
 const onlyDigits = (s: string) => (s ?? "").replace(/\D/g, "");
@@ -10,7 +9,6 @@ const splitYYMMDD = (v: string) => {
 };
 
 type Props = {
-  // user: UserState | null;
   value: string; // "YYMMDD"
   onChange: (v: string) => void; // 부모 상태 갱신
 };

@@ -1,15 +1,11 @@
 "use client";
 
-// import { UserState } from "@/store/slices/userSlice";
-
 type Props = {
-  // user: UserState | null;
   value: string;
   onChange: (v: string) => void;
 };
 
 export default function CNameEditRow({ value, onChange }: Props) {
-  // export default function CNameEditRow({ user, value, onChange }: Props) {
   return (
     <tr className="border-b border-gray-300">
       <th className="bg-peach-100 px-5 py-4 text-left whitespace-nowrap">이름</th>
