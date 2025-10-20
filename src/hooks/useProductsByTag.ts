@@ -2,7 +2,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { collection, getDocs, query, where, orderBy, limit } from "firebase/firestore";
 import { db } from "@/firebases/firebase";
-import type { ProductDoc } from "./useProductFS";
+import type { ProductDoc } from "./useProductsFS";
 
 export function useProductsByTag(tag: string, pageSize = 24) {
   return useQuery({

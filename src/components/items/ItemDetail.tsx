@@ -13,14 +13,14 @@ import PlusIcon from "../icons/PlusIcon";
 import ShareIcon from "./../icons/ShareIcon";
 import LocationNav from "./LocationNav";
 import OptionsSelector from "./OptionsSelector";
-import { useProductFS } from "@/hooks/useProductsFS";
+import { useProductsFS } from "@/hooks/useProductsFS";
 
 export interface ItemDetailProps {
   productId: string;
 }
 
 const ItemDetail = ({ productId }: ItemDetailProps) => {
-  const { data: p, isLoading, error } = useProductFS(productId);
+  const { data: p, isLoading, error } = useProductsFS(productId);
 
   const salePrice = useMemo(() => {
     if (!p) return 0;

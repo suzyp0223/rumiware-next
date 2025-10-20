@@ -19,7 +19,7 @@ export type ProductDoc = {
   color?: string[];
 };
 
-export function useProductFS(id: string) {
+export function useProductsFS(id: string) {
   return useQuery({
     queryKey: ["product", id],
     queryFn: async () => {
