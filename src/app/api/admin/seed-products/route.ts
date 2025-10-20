@@ -157,7 +157,7 @@ export async function POST() {
       if (sub) category.sub = sub;
       if (third) category.third = third;
 
-      const categoryKeys = parts.map((_, i) => parts.slice(0, i + 1).join("/"));
+      const categoryKeys = parts.map((_: string, i: number) => parts.slice(0, i + 1).join("/"));
 
       // const categoryKeys = buildCategoryKeys(meta.pathName);
       await db

@@ -11,6 +11,7 @@ const AddressForm = () => {
 
   const handleAddressSearch = () => {
     // 주소 검색 모달만 호출하는 방식
+    if (window.daum?.Postcode) {
     new window.daum.Postcode({
       popupTitle: "Rumiware 루미웨어 주소 검색",
       popupKey: "popup1",
@@ -23,6 +24,7 @@ const AddressForm = () => {
         }, 0);
       },
     }).open();
+  }
   };
 
   return (

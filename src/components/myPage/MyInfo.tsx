@@ -184,10 +184,10 @@ export default function MyInfo() {
               <col className="w-auto" />
             </colgroup>
             <tbody>
-              <NameEditRow user={user} value={name} onChange={setName} />
+              <NameEditRow value={name} onChange={setName} />
               <EmailEditRow user={user} />
-              <PhoneEditRow user={user} value={phone} onChange={setPhone} />
-              <BirthDateEditRow user={user} value={birthDate} onChange={setBirthDate} />
+              <PhoneEditRow value={phone} onChange={setPhone} />
+              <BirthDateEditRow value={birthDate} onChange={setBirthDate} />
 
               {/* 성별 */}
               <tr className="border-b border-gray-300 ">

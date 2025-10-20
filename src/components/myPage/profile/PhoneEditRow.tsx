@@ -1,10 +1,13 @@
 "use client";
 
+// import { UserState } from "@/store/slices/userSlice";
+
 const onlyDigits = (s: string) => s.replace(/\D/g, "");
 const toHyphen = (digits: string) =>
   /^\d{11}$/.test(digits) ? digits.replace(/^(\d{3})(\d{4})(\d{4})$/, "$1-$2-$3") : digits;
 
 type Props = {
+  // user: UserState | null;
   value: string; // 숫자만: "01012345678"
   onChange: (v: string) => void;
 };
@@ -20,6 +23,7 @@ export default function PhoneEditRow({ value, onChange }: Props) {
     <tr className="border-b border-gray-300">
       <th className="bg-peach-100 px-5 py-4 text-left whitespace-nowrap">휴대폰</th>
       <td className="p-4 align-middle">
+        {/* {user?.phoneNumber} */}
         <input
           type="text"
           value={display}
