@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/firebases/firebase";
 
+// 추가정보 받아야하는 경우의 로직 추가할것
 const AddProfile = () => {
   const [name, setName] = useState("");
   const [birthDate, setBirthDate] = useState("");
