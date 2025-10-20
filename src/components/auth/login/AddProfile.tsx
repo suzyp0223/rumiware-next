@@ -1,3 +1,6 @@
+"react client";
+
+import { useState } from "react";
 import { doc, setDoc, serverTimestamp } from "firebase/firestore";
 import { auth, db } from "@/firebases/firebase";
 

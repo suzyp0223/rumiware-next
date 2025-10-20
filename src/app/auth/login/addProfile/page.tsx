@@ -1,4 +1,4 @@
-import AddProfile from "@/components/auth/login/addProfile";
+import AddProfile from "@/components/auth/login/AddProfile";
 
 const page = () => {
   return <AddProfile />;
