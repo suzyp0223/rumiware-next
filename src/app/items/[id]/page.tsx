@@ -8,7 +8,7 @@ export function generateStaticParams(): { id: string }[] {
   }));
 }
 
-// ✅ Next.js 15 기준 - params는 Promise 형태로 받아서 await 처리
+// ✅ Next.js 15 기준
 export default async function Page({ params }: { params: { id: string } }) {
   const { id } = params;
   return <ItemDetail productId={id} />;
