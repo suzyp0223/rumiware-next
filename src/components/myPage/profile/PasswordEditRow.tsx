@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { auth } from "@/firebases/firebase";
 import { EmailAuthProvider, reauthenticateWithCredential } from "firebase/auth";
 
@@ -22,20 +22,7 @@ export default function PasswordEditRow({
   const [canEdit, setCanEdit] = useState(false); // 비번 확인 성공 시 true
   const [authErr, setAuthErr] = useState<string | null>(null);
 
-  // ⌨️ Enter 키로 확인 가능
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Enter" && !canEdit && pwd.trim() && !verifying) {
-        verifyPassword();
-      }
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [canEdit, pwd, verifying]);
-
-  if (isSocialUser) return null; // 소셜 계정이면 행 숨김
-
-  const verifyPassword = async () => {
+  const verifyPassword = useCallback(async () => {
     const user = auth.currentUser;
     if (!user || !user.email) {
       setAuthErr("로그인이 필요합니다.");
@@ -60,7 +47,20 @@ export default function PasswordEditRow({
     } finally {
       setVerifying(false);
     }
-  };
+  }, [pwd, onVerified]);
+
+  // ⌨️ Enter 키로 확인 가능
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Enter" && !canEdit && pwd.trim() && !verifying) {
+        verifyPassword(); // ← 메모이즈된 함수 참조
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [canEdit, pwd, verifying, verifyPassword]); // verifyPassword 추가
+
+  if (isSocialUser) return null; // 소셜 계정이면 행 숨김
 
   const handleCancel = () => {
     setCanEdit(false);

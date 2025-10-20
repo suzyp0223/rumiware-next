@@ -88,13 +88,13 @@ export default function AddressEditRow({ onChange, showActions = true }: Props) 
     return <p className="text-sm text-red-600 px-4">오류: {error}</p>;
   }
 
-  const setFormAndNotify = (updater: (f: AddressFormValue) => AddressFormValue) => {
-    setForm((prev) => {
-      const next = updater(prev);
-      onChange?.(next); // 부모(JoinForm)에 즉시 반영
-      return next;
-    });
-  };
+  // const setFormAndNotify = (updater: (f: AddressFormValue) => AddressFormValue) => {
+  //   setForm((prev) => {
+  //     const next = updater(prev);
+  //     onChange?.(next); // 부모(JoinForm)에 즉시 반영
+  //     return next;
+  //   });
+  // };
 
   // 🔶 모달 열기: 추가 / 수정
   const openAddModal = () => {
